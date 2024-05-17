@@ -1,0 +1,77 @@
+@font-face {
+  font-family: 'rabbit';
+  src: url('https://cdn.glitch.global/8d0743e3-e624-443e-8e3c-4ce0c765e784/PowerGrotesk-Regular.woff2?v=1715619551767') format('woff2'); /* Modern Browsers */
+}
+
+img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none; /* For Safari */
+  -moz-user-select: none; /* For Firefox */
+  -ms-user-select: none;
+  zoom: 150%;
+  transform: translate(-50%, -50%);
+}
+
+body {
+  background-color: #000;
+  font-family: 'rabbit', sans-serif;
+}
+
+#home {
+  width: 200px;
+  height: 200px;
+  top: 180px;
+  left: 140px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none; /* For Safari */
+  -moz-user-select: none; /* For Firefox */
+  -ms-user-select: none; /* For Internet Explorer/Edge */
+}
+
+div {
+  position: absolute; /* or position: absolute; */
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  height: 379px;
+  width: 284px;
+  transform: translate(-72%, -50%);
+  background-color: #000;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none; /* For Safari */
+  -moz-user-select: none; /* For Firefox */
+  -ms-user-select: none; /* For Internet Explorer/Edge */
+}
+
+#time-overlay {
+  top: 65%;
+  left: 100%;
+  height: 379px;
+  width: 284px;
+  background-color: rgba(0, 0, 0, 0);
+  color: #f7642d;
+  padding: 5px 10px;
+  font-size: 68px;
+  font-weight: bold;
+  zoom: 150%;/* Remove boldness */
+}
+
+
+demo {
+  position: absolute;
+  top: 65%;
+  left: 100%;
+  height: 379px;
+  width: 284px;
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  padding: 5px 10px;
+  font-size: 68px;
+  font-weight: bold; /* Remove boldness */
+}
