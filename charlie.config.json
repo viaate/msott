@@ -1,0 +1,93 @@
+{
+  "persona": {
+    "name": "Charlie",
+    "humanName": "",
+    "about": "An 18 lb red-brown mini goldendoodle. A girl. Curly coat, long wavy ears, a feathery tail. Loves flopping flat on cool wood floors, sleeping stretched out on the bed, catching treats, staring out windows, and her lemon tart squeaky toy."
+  },
+
+  "brain": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "maxTokens": 32000,
+    "maxStepsPerWake": 24,
+    "serverSideFallbacks": true,
+    "dailyBudgetUSD": 5,
+    "pricingPerMTok": {
+      "claude-opus-5-5":   { "input": 4,    "output": 20,  "cacheWrite": 5,     "cacheRead": 0.2 },
+      "claude-sonnet-5-5": { "input": 2,    "output": 10,  "cacheWrite": 2.5,   "cacheRead": 0.2 },
+      "claude-haiku-5-5":  { "input": 0.1,  "output": 0.5, "cacheWrite": 0.125, "cacheRead": 0.01 },
+      "claude-fable-5-1":  { "input": 10,   "output": 50,  "cacheWrite": 12.5,  "cacheRead": 0.25 }
+    }
+  },
+
+  "schedule": {
+    "firstWakeDelaySeconds": 10,
+    "defaultNapMinutes": 30,
+    "minNapMinutes": 2,
+    "maxNapMinutes": 480,
+    "wakeOnMessage": true,
+    "minMinutesBetweenWakes": 4
+  },
+
+  "economy": {
+    "startingTokens": 0,
+    "earn": {
+      "github.star": 20,
+      "github.fork": 30,
+      "github.follower": 25,
+      "github.watcher": 8,
+      "github.uniqueView": 1,
+      "github.externalIssue": 12,
+      "github.externalComment": 5,
+      "github.newRepo": 5,
+      "site.visitor": 1,
+      "site.pet": 1,
+      "site.treat": 2,
+      "site.message": 3,
+      "site.touch": 1,
+      "beacon.view": 1
+    },
+    "limits": {
+      "petsPerVisitorPerDay": 10,
+      "treatsPerVisitorPerDay": 3,
+      "messagesPerVisitorPerDay": 6,
+      "touchesPerVisitorPerObjectPerDay": 2,
+      "newReposCreditedPerDay": 2
+    },
+    "costs": {
+      "skill":   { "base": 25, "growth": 1.4 },
+      "reviseSkill": 5,
+      "build":   { "base": 15, "growth": 1.3 },
+      "rebuild": 5
+    }
+  },
+
+  "starterSkills": ["github"],
+
+  "github": {
+    "pollMinutes": 10,
+    "maxReposScanned": 30
+  },
+
+  "skills": {
+    "timeoutSeconds": 120,
+    "maxResultChars": 12000,
+    "maxCodeChars": 120000
+  },
+
+  "world": {
+    "plotSize": 12,
+    "maxPointsPerBuild": 30000,
+    "maxHeight": 20,
+    "buildTimeoutSeconds": 30,
+    "minRefreshMinutes": 30
+  },
+
+  "site": {
+    "port": 8787,
+    "trustProxy": true,
+    "maxMessageLength": 280,
+    "showMessagesPublicly": true,
+    "feedLength": 300
+  }
+}

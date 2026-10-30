@@ -1,0 +1,21 @@
+{
+  "name": "charlie",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Charlie: a dot-art dog who lives on a server, earns her own tokens, and writes her own code.",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch-path=server --watch-path=charlie.config.json server/index.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "reset": "node scripts/reset.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "three": "^0.187.0"
+  }
+}
