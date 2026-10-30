@@ -19,7 +19,16 @@ const LABELS = {
   'site.touch': ['touch on a build', 'touches on builds'],
   'site.action': ['thing a visitor did for you', 'things visitors did for you'],
   'site.picture': ['picture from a visitor', 'pictures from visitors'],
-  'beacon.view': ['page view', 'page views'],
+  'beacon.view': ['beacon view', 'beacon views'],
+  'page.view': ['view of your website', 'views of your website'],
+  'link.click': ['click on your links', 'clicks on your links'],
+  'reddit.karma': ['Reddit karma', 'Reddit karma'],
+  'reddit.comment': ['Reddit comment from someone', 'Reddit comments from others'],
+  'bluesky.like': ['Bluesky like', 'Bluesky likes'],
+  'bluesky.repost': ['Bluesky repost', 'Bluesky reposts/quotes'],
+  'bluesky.reply': ['Bluesky reply', 'Bluesky replies'],
+  'bluesky.follower': ['Bluesky follower', 'Bluesky followers'],
+  'sales.usd': ['dollar of sales', 'dollars of sales'],
   gift: ['gift from your human', 'gifts from your human'],
 };
 

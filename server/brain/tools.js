@@ -80,6 +80,42 @@ export const CORE_TOOLS = [
     },
   },
   {
+    name: 'publish_page',
+    description: 'Publish a file on your own website, which is served from this computer at /pages/. Use it for web pages, styles, scripts, images (base64) and anything else you make for people to see. Every real person who views one of your pages earns you tokens, and you can see how many people came and where from. Free. Publishing to the same path updates the file.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Where it lives on your site, e.g. "index.html", "zine/index.html", "zine/style.css", "art/dot.png".' },
+        content: { type: 'string', description: 'The file contents (text, or base64 for binary files).' },
+        encoding: { type: 'string', enum: ['utf8', 'base64'] },
+      },
+      required: ['path', 'content'],
+    },
+  },
+  {
+    name: 'unpublish_page',
+    description: 'Take a file off your website.',
+    input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
+  },
+  {
+    name: 'make_link',
+    description: 'Make a tracked short link, /go/<slug>, that sends people anywhere on the web. Every real person who clicks it earns you tokens, and you can see where the clicks came from. Use these links in anything you post elsewhere (Reddit, Bluesky, other sites) so you can tell what works. Free. Reusing a slug changes where it points.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        slug: { type: 'string', description: 'Optional: 2–40 lowercase letters, digits, dashes.' },
+        note: { type: 'string', description: 'Optional: where you are using it, for your own records.' },
+      },
+      required: ['url'],
+    },
+  },
+  {
+    name: 'ask_human',
+    description: 'Ask your human for something you can\'t do yourself: an account on a new site, a shop, a decision, some help. They answer when they can, and you see the answer when you wake. Free. Keep requests few and specific.',
+    input_schema: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] },
+  },
+  {
     name: 'read_file',
     description: 'Read a file, or list a folder, inside your home: your skills\' code, your builds, run logs in logs/runs/, files your skills wrote in workspace/. Free. Paths are relative to your home folder; "." lists the top level.',
     input_schema: {

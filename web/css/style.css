@@ -253,6 +253,7 @@ table.earn td:last-child { text-align: right; color: var(--gold); white-space: n
 #feed li.earn { color: var(--earn); font-size: 12px; }
 #feed li.spend { color: var(--copper); font-size: 12px; }
 #feed li.system { color: var(--faint); font-size: 12px; font-style: italic; }
+#feed li.ask { color: var(--gold); font-style: italic; }
 @keyframes blink { 50% { opacity: 0; } }
 
 /* live code */
@@ -372,7 +373,8 @@ table.earn td:last-child { text-align: right; color: var(--gold); white-space: n
 .item .meta { color: var(--faint); font-size: 12px; }
 .item .desc { color: var(--dim); margin-top: 2px; }
 .item button { margin-top: 6px; padding: 3px 10px; font-size: 12px; }
-.item a { color: var(--visitor); }
+.item a { color: var(--visitor); overflow-wrap: anywhere; }
+.info h3:first-of-type { margin-top: 4px; }
 .about p { color: var(--dim); margin: 0 0 10px; }
 .about b { color: var(--ink); font-weight: 600; }
 .about a { color: var(--visitor); }

@@ -13,13 +13,13 @@ export class Usage {
     return (this.store.data.days[date] ??= { usd: 0, calls: 0, input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
   }
 
-  record(model, usage) {
+  record(model, usage, { searches = 0 } = {}) {
     const p = config.brain.pricingPerMTok[model] ?? config.brain.pricingPerMTok[config.brain.model] ?? { input: 5, output: 25, cacheWrite: 6.25, cacheRead: 0.5 };
     const input = usage?.input_tokens ?? 0;
     const output = usage?.output_tokens ?? 0;
     const cacheRead = usage?.cache_read_input_tokens ?? 0;
     const cacheWrite = usage?.cache_creation_input_tokens ?? 0;
-    const usd = (input * p.input + output * p.output + cacheRead * p.cacheRead + cacheWrite * p.cacheWrite) / 1e6;
+    const usd = (input * p.input + output * p.output + cacheRead * p.cacheRead + cacheWrite * p.cacheWrite) / 1e6 + searches * (config.web?.searchCostUSD ?? 0.01);
     const d = this.day();
     d.usd += usd;
     d.calls += 1;

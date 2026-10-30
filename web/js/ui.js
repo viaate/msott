@@ -15,6 +15,17 @@ const EARN_LABELS = {
   'site.message': 'a message',
   'site.touch': 'a click on one of her builds',
   'beacon.view': 'a view of a page she made',
+  'page.view': 'someone reading her website',
+  'link.click': 'a click on one of her links',
+  'reddit.karma': 'a point of Reddit karma',
+  'reddit.comment': 'a comment on her Reddit post',
+  'bluesky.like': 'a like on Bluesky',
+  'bluesky.repost': 'a repost on Bluesky',
+  'bluesky.reply': 'a reply on Bluesky',
+  'bluesky.follower': 'a Bluesky follower',
+  'sales.usd': 'every dollar of sales',
+  'site.action': 'something you do for her',
+  'site.picture': 'a picture you leave her',
 };
 
 const ACTIVITY = {
@@ -23,6 +34,7 @@ const ACTIVITY = {
   coding: 'writing code',
   building: 'building something',
   skill: 'using a skill',
+  browsing: 'browsing the web',
 };
 
 const FEELINGS = [
@@ -189,6 +201,7 @@ export class UI {
     this.renderLedger();
     this.renderSkills();
     this.renderWorld();
+    this.renderWeb();
     this.renderFeelings();
     this.renderDiary();
     this.renderActions();
@@ -252,6 +265,7 @@ export class UI {
     if (c.activity === 'coding') return c.detail ? `writing code for "${c.detail}"` : 'writing some code';
     if (c.activity === 'building') return c.detail ? `building "${c.detail}"` : 'building something';
     if (c.activity === 'skill') return c.detail ? `using her ${c.detail} skill` : 'busy with something';
+    if (c.activity === 'browsing') return c.detail === 'web_fetch' ? 'reading something on the web' : 'searching the web';
     if (c.doing) return c.doing;
     return `having a think${where ? ` ${where}` : ''}`;
   }
@@ -265,6 +279,70 @@ export class UI {
     document.querySelectorAll('[data-view]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
     document.body.classList.toggle('view-3d', v === '3d');
     $('hint').textContent = v === '3d' ? 'drag to look around her · scroll to move closer · click charlie to pet her' : 'drag to look around · scroll to zoom · click charlie to pet her';
+  }
+
+  // ---- her web presence ----
+  setSite(site) {
+    if (!this.state) return;
+    this.state.site = site;
+    this.renderWeb();
+  }
+
+  setRequests(list) {
+    if (!this.state) return;
+    this.state.requests = list;
+    this.renderWeb();
+  }
+
+  renderWeb() {
+    const box = $('web-list');
+    const s = this.state;
+    if (!box || !s?.site) return;
+    box.textContent = '';
+    const link = (href, text) => {
+      const a = el('a', '', text);
+      a.href = href;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      return a;
+    };
+    const section = (title) => box.append(el('h3', '', title));
+    section('her website');
+    const pages = [...s.site.pages].sort((a, b) => b.total - a.total);
+    if (!pages.length) box.append(el('p', 'empty', "She hasn't published any pages yet."));
+    for (const p of pages) {
+      const item = el('div', 'item');
+      item.append(link(p.url, p.url.replace(/^https?:\/\//, '')));
+      item.append(el('div', 'meta', `${p.today} view${p.today === 1 ? '' : 's'} today · ${p.total} all-time`));
+      box.append(item);
+    }
+    if (s.accounts?.length) {
+      section('where she is');
+      const item = el('div', 'item');
+      s.accounts.forEach((a, i) => {
+        if (i) item.append(document.createTextNode(' · '));
+        item.append(a.url ? link(a.url, a.label) : el('span', '', a.label));
+      });
+      box.append(item);
+    }
+    if (s.site.links.length) {
+      section('her links');
+      for (const l of [...s.site.links].sort((a, b) => b.total - a.total).slice(0, 12)) {
+        const item = el('div', 'item');
+        item.append(el('div', 'name', `/go/${l.slug}`), el('div', 'meta', `${l.total} click${l.total === 1 ? '' : 's'} → ${l.url.replace(/^https?:\/\//, '').slice(0, 60)}`));
+        box.append(item);
+      }
+    }
+    const reqs = (s.requests ?? []).slice().reverse();
+    if (reqs.length) {
+      section('what she asked her human for');
+      for (const r of reqs.slice(0, 10)) {
+        const item = el('div', 'item');
+        item.append(el('div', 'desc', `#${r.id} ${r.text}`));
+        item.append(el('div', 'meta', r.status === 'open' ? 'waiting' : `${r.status}${r.reply ? `: ${r.reply}` : ''}`));
+        box.append(item);
+      }
+    }
   }
 
   // ---- feelings ----

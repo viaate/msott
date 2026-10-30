@@ -1,0 +1,22 @@
+{
+  "name": "reddit",
+  "description": "Use Reddit as yourself (your own Reddit account). Actions: \"me\" (your profile and karma); \"rules\" (a subreddit's rules: read them before posting there); \"about\" (a subreddit's description and subscriber count); \"submit\" (a new post: subreddit, title, and text OR url); \"comment\" (reply to a post or comment: parent is its fullname, like t3_abc or t1_xyz); \"my_posts\" and \"my_comments\" (with scores); \"inbox\" (replies and messages to you); \"read\" (a post's top comments: id); \"search\" (posts in a subreddit or sitewide: query, subreddit optional); \"api\" (any other OAuth endpoint: method, path, form). Follow every subreddit's rules and Reddit's rules on bots and self-promotion.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "action": { "type": "string", "enum": ["me", "rules", "about", "submit", "comment", "my_posts", "my_comments", "inbox", "read", "search", "api"] },
+      "subreddit": { "type": "string" },
+      "title": { "type": "string" },
+      "text": { "type": "string" },
+      "url": { "type": "string" },
+      "flair_id": { "type": "string" },
+      "parent": { "type": "string" },
+      "id": { "type": "string" },
+      "query": { "type": "string" },
+      "method": { "type": "string" },
+      "path": { "type": "string" },
+      "form": { "type": "object" }
+    },
+    "required": ["action"]
+  }
+}

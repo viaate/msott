@@ -23,7 +23,10 @@ export class Skills {
       const from = path.join(paths.starter, 'skills', name);
       const to = path.join(paths.skills, name);
       if (!fs.existsSync(from) || fs.existsSync(to)) continue;
-      fs.cpSync(from, to, { recursive: true });
+      // Account skills (reddit, bluesky…) arrive once her human gives her the account.
+      const needs = readJSON(path.join(from, 'starter.json'), {}).requires ?? [];
+      if (!needs.every((k) => process.env[k])) continue;
+      fs.cpSync(from, to, { recursive: true, filter: (src) => path.basename(src) !== 'starter.json' });
       writeJSON(path.join(to, 'meta.json'), { origin: 'starter', learnedAt: new Date().toISOString(), revisions: 0, spent: 0, uses: 0 });
     }
   }

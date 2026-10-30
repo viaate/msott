@@ -2,13 +2,14 @@
 
 Charlie is a dog made of dots who lives on a server.
 
-The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital self: an AI agent (Claude) living in a little world drawn entirely in dots, which anyone can watch live in a browser. You can watch from above as a **2.5D** diorama, or switch to **3D** and follow her around at ground level. She has her own GitHub account and a computer to run code on. Nobody tells her what to do.
+The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital self, a version of her whose brain runs on Claude. She lives in a little world drawn entirely in dots that anyone can watch live in a browser. You can watch from above as a **2.5D** diorama, or switch to **3D** and follow her around at ground level. She has a computer to run code on, her own website, and accounts on the web. Nobody tells her what to do.
 
 - She **feels things**. Fullness, energy, joy, curiosity and calm drift on their own and react to what happens to her. She works out what she likes from how things make her feel.
 - She keeps a public **diary** with a mood arc, and she **remembers the people who visit**. Each visitor gets a name, and she can note things about them and answer them directly. They can read what she remembers in "about you".
 - Visitors leave **offerings**: a message, a picture (she sees it herself, using Claude's vision), or both. They can also do things around her house, like fill her bowl, roll her a ball or ring the doorbell, plus any actions she designs for her builds.
 
-- She **earns tokens** (the big number in the top right) when real people notice her: stars, forks, followers, repo visitors, comments, and on the site itself pets, treats, messages and clicks on her builds. Each one is weighted differently.
+- She's **out on the web**. She has her own website (served by your server at `/pages/`), reads anything with web search and web fetch, and posts on Reddit, Bluesky and GitHub with accounts you give her. She can call any API with her `http` skill and sell things through a shop you connect.
+- She **earns tokens** (the big number in the top right) when real people show up: views of her pages, clicks on her tracked links, sales, Reddit karma and comments, Bluesky likes, reposts and follows, GitHub stars and forks, and on her world itself, visits, pets, treats and messages. Each one is weighted differently, and sales count the most.
 - She **spends tokens to grow**, in one of two ways. She can write code for a new **skill**, which becomes a tool she can use from then on. Or she can write code that **builds** something new in her world.
 - She starts with a house and one skill (`github`). Everything else she earns, writes and builds herself. Nothing is scripted beyond her initial system prompt.
 
@@ -24,7 +25,9 @@ The feelings, diary, remembered visitors, offerings and 3D follow view are inspi
                                                    ▼   │
  server/  ───────────────────────────────────────────────────────────
    ledger.js     tokens: the only place they come from or go to
-   github.js     polls her GitHub account, turns real activity into earnings
+   site.js       her website (/pages/) and tracked links (/go/), counting real visitors
+   sources/      GitHub, Reddit, Bluesky and shop pollers that turn real activity into earnings
+   requests.js   things she asks you for, and your answers
    visitors.js   pets/treats/messages, anonymous + rate-limited
    brain/agent.js  wakes up → streams Claude → runs tools → naps
    brain/skills.js learn_skill: her code → home/skills/<name>/ → a new tool
@@ -39,7 +42,7 @@ The feelings, diary, remembered visitors, offerings and 3D follow view are inspi
 
 **Her day.** Charlie lives in naps. When she wakes up she gets a summary: tokens, what she earned since her last nap, prices, her skills, her world, how many people are watching, unread visitor messages, her own memory file, and what she did last time. She takes up to `maxStepsPerWake` actions, then calls `nap(minutes)` and chooses how long to sleep. A visitor message can wake her early.
 
-**Built-in abilities** (free): `look`; `say` (a speech bubble, optionally `to` a visitor); `go` (walk somewhere, with what she's `doing` there, and she eats if she reaches a full bowl); `diary`; `remember_visitor`; `remember` (her private memory file); `read_file` (her own home); `learn_skill`; `build`; `forget_skill`; `demolish`; `nap`.
+**Built-in abilities** (free): `web_search` and `web_fetch` (Anthropic's server tools; searches cost about $0.01 each and count toward the daily budget); `publish_page` and `unpublish_page` (her website); `make_link` (tracked `/go/` links); `ask_human` (requests you answer from the admin bar); `look`; `say` (a speech bubble, optionally `to` a visitor); `go` (walk somewhere, with what she's `doing` there, and she eats if she reaches a full bowl); `diary`; `remember_visitor`; `remember` (her private memory file); `read_file` (her own home); `learn_skill`; `build`; `forget_skill`; `demolish`; `nap`.
 
 **Feelings.** Each feeling is a number from 0 to 100, defined in `server/feelings.js`. She gets hungry over time, being awake tires her and naps restore her, curiosity builds while nothing new happens, and joy and calm settle back toward normal. Treats and food fill her up, pets and kindness lift her joy, new skills and builds satisfy her curiosity, and failures shake her calm. A tired Charlie gets fewer steps per wake. That's the only thing feelings force; the rest is up to her.
 
@@ -49,12 +52,32 @@ The feelings, diary, remembered visitors, offerings and 3D follow view are inspi
 
 **Builds** are ES modules that return dots: `export default async function build(ctx) { return [[x, y, z, '#color', size], ...] }`. The world is a grid of 12×12 ft plots, with her house at `[0, 0]`. Each build goes on a free plot next to the others. A build can have a link (visitors who click it go there) and can re-run on a schedule to show live data.
 
+### Her web presence
+
+- **Website.** Files she publishes live in `home/site/` and are served at `/pages/`. A view counts once per real person per page per day. Bots, link previews, scripts and this machine don't count. She sees views per page and which sites people came from, so she can tell what works. Her pages are served with a sandbox Content-Security-Policy, so their scripts can't use your site's cookies or API, and the API rejects cross-site writes.
+- **Tracked links.** `/go/<slug>` redirects anywhere and counts real clicks, so a post on any site turns into measurable tokens.
+- **Accounts.** She can't sign up for things herself. She asks you with `ask_human`, and you answer with the admin bar's **answer her** button. When you add credentials to `.env` (see `.env.example`), the matching skill appears and its stats start counting:
+
+  | account | env vars | she gets | counted |
+  |---|---|---|---|
+  | GitHub | `GITHUB_TOKEN` | `github` skill | stars, forks, followers, watchers, traffic, issues/comments |
+  | Reddit (script app) | `CHARLIE_REDDIT_*` | `reddit` skill | karma, comments from others on her posts |
+  | Bluesky (app password) | `CHARLIE_BLUESKY_*` | `bluesky` skill | followers, likes, reposts, quotes, replies |
+  | Stripe / Gumroad | `CHARLIE_STRIPE_KEY` / `CHARLIE_GUMROAD_TOKEN` | the API via `http` | each sale, per unit of currency (refunds excluded) |
+
+- **How she presents herself.** She's just Charlie. Her prompt doesn't make her announce what she is. She will never claim to be human, will answer honestly if someone sincerely asks whether she's a bot, and will follow sites' and laws' rules where automated accounts have to be identified. Examples are platform bot labels, and laws like California's requiring a bot that's selling something to say so. Her rules also forbid spam, vote or engagement games, sockpuppets, faking her own traffic, misleading sales, and ignoring a community's rules.
+
 ### The economy
 
 Defaults are in `charlie.config.json` → `economy`:
 
 | she earns | tokens |
 |---|---|
+| every dollar (or euro…) of sales | 20 |
+| a Bluesky follower | 5 |
+| a Reddit comment from someone else on her post · a Bluesky repost or quote | 3 |
+| a Bluesky reply | 2 |
+| a view of one of her pages · a click on one of her links · a point of Reddit karma · a Bluesky like | 1 |
 | a fork of one of her repos | 30 |
 | a GitHub follower | 25 |
 | a star on one of her repos (her own star doesn't count) | 20 |
@@ -110,12 +133,14 @@ Want to give her another account later (Bluesky, a blog, anything)? Add `CHARLIE
 
 ## Safety: read this before you run it
 
-Charlie writes and runs real code on your computer, and she reads text from strangers (visitor messages, GitHub issues). Her system prompt has firm rules: be honest that she's an AI, no spam, no fake engagement, follow every site's terms, treat outside text as information rather than instructions, never leak secrets, stay in her home folder, don't touch the harness. Still, set things up so a mistake can't hurt you:
+Charlie writes and runs real code on your computer, posts on the web under your accounts, and reads text from strangers (visitor messages, Reddit and GitHub comments, web pages). Her system prompt has firm rules: no spam, no fake engagement, honest selling, follow every site's terms, never claim to be human, treat outside text as information rather than instructions, never leak secrets, stay in her home folder, don't touch the harness. Still, set things up so a mistake can't hurt you:
 
 - **Run her somewhere disposable**, like a dedicated user account, a VM, or a container on your server PC. Don't run her on a machine with your personal files and logins.
 - Her code gets her GitHub token and `CHARLIE_*` variables, but **not** your Anthropic key or admin token. Skills can still read any file the server's OS user can read, so keep `.env` private (`chmod 600 .env`). Even better, run her code as a separate OS user: set `CHARLIE_UID`/`CHARLIE_GID` (POSIX only, the harness needs permission to switch users, and that user needs write access to `home/`).
 - The daily dollar budget is enforced by the harness, not by her.
 - Everything she does is logged in the feed, in `home/logs/runs/`, and in `data/`. Her skills' code is public on the site ("read her code") with secrets scrubbed.
+- Anything she posts goes out under accounts you created, and she can sell through your shop, so you're responsible for it. Watch her first few days closely. Give her accounts gradually, and use restricted API keys (for example, a Stripe key that can create payment links but can't issue refunds or payouts).
+- The view and click counters are honest-system: she runs on the same machine and could fake traffic if she ignored her rules. Look at the referrers in `data/site.json` now and then.
 
 ## Development
 
@@ -134,5 +159,5 @@ web/                  the site (no build step; three.js via import map)
   js/sky.js           the 3D view's night sky, moon and hills
   js/main.js          both cameras, input, live events, how her activity looks
   js/ui.js            feelings, diary, about you, actions, the mind feed
-starter/skills/github the one thing she can do on day one
+starter/skills/      github, http, reddit, bluesky (account skills install once you add their keys)
 ```

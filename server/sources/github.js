@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { config, paths, secrets } from './config.js';
-import { JSONStore } from './store.js';
-import { bus } from './bus.js';
+import { config, paths, secrets } from '../config.js';
+import { JSONStore } from '../store.js';
+import { bus } from '../bus.js';
 
 const API = 'https://api.github.com';
 
@@ -42,6 +42,7 @@ export class GitHubWatcher {
       lastPoll: this.s.lastPoll,
       error: this.error,
       repos: Object.keys(this.s.repos).length,
+      label: this.s.login ? `GitHub @${this.s.login}` : 'GitHub',
     };
   }
 
@@ -52,7 +53,7 @@ export class GitHubWatcher {
       console.error('[github] poll failed:', this.error);
     });
     setTimeout(run, 3000);
-    this.timer = setInterval(run, config.github.pollMinutes * 60_000);
+    this.timer = setInterval(run, config.sources.pollMinutes * 60_000);
   }
 
   stop() {

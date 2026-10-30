@@ -191,7 +191,7 @@ function asleep() {
 function settle() {
   if (asleep()) return charlie.setPose(currentPlace === 'bed' ? 'sleep' : 'sploot');
   if (B.activity === 'coding') return charlie.setPose('sploot');
-  if (B.activity === 'skill' || B.activity === 'waking') return charlie.setPose('stand');
+  if (B.activity === 'skill' || B.activity === 'waking' || B.activity === 'browsing') return charlie.setPose('stand');
   charlie.setPose('sit');
 }
 
@@ -332,6 +332,8 @@ function connect() {
     house.setBowl(f.bowl);
   });
   on('diary', (entry) => ui.addDiary(entry));
+  on('site', (site) => ui.setSite(site));
+  on('requests', (list) => ui.setRequests(list));
   on('actions', (list) => ui.setActions(list));
   on('action', actionEffect);
   on('visitor_note', () => ui.refreshMe());
@@ -486,6 +488,12 @@ if (new URLSearchParams(location.search).has('admin')) {
       if (!amount) return;
       body = { amount, reason: prompt('Why? (Charlie will see this)', 'a gift from your human') || undefined };
     }
+    if (action === 'answer') {
+      const id = Number(prompt('Which request number are you answering? (see her stuff → web)'));
+      if (!id) return;
+      const reply = prompt('Your answer (she reads it next time she wakes):') ?? '';
+      body = { id, reply, status: confirm('OK = done / granted, Cancel = declined') ? 'done' : 'declined' };
+    }
     const res = await fetch(`/api/admin/${action}`, { method: 'POST', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (res.status === 403) {
       try {
@@ -529,6 +537,9 @@ function frame(time) {
     } else if (B.activity === 'coding' || B.activity === 'building') {
       fx.sparks(head, 2);
       B.fxT = 0.25;
+    } else if (B.activity === 'browsing' && !charlie.walking) {
+      fx.stream(new THREE.Vector3(1.5, 3.7, -7), head, 2, [0.6, 0.72, 0.85]);
+      B.fxT = 0.15;
     } else if (B.activity === 'skill' && !charlie.walking) {
       fx.stream(head, new THREE.Vector3(DOOR_OUT.x - 4, 3, DOOR_OUT.z), 3);
       B.fxT = 0.12;

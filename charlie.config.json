@@ -47,7 +47,16 @@
       "site.touch": 1,
       "site.action": 1,
       "site.picture": 4,
-      "beacon.view": 1
+      "beacon.view": 1,
+      "page.view": 1,
+      "link.click": 1,
+      "reddit.karma": 1,
+      "reddit.comment": 3,
+      "bluesky.like": 1,
+      "bluesky.repost": 3,
+      "bluesky.reply": 2,
+      "bluesky.follower": 5,
+      "sales.usd": 20
     },
     "limits": {
       "petsPerVisitorPerDay": 10,
@@ -67,10 +76,22 @@
     }
   },
 
-  "starterSkills": ["github"],
+  "starterSkills": ["github", "http", "reddit", "bluesky"],
+
+  "web": {
+    "search": true,
+    "fetch": true,
+    "maxSearchesPerTurn": 5,
+    "maxFetchesPerTurn": 8,
+    "fetchMaxContentTokens": 12000,
+    "searchCostUSD": 0.01
+  },
+
+  "sources": {
+    "pollMinutes": 10
+  },
 
   "github": {
-    "pollMinutes": 10,
     "maxReposScanned": 30
   },
 
@@ -94,6 +115,8 @@
     "maxMessageLength": 280,
     "maxPictureBytes": 3000000,
     "maxPicturesPerWake": 3,
+    "maxPageBytes": 2000000,
+    "maxSiteBytes": 200000000,
     "showMessagesPublicly": true,
     "feedLength": 300
   }

@@ -10,7 +10,12 @@ import { Visitors } from './visitors.js';
 import { Feelings } from './feelings.js';
 import { Diary } from './diary.js';
 import { HOUSE_ACTIONS, buildActions } from './places.js';
-import { GitHubWatcher } from './github.js';
+import { Site } from './site.js';
+import { Requests } from './requests.js';
+import { RedditSource } from './sources/reddit.js';
+import { BlueskySource } from './sources/bluesky.js';
+import { SalesSource } from './sources/sales.js';
+import { GitHubWatcher } from './sources/github.js';
 import { Usage } from './brain/usage.js';
 import { Skills } from './brain/skills.js';
 import { World } from './brain/world.js';
@@ -86,6 +91,21 @@ function safeJoin(root, rel) {
   return target.startsWith(root + path.sep) || target === root ? target : null;
 }
 
+// API writes must come from this site's own pages (not from Charlie's
+// sandboxed pages or anyone else's), so nothing can act as a visitor.
+function sameOrigin(req) {
+  const site = req.headers['sec-fetch-site'];
+  if (site && site !== 'same-origin' && site !== 'none') return false;
+  const origin = req.headers.origin;
+  if (!origin) return true;
+  if (origin === 'null') return false;
+  try {
+    return new URL(origin).host === req.headers.host;
+  } catch {
+    return false;
+  }
+}
+
 function isAdmin(req) {
   if (!secrets.adminToken) return false;
   const got = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -108,7 +128,11 @@ export function createApp({ client } = {}) {
   const diary = new Diary();
   let agent = null;
   const visitors = new Visitors({ ledger, world, feelings, agentState: () => agent.s });
-  agent = new Agent({ ledger, skills, world, visitors, usage, github, feelings, diary, client });
+  const site = new Site({ ledger, visitors });
+  const requests = new Requests();
+  const sources = [github, new RedditSource(ledger), new BlueskySource(ledger), new SalesSource(ledger)];
+  agent = new Agent({ ledger, skills, world, visitors, usage, github, feelings, diary, site, requests, sources, client });
+  site.init();
   feelings.isAsleep = () => agent.s.status !== 'awake';
   skills.init();
   world.init();
@@ -120,7 +144,8 @@ export function createApp({ client } = {}) {
   bus.on('world', () => bus.emit('actions', actionsList()));
   // Good news from the outside world lifts her spirits.
   bus.on('balance', ({ key, delta }) => {
-    if (delta > 0 && (key?.startsWith('github.') || key === 'beacon.view' || key === 'gift')) feelings.bump({ joy: Math.min(12, 2 + delta * 0.3) });
+    const outside = ['github.', 'reddit.', 'bluesky.', 'sales.', 'page.', 'link.', 'beacon.'].some((p) => key?.startsWith(p));
+    if (delta > 0 && (outside || key === 'gift')) feelings.bump({ joy: Math.min(12, 1 + delta * 0.2) });
   });
 
   const actionsList = () => [...HOUSE_ACTIONS, ...buildActions(world)].map(({ id, place, label, build }) => ({ id, place, label, build: Boolean(build) }));
@@ -140,6 +165,12 @@ export function createApp({ client } = {}) {
     diary: diary.recent(60),
     actions: actionsList(),
     tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    site: site.publicState(),
+    accounts: sources.filter((src) => src.enabled).map((src) => {
+      const { label, url } = src.status();
+      return { label, url: url ?? null };
+    }),
+    requests: requests.publicList(),
   });
 
   const routes = async (req, res) => {
@@ -172,6 +203,14 @@ export function createApp({ client } = {}) {
       const src = skills.source(m[1]);
       return src ? send(res, 200, src) : send(res, 404, { error: 'unknown skill' });
     }
+    if ((method === 'GET' || method === 'HEAD') && (p === '/pages' || p.startsWith('/pages/'))) {
+      if (p === '/pages') {
+        res.writeHead(301, { location: '/pages/' });
+        return res.end();
+      }
+      return site.serve(req, res, p.slice('/pages/'.length));
+    }
+    if (method === 'GET' && (m = p.match(/^\/go\/([a-z0-9-]{2,40})$/))) return site.redirect(req, res, m[1]);
     if (method === 'GET' && p === '/api/me') return send(res, 200, visitors.about(visitors.identify(req, res)));
     if (method === 'GET' && p === '/api/diary') return send(res, 200, diary.recent(Math.min(300, Number(url.searchParams.get('limit')) || 100)));
     if (method === 'GET' && (m = p.match(/^\/beacon\/([\w.-]{1,64})$/))) {
@@ -179,6 +218,7 @@ export function createApp({ client } = {}) {
       return send(res, 200, GIF, { 'content-type': 'image/gif', 'cache-control': 'no-store, max-age=0' });
     }
 
+    if (method === 'POST' && !sameOrigin(req)) return send(res, 403, { error: 'cross-site requests are not allowed' });
     if (method === 'POST' && p.startsWith('/api/') && !p.startsWith('/api/admin/')) {
       if (!visitors.burstOK(req)) return send(res, 429, { error: 'slow down a little' });
       const body = await readBody(req, p === '/api/message' ? Math.ceil(config.site.maxPictureBytes * 1.4) + 4096 : 8192);
@@ -217,6 +257,12 @@ export function createApp({ client } = {}) {
         const amount = Number(body.amount);
         if (!(amount > 0 && amount <= 10000)) return send(res, 400, { error: 'amount must be 1–10000' });
         ledger.earn('gift', amount, String(body.reason || 'a gift from your human').slice(0, 120));
+      } else if (action === 'answer') {
+        try {
+          requests.answer(body.id, body.reply, body.status);
+        } catch (err) {
+          return send(res, 404, { error: err.message });
+        }
       } else return send(res, 404, { error: 'unknown action' });
       return send(res, 200, { ok: true, charlie: agent.publicState() });
     }
@@ -238,7 +284,7 @@ export function createApp({ client } = {}) {
   });
 
   const flush = () => {
-    for (const s of [bus, ledger, usage, github, visitors, agent, feelings, diary]) {
+    for (const s of [bus, ledger, usage, visitors, agent, feelings, diary, site, requests, ...sources]) {
       try {
         s.flush();
       } catch {}
@@ -246,9 +292,9 @@ export function createApp({ client } = {}) {
   };
 
   return {
-    server, ledger, usage, github, skills, world, visitors, agent, feelings, diary, flush, snapshot,
+    server, ledger, usage, github, skills, world, visitors, agent, feelings, diary, site, requests, sources, flush, snapshot,
     start() {
-      github.start();
+      for (const src of sources) src.start();
       world.startRefreshLoop();
       agent.start();
     },

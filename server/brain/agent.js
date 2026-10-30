@@ -39,6 +39,10 @@ function summarizeInput(name, input) {
   if (name === 'look') return 'looking around';
   if (name === 'nap') return `napping for ${input.minutes} min`;
   if (name === 'forget_skill') return `forgetting skill "${input.name}"`;
+  if (name === 'publish_page') return `publishing /pages/${String(input.path).replace(/^\/+/, '')}`;
+  if (name === 'unpublish_page') return `unpublishing /pages/${String(input.path).replace(/^\/+/, '')}`;
+  if (name === 'make_link') return `making a link to ${input.url}`;
+  if (name === 'ask_human') return 'asking her human for something';
   if (name === 'demolish') return `demolishing "${input.name}"`;
   const parts = Object.entries(input)
     .filter(([, v]) => typeof v !== 'object' || v === null)
@@ -49,8 +53,8 @@ function summarizeInput(name, input) {
 
 // Charlie's brain: wakes up, thinks with Claude, uses her tools, naps.
 export class Agent {
-  constructor({ ledger, skills, world, visitors, usage, github, feelings, diary, client }) {
-    Object.assign(this, { ledger, skills, world, visitors, usage, github, feelings, diary });
+  constructor({ ledger, skills, world, visitors, usage, github, feelings, diary, site, requests, sources = [], client }) {
+    Object.assign(this, { ledger, skills, world, visitors, usage, github, feelings, diary, site, requests, sources });
     this.client = client ?? (secrets.anthropicKey ? new Anthropic({ apiKey: secrets.anthropicKey }) : null);
     this.store = new JSONStore(path.join(paths.data, 'state.json'), () => ({
       born: new Date().toISOString(),
@@ -179,8 +183,13 @@ export class Agent {
       const parts = Object.entries(since.groups).map(([k, g]) => `${g.units} ${label(k, g.units)} (+${g.amount})`);
       lines.push(`SINCE YOUR LAST NAP: ${since.total ? `+${since.total} — ${parts.join(', ')}` : 'nothing new earned'}`);
     }
-    const gh = this.github.status();
-    lines.push(`GITHUB: ${gh.enabled ? `you are @${gh.login ?? '(checking…)'}${gh.error ? ` — note: last stats check failed: ${clip(gh.error, 160)}` : ''}` : 'no account connected yet (GITHUB_TOKEN is not set), so your github skill will not work'}`);
+    const accounts = this.sources.filter((src) => src.enabled).map((src) => {
+      const st = src.status();
+      return `${st.label}${st.error ? ` (last stats check failed: ${clip(st.error, 100)})` : ''}`;
+    });
+    lines.push(`ACCOUNTS: ${accounts.length ? accounts.join(' · ') : 'none yet, so ask your human if you want accounts somewhere'}`);
+    lines.push(...this.site.summary());
+    for (const src of this.sources) if (src.lines) lines.push(...src.lines());
     lines.push('');
     lines.push('SKILLS (tools you can use now):');
     for (const sk of this.skills.list()) {
@@ -201,6 +210,8 @@ export class Agent {
     lines.push(`WATCHING RIGHT NOW: ${bus.viewers} ${bus.viewers === 1 ? 'person' : 'people'}`);
     lines.push(`THINKING BUDGET: ${Math.round(this.usage.energy * 100)}% of today's left`);
     lines.push(...this.visitorLines());
+    const req = this.requests.lines(this.s.lastSleepAt || 0);
+    if (req.length) lines.push('', ...req);
     return lines.join('\n');
   }
 
@@ -287,7 +298,12 @@ export class Agent {
   }
 
   toolset() {
-    return [...CORE_TOOLS, ...this.skills.tools()];
+    const web = [];
+    if (!this.compat.minimal) {
+      if (config.web.search) web.push({ type: 'web_search_20260209', name: 'web_search', max_uses: config.web.maxSearchesPerTurn });
+      if (config.web.fetch) web.push({ type: 'web_fetch_20260209', name: 'web_fetch', max_uses: config.web.maxFetchesPerTurn, max_content_tokens: config.web.fetchMaxContentTokens });
+    }
+    return [...CORE_TOOLS, ...this.skills.tools(), ...web];
   }
 
   params({ tools, messages }) {
@@ -336,6 +352,12 @@ export class Agent {
           live.set(ev.index, entry);
         } else if (b.type === 'thinking' || b.type === 'text') {
           live.set(ev.index, { kind: 'thought', key, text: '' });
+        } else if (b.type === 'server_tool_use') {
+          live.set(ev.index, { kind: 'server', name: b.name, json: '' });
+          this.moveTo('window', 'browsing the web');
+          this.setActivity('browsing', b.name);
+        } else if (b.type === 'web_search_tool_result' || b.type === 'web_fetch_tool_result') {
+          this.webResult(b);
         }
       } else if (ev.type === 'content_block_delta') {
         const entry = live.get(ev.index);
@@ -346,6 +368,8 @@ export class Agent {
           if (!entry.text) this.setActivity('thinking');
           entry.text += text;
           bus.emit('thought_delta', { key: entry.key, text });
+        } else if (d.type === 'input_json_delta' && entry.kind === 'server') {
+          entry.json += d.partial_json;
         } else if (d.type === 'input_json_delta' && entry.code) {
           const title = entry.nameField.push(d.partial_json);
           if (title) {
@@ -362,10 +386,19 @@ export class Agent {
           this.logSession(`thought: ${clip(entry.text.trim().replace(/\s+/g, ' '), 200)}`);
         }
         if (entry?.code) bus.emit('code_end', { key: entry.key });
+        if (entry?.kind === 'server') {
+          let input = {};
+          try {
+            input = JSON.parse(entry.json || '{}');
+          } catch {}
+          const what = entry.name === 'web_search' ? `searching the web: ${input.query ?? ''}` : `reading ${input.url ?? 'a web page'}`;
+          bus.feed('action', what, { tool: entry.name });
+          this.logSession(what);
+        }
       }
     }
     const message = await stream.finalMessage();
-    this.usage.record(config.brain.model, message.usage);
+    this.usage.record(config.brain.model, message.usage, { searches: message.usage?.server_tool_use?.web_search_requests ?? 0 });
     this.broadcast();
     return message;
   }
@@ -376,6 +409,18 @@ export class Agent {
     this.store.save();
     bus.emit('go', { to: place, doing });
     this.broadcast();
+  }
+
+  webResult(b) {
+    const c = b.content;
+    if (c && !Array.isArray(c) && c.type?.endsWith('error')) {
+      bus.feed('result', `✗ ${b.type === 'web_search_tool_result' ? 'search' : 'fetch'} failed (${c.error_code ?? 'error'})`, { ok: false });
+    } else if (b.type === 'web_search_tool_result') {
+      bus.feed('result', `✓ ${Array.isArray(c) ? c.length : 0} results`, { ok: true, tool: 'web_search' });
+    } else {
+      const title = c?.content?.title || c?.url || 'a page';
+      bus.feed('result', `✓ read ${clip(title, 120)}`, { ok: true, tool: 'web_fetch' });
+    }
   }
 
   logSession(line) {
@@ -407,7 +452,7 @@ export class Agent {
     bus.feed('system', `Charlie woke up (${reason}).`);
     this.setActivity('waking');
 
-    const tools = this.toolset();
+    let tools = this.toolset();
     const messages = [{ role: 'user', content: this.wakeMessage(reason) }];
     s.lastWakeAt = Date.now();
     s.wakes += 1;
@@ -434,6 +479,7 @@ export class Agent {
             console.warn('[brain] request rejected, retrying without beta features:', err.message);
             this.compat.minimal = true;
             compatRetried = true;
+            tools = this.toolset();
             step--;
             continue;
           }
@@ -577,6 +623,27 @@ export class Agent {
       case 'diary': {
         const entry = this.diary.write({ ...input, place: input.place ?? this.s.location }, this.feelings.values);
         return `Written (entry #${entry.id}).`;
+      }
+
+      case 'publish_page': {
+        const r = this.site.publish(input);
+        bus.feed('result', `✓ ${r.updated ? 'updated' : 'published'} ${r.url}`, { ok: true, tool: name, url: r.url });
+        return `${r.updated ? 'Updated' : 'Published'} ${r.file}. It's live at ${r.url}`;
+      }
+
+      case 'unpublish_page': {
+        const file = this.site.unpublish(input.path);
+        return `Took ${file} off your website.`;
+      }
+
+      case 'make_link': {
+        const r = this.site.makeLink(input);
+        return `${r.link} now sends people to ${r.url}. Every real click counts.`;
+      }
+
+      case 'ask_human': {
+        const r = this.requests.ask(input.text);
+        return `Asked (request #${r.id}). You'll see the answer when you wake up after your human replies.`;
       }
 
       case 'remember_visitor': {

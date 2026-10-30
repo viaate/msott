@@ -11,13 +11,15 @@ export function fakeClient(turns) {
           calls.push(structuredClone(params));
           const blocks = turns[n++] ?? [{ type: 'tool_use', name: 'nap', input: { minutes: 30 } }];
           const id = `msg_${n}`;
-          const content = blocks.map((b, i) => (b.type === 'tool_use' ? { ...b, id: b.id ?? `toolu_${n}_${i}` } : b));
+          const content = blocks.map((b, i) => (b.type === 'tool_use' || b.type === 'server_tool_use' ? { ...b, id: b.id ?? `toolu_${n}_${i}` } : b));
           const events = [{ type: 'message_start', message: { id } }];
           content.forEach((b, index) => {
-            if (b.type === 'tool_use') {
-              events.push({ type: 'content_block_start', index, content_block: { type: 'tool_use', id: b.id, name: b.name, input: {} } });
+            if (b.type === 'tool_use' || b.type === 'server_tool_use') {
+              events.push({ type: 'content_block_start', index, content_block: { type: b.type, id: b.id, name: b.name, input: {} } });
               const json = JSON.stringify(b.input);
               for (let i = 0; i < json.length; i += 40) events.push({ type: 'content_block_delta', index, delta: { type: 'input_json_delta', partial_json: json.slice(i, i + 40) } });
+            } else if (b.type !== 'thinking' && b.type !== 'text') {
+              events.push({ type: 'content_block_start', index, content_block: b });
             } else {
               const key = b.type === 'thinking' ? 'thinking' : 'text';
               events.push({ type: 'content_block_start', index, content_block: { type: b.type, [key]: '' } });
