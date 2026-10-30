@@ -99,6 +99,48 @@ export class Particles {
     }
   }
 
+  // Kibble tumbling into her bowl.
+  pour(at) {
+    for (let i = 0; i < 40; i++) {
+      const delay = Math.random() * 0.6;
+      const j = () => (Math.random() - 0.5) * 0.25;
+      this.spawn(at.x + j(), at.y + 2.2 + delay * 3, at.z + j(), j(), -1.5, j(), [0.66, 0.44, 0.24], 0.06, 1.1 + delay, 4);
+    }
+  }
+
+  // An expanding ring of dots: a squeak, a tap, a ding.
+  ring(at, color) {
+    for (let w = 0; w < 3; w++) {
+      for (let i = 0; i < 28; i++) {
+        const a = (i / 28) * Math.PI * 2;
+        const v = 1.2 + w * 0.5;
+        this.spawn(at.x, at.y, at.z, Math.cos(a) * v, Math.sin(a) * v * 0.6, Math.sin(a) * v * 0.3, color, 0.05, 0.7 + w * 0.15);
+      }
+    }
+  }
+
+  puff(at) {
+    for (let i = 0; i < 50; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.random() * 1.2;
+      this.spawn(at.x + Math.cos(a) * r, at.y, at.z + Math.sin(a) * r, Math.cos(a) * 0.3, 0.6 + Math.random() * 0.8, Math.sin(a) * 0.3, [0.93, 0.91, 0.87], 0.07, 1.3 + Math.random() * 0.6, 0.6);
+    }
+  }
+
+  // A dotted ball that rolls to her.
+  ball(from, to) {
+    const life = 1.8;
+    const vx = (to.x - from.x) / life;
+    const vz = (to.z - from.z) / life;
+    for (let i = 0; i < 60; i++) {
+      const u = Math.random() * 2 - 1;
+      const a = Math.random() * Math.PI * 2;
+      const s = Math.sqrt(1 - u * u);
+      const color = i % 3 ? [0.86, 0.42, 0.33] : [0.95, 0.9, 0.8];
+      this.spawn(from.x + Math.cos(a) * s * 0.18, from.y + u * 0.18, from.z + Math.sin(a) * s * 0.18, vx, 0, vz, color, 0.05, life);
+    }
+  }
+
   update(dt) {
     for (let i = 0; i < MAX; i++) {
       if (this.life[i] <= 0) {

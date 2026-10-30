@@ -5,6 +5,7 @@ const GROUND = hex('#2f2b27');
 const EDGE = hex('#4a443d');
 const FREE = hex('#26231f');
 const HAZARD = hex('#d6834a');
+const GRID = hex('#2a2622');
 
 // Everything outside the house: the plot grid and the things Charlie builds.
 export class WorldView {
@@ -61,6 +62,19 @@ export class WorldView {
       }
       for (let x = -half + 1.5; x < half; x += 1.5) {
         for (let z = -half + 1.5; z < half; z += 1.5) d.add(c.x + x, 0, c.z + z, FREE, 0.04);
+      }
+    }
+    // A faint dotted grid out to the horizon, so the land reads at ground level.
+    const claimed = new Set(objects.map((o) => `${o.plot[0]},${o.plot[1]}`));
+    const ext = 60 + this.plotSize * Math.max(1, ...objects.map((o) => Math.max(Math.abs(o.plot[0]), Math.abs(o.plot[1]))));
+    const isClaimed = (x, z) => claimed.has(`${Math.round(x / this.plotSize)},${Math.round(z / this.plotSize)}`);
+    for (let a = -ext; a <= ext; a += 3) {
+      for (let b = -ext; b <= ext; b += 0.6) {
+        for (const [x, z] of [[a, b], [b, a]]) {
+          if (x * x + z * z > ext * ext || isClaimed(x, z)) continue;
+          const fade = 1 - Math.sqrt(x * x + z * z) / ext;
+          d.add(x, -0.01, z, scale(GRID, 0.55 + 0.45 * fade), 0.045);
+        }
       }
     }
     if (!d.count) d.add(0, -100, 0, FREE, 0);

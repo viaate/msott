@@ -3,6 +3,7 @@ import path from 'node:path';
 import { config, paths } from '../config.js';
 import { clip } from '../store.js';
 import { MOTIONS } from './world.js';
+import { DIARY_KINDS } from '../diary.js';
 
 export const MEMORY_CAP = 8000;
 export const PLACES = ['bed', 'window', 'door', 'bowl', 'toy', 'rug', 'center'];
@@ -17,19 +18,25 @@ export const CORE_TOOLS = [
   },
   {
     name: 'say',
-    description: 'Say something out loud to the people watching you right now. It appears as a speech bubble over your head and in the feed. Use it to greet visitors, answer messages, or show off what you made.',
+    description: 'Say something out loud to the people watching you right now. It appears as a speech bubble over your head and in the feed. Use it to greet visitors, answer messages, or show off what you made. Give `to` (a visitor\'s name) to answer someone; they will also find it in their "about you" page next time.',
     input_schema: {
       type: 'object',
-      properties: { text: { type: 'string', description: 'What to say (max 240 characters).' } },
+      properties: {
+        text: { type: 'string', description: 'What to say (max 240 characters).' },
+        to: { type: 'string', description: 'Optional: the visitor you are talking to.' },
+      },
       required: ['text'],
     },
   },
   {
     name: 'go',
-    description: `Walk somewhere in your world: ${PLACES.map((p) => `"${p}"`).join(', ')}, or the name of one of your builds. Purely physical, and free.`,
+    description: `Walk somewhere in your world: ${PLACES.map((p) => `"${p}"`).join(', ')}, or the name of one of your builds. Free. If there's food in your bowl when you get to it, you eat. Visitors see "Charlie is <doing>" while you're there.`,
     input_schema: {
       type: 'object',
-      properties: { to: { type: 'string', description: 'A place in your house or the name of a build.' } },
+      properties: {
+        to: { type: 'string', description: 'A place in your house or the name of a build.' },
+        doing: { type: 'string', description: 'Optional: a few words for what you\'re doing there, e.g. "watching the street".' },
+      },
       required: ['to'],
     },
   },
@@ -43,6 +50,33 @@ export const CORE_TOOLS = [
         mode: { type: 'string', enum: ['append', 'rewrite'] },
       },
       required: ['text', 'mode'],
+    },
+  },
+  {
+    name: 'diary',
+    description: 'Write an entry in your diary: what happened, what you noticed, and how it made you feel. Visitors can read your diary, and your mood over time is drawn from these entries. Free. A few honest entries a day is plenty.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        text: { type: 'string', description: 'The entry, in your own voice.' },
+        kind: { type: 'string', enum: DIARY_KINDS },
+        mood: { type: 'integer', description: 'How it left you feeling, from -2 (awful) to 2 (wonderful).' },
+        place: { type: 'string', description: 'Optional: where it happened.' },
+      },
+      required: ['text', 'kind', 'mood'],
+    },
+  },
+  {
+    name: 'remember_visitor',
+    description: 'Remember something about a visitor, by name. You will see it whenever they come back, and they can see what you remember about them. Free.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        note: { type: 'string' },
+        mode: { type: 'string', enum: ['append', 'rewrite'] },
+      },
+      required: ['name', 'note'],
     },
   },
   {
@@ -82,6 +116,7 @@ export const CORE_TOOLS = [
         link: { type: 'string', description: 'Optional https URL that visitors go to when they click the build.' },
         motion: { type: 'string', enum: MOTIONS },
         refresh_minutes: { type: 'integer', description: `Optional: re-run the code every N minutes (≥ ${config.world.minRefreshMinutes}) so the build can show live data.` },
+        actions: { type: 'array', items: { type: 'string' }, description: 'Optional: up to 3 short things visitors can do at this build (e.g. "ring the bell"). You hear about it when they do.' },
       },
       required: ['name', 'description', 'code'],
     },

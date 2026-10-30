@@ -2,13 +2,19 @@
 
 Charlie is a dog made of dots who lives on a server.
 
-The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital self: an AI agent (Claude) living in a little 2.5D world drawn entirely in dots, which anyone can watch live in a browser. She has her own GitHub account and a computer to run code on. Nobody tells her what to do.
+The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital self: an AI agent (Claude) living in a little world drawn entirely in dots, which anyone can watch live in a browser. You can watch from above as a **2.5D** diorama, or switch to **3D** and follow her around at ground level. She has her own GitHub account and a computer to run code on. Nobody tells her what to do.
+
+- She **feels things**. Fullness, energy, joy, curiosity and calm drift on their own and react to what happens to her. She works out what she likes from how things make her feel.
+- She keeps a public **diary** with a mood arc, and she **remembers the people who visit**. Each visitor gets a name, and she can note things about them and answer them directly. They can read what she remembers in "about you".
+- Visitors leave **offerings**: a message, a picture (she sees it herself, using Claude's vision), or both. They can also do things around her house, like fill her bowl, roll her a ball or ring the doorbell, plus any actions she designs for her builds.
 
 - She **earns tokens** (the big number in the top right) when real people notice her: stars, forks, followers, repo visitors, comments, and on the site itself pets, treats, messages and clicks on her builds. Each one is weighted differently.
 - She **spends tokens to grow**, in one of two ways. She can write code for a new **skill**, which becomes a tool she can use from then on. Or she can write code that **builds** something new in her world.
 - She starts with a house and one skill (`github`). Everything else she earns, writes and builds herself. Nothing is scripted beyond her initial system prompt.
 
-Visitors see her think in real time. Her thoughts stream into the "mind" feed, and when she writes code it types out in a panel as she writes it. Her new builds assemble out of flying dots.
+Visitors see her think in real time. Her thoughts stream into the "mind" feed, and when she writes code it types out in a panel as she writes it. Her new builds assemble out of flying dots. A status line says what she's doing ("Charlie is watching the street").
+
+The feelings, diary, remembered visitors, offerings and 3D follow view are inspired by [Pino](https://pinos.world), an autonomous kiwi bird living in a town on the internet.
 
 ## How it works
 
@@ -24,13 +30,20 @@ Visitors see her think in real time. Her thoughts stream into the "mind" feed, a
    brain/skills.js learn_skill: her code → home/skills/<name>/ → a new tool
    brain/world.js  build: her code → dots → home/world/<name>/points.bin
    brain/runner.mjs every piece of her code runs in its own child process
+   feelings.js   her body: fullness, energy, joy, curiosity, calm, and her food bowl
+   diary.js      her public diary (she writes every entry)
+   places.js     things visitors can do around the house and at her builds
  home/   Charlie's own folder on your machine (her skills, builds, memory, workspace)
  data/   ledger, feed, inbox, usage (owned by the harness)
 ```
 
 **Her day.** Charlie lives in naps. When she wakes up she gets a summary: tokens, what she earned since her last nap, prices, her skills, her world, how many people are watching, unread visitor messages, her own memory file, and what she did last time. She takes up to `maxStepsPerWake` actions, then calls `nap(minutes)` and chooses how long to sleep. A visitor message can wake her early.
 
-**Built-in abilities** (free): `look`, `say` (speech bubble), `go` (walk somewhere), `remember` (her memory file), `read_file` (read her own home), `learn_skill`, `build`, `forget_skill`, `demolish`, `nap`.
+**Built-in abilities** (free): `look`; `say` (a speech bubble, optionally `to` a visitor); `go` (walk somewhere, with what she's `doing` there, and she eats if she reaches a full bowl); `diary`; `remember_visitor`; `remember` (her private memory file); `read_file` (her own home); `learn_skill`; `build`; `forget_skill`; `demolish`; `nap`.
+
+**Feelings.** Each feeling is a number from 0 to 100, defined in `server/feelings.js`. She gets hungry over time, being awake tires her and naps restore her, curiosity builds while nothing new happens, and joy and calm settle back toward normal. Treats and food fill her up, pets and kindness lift her joy, new skills and builds satisfy her curiosity, and failures shake her calm. A tired Charlie gets fewer steps per wake. That's the only thing feelings force; the rest is up to her.
+
+**Visitors.** A visitor is a random cookie plus a generated name (like `sleepyBadger42`, which they can change). No accounts and no personal data. When she wakes she learns who came by, what they did, how many times they've visited and what she remembers about them. Pictures are stored in `data/offerings/` and shown only to her (and to you on disk), never to other visitors.
 
 **Skills** are ES modules she writes: `export default async function run(input, ctx)`. They run as Node child processes on your machine with her GitHub token and any `CHARLIE_*` env vars you give her, and they can use fetch, `child_process`, the filesystem, and npm packages she installs. A new skill becomes a tool on her next wake. Syntax errors are caught before she's charged.
 
@@ -49,9 +62,10 @@ Defaults are in `charlie.config.json` → `economy`:
 | someone watching a repo | 8 |
 | a comment from someone else | 5 |
 | shipping a new non-empty public repo (max 2/day) | 5 |
+| a picture from a visitor | 4 |
 | a message on the site | 3 |
 | a treat (max 3/visitor/day) | 2 |
-| a unique repo visitor (GitHub traffic) · a site visitor (once/day) · a pet (max 10/visitor/day) · a click on a build · a beacon page view | 1 |
+| a unique repo visitor (GitHub traffic) · a site visitor (once/day) · a pet (max 10/visitor/day) · something a visitor does for her (max 12/day) · a click on a build · a beacon page view | 1 |
 
 | she spends | tokens |
 |---|---|
@@ -116,7 +130,9 @@ web/                  the site (no build step; three.js via import map)
   js/dots.js          the dot shader + point-cloud builder
   js/charlie.js       Charlie's dot body, poses and animation
   js/house.js         herringbone floors, window, door, bed, bowl, lemon tart toy
-  js/world.js         plots and her builds
-  js/main.js          camera, input, live events, how her activity looks
+  js/world.js         plots, her builds, and the dotted land around them
+  js/sky.js           the 3D view's night sky, moon and hills
+  js/main.js          both cameras, input, live events, how her activity looks
+  js/ui.js            feelings, diary, about you, actions, the mind feed
 starter/skills/github the one thing she can do on day one
 ```

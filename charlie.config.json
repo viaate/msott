@@ -45,6 +45,8 @@
       "site.treat": 2,
       "site.message": 3,
       "site.touch": 1,
+      "site.action": 1,
+      "site.picture": 4,
       "beacon.view": 1
     },
     "limits": {
@@ -52,6 +54,9 @@
       "treatsPerVisitorPerDay": 3,
       "messagesPerVisitorPerDay": 6,
       "touchesPerVisitorPerObjectPerDay": 2,
+      "picturesPerVisitorPerDay": 2,
+      "actionsPerVisitorPerDay": 12,
+      "sameActionPerVisitorPerDay": 4,
       "newReposCreditedPerDay": 2
     },
     "costs": {
@@ -87,6 +92,8 @@
     "port": 8787,
     "trustProxy": true,
     "maxMessageLength": 280,
+    "maxPictureBytes": 3000000,
+    "maxPicturesPerWake": 3,
     "showMessagesPublicly": true,
     "feedLength": 300
   }

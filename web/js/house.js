@@ -303,15 +303,30 @@ export function buildHouse() {
     return { pts, mat, normal: new THREE.Vector3(...spec.normal), density: 1 };
   });
 
-  const view = new THREE.Vector3();
+  // Kibble in the bowl; how much shows depends on how full it is.
+  const food = new Dots(13);
+  for (let i = 0; i < 260; i++) {
+    const a = r() * Math.PI * 2;
+    const rr = Math.sqrt(r()) * 0.3;
+    food.add(4.4 + Math.cos(a) * rr, 0.2 + r() * 0.08, -4.6 + Math.sin(a) * rr, scale(hex('#a86f3c'), 0.8 + r() * 0.4), 0.06, 0, 1, 0);
+  }
+  const foodMat = dotMaterial();
+  foodMat.uniforms.uDensity.value = 0;
+  group.add(food.points(foodMat));
+  let bowlTarget = 0;
+
   return {
     group,
+    setBowl(portions) {
+      bowlTarget = Math.min(1, portions / 2);
+    },
     update(camera, dt) {
-      camera.getWorldDirection(view);
+      const u = foodMat.uniforms.uDensity;
+      u.value += (bowlTarget - u.value) * Math.min(1, dt * 3);
       for (const w of walls) {
-        // The wall faces into the room; if we're looking at its back, fade it.
-        const facing = w.normal.dot(view);
-        const target = facing > 0.15 ? 0 : 1;
+        // Hide a wall when the camera is on its outside, looking in.
+        const side = w.normal.x !== 0 ? (camera.position.x + HALF * w.normal.x) * w.normal.x : (camera.position.z + HALF * w.normal.z) * w.normal.z;
+        const target = side < 0 ? 0 : 1;
         w.density += (target - w.density) * Math.min(1, dt * 4);
         w.mat.uniforms.uDensity.value = w.density;
       }

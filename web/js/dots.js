@@ -14,6 +14,8 @@ export const globals = {
   uFogNear: { value: 40 },
   uFogFar: { value: 120 },
   uLight: { value: new THREE.Vector3(0.45, 0.85, 0.35).normalize() },
+  uPersp: { value: 0 },
+  uMaxPx: { value: 64 },
 };
 
 const vertex = /* glsl */ `
@@ -26,6 +28,8 @@ const vertex = /* glsl */ `
   #endif
   uniform float uScale;
   uniform float uMinPx;
+  uniform float uPersp;
+  uniform float uMaxPx;
   uniform float uTime;
   uniform float uDensity;
   uniform float uTwinkle;
@@ -61,12 +65,23 @@ const vertex = /* glsl */ `
     vColor = color * shade * uBright;
 
     float tw = 1.0 + uTwinkle * 0.45 * sin(uTime * 2.3 + seed * 61.0);
-    gl_PointSize = max(uMinPx, size * uScale * grow * tw);
+    float px = size * uScale * grow * tw;
+    if (uPersp > 0.5) {
+      // Ground-level view: dots shrink with distance, and vanish right at the lens.
+      if (vDepth < 0.3) {
+        gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+        gl_PointSize = 0.0;
+        return;
+      }
+      px /= vDepth;
+    }
+    gl_PointSize = clamp(px, uMinPx, uMaxPx);
   }
 `;
 
 const fragment = /* glsl */ `
   uniform vec3 uBg;
+  uniform float uFogAmt;
   uniform float uFogNear;
   uniform float uFogFar;
   varying vec3 vColor;
@@ -75,7 +90,7 @@ const fragment = /* glsl */ `
   void main() {
     vec2 c = gl_PointCoord - 0.5;
     if (dot(c, c) > 0.25) discard;
-    float f = smoothstep(uFogNear, uFogFar, vDepth) * 0.65;
+    float f = smoothstep(uFogNear, uFogFar, vDepth) * uFogAmt;
     gl_FragColor = vec4(mix(vColor, uBg, f), 1.0);
   }
 `;
@@ -91,6 +106,7 @@ export function dotMaterial({ assemble = false } = {}) {
       uTwinkle: { value: 0 },
       uBright: { value: 1 },
       uAssemble: { value: 1 },
+      uFogAmt: { value: 0.65 },
     },
   });
 }

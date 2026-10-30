@@ -7,6 +7,9 @@ import { ensureDir } from './store.js';
 import { bus } from './bus.js';
 import { Ledger } from './ledger.js';
 import { Visitors } from './visitors.js';
+import { Feelings } from './feelings.js';
+import { Diary } from './diary.js';
+import { HOUSE_ACTIONS, buildActions } from './places.js';
 import { GitHubWatcher } from './github.js';
 import { Usage } from './brain/usage.js';
 import { Skills } from './brain/skills.js';
@@ -43,19 +46,30 @@ function send(res, status, body, headers = {}) {
 
 function readBody(req, limit = 8192) {
   return new Promise((resolve) => {
-    let data = '';
+    const chunks = [];
+    let size = 0;
+    let done = false;
+    const finish = (v) => {
+      if (!done) {
+        done = true;
+        resolve(v);
+      }
+    };
     req.on('data', (c) => {
-      data += c;
-      if (data.length > limit) req.destroy();
+      size += c.length;
+      if (size > limit) {
+        finish({ tooBig: true });
+        req.destroy();
+      } else chunks.push(c);
     });
     req.on('end', () => {
       try {
-        resolve(data ? JSON.parse(data) : {});
+        finish(size ? JSON.parse(Buffer.concat(chunks).toString('utf8')) : {});
       } catch {
-        resolve({});
+        finish({});
       }
     });
-    req.on('error', () => resolve({}));
+    req.on('error', () => finish({}));
   });
 }
 
@@ -90,8 +104,12 @@ export function createApp({ client } = {}) {
   const github = new GitHubWatcher(ledger);
   const skills = new Skills({ ledger, reserved: CORE_NAMES });
   const world = new World({ ledger, progress: skills.progress });
-  const visitors = new Visitors(ledger, world);
-  const agent = new Agent({ ledger, skills, world, visitors, usage, github, client });
+  const feelings = new Feelings();
+  const diary = new Diary();
+  let agent = null;
+  const visitors = new Visitors({ ledger, world, feelings, agentState: () => agent.s });
+  agent = new Agent({ ledger, skills, world, visitors, usage, github, feelings, diary, client });
+  feelings.isAsleep = () => agent.s.status !== 'awake';
   skills.init();
   world.init();
   if (!bus.feedItems.length) bus.feed('system', `${config.persona.name} moved into her new house. It has a bed, a window, a door, and not much else.`);
@@ -99,6 +117,13 @@ export function createApp({ client } = {}) {
   const emitPrices = () => bus.emit('prices', { skill: skills.nextPrice(), build: world.nextPrice() });
   bus.on('skills', emitPrices);
   bus.on('world', emitPrices);
+  bus.on('world', () => bus.emit('actions', actionsList()));
+  // Good news from the outside world lifts her spirits.
+  bus.on('balance', ({ key, delta }) => {
+    if (delta > 0 && (key?.startsWith('github.') || key === 'beacon.view' || key === 'gift')) feelings.bump({ joy: Math.min(12, 2 + delta * 0.3) });
+  });
+
+  const actionsList = () => [...HOUSE_ACTIONS, ...buildActions(world)].map(({ id, place, label, build }) => ({ id, place, label, build: Boolean(build) }));
 
   const snapshot = () => ({
     charlie: agent.publicState(),
@@ -111,6 +136,10 @@ export function createApp({ client } = {}) {
     feed: bus.feedItems.slice(-150),
     viewers: bus.viewers,
     github: github.status(),
+    feelings: feelings.publicState(),
+    diary: diary.recent(60),
+    actions: actionsList(),
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
 
   const routes = async (req, res) => {
@@ -143,6 +172,8 @@ export function createApp({ client } = {}) {
       const src = skills.source(m[1]);
       return src ? send(res, 200, src) : send(res, 404, { error: 'unknown skill' });
     }
+    if (method === 'GET' && p === '/api/me') return send(res, 200, visitors.about(visitors.identify(req, res)));
+    if (method === 'GET' && p === '/api/diary') return send(res, 200, diary.recent(Math.min(300, Number(url.searchParams.get('limit')) || 100)));
     if (method === 'GET' && (m = p.match(/^\/beacon\/([\w.-]{1,64})$/))) {
       visitors.beacon(req, m[1].replace(/\.gif$/, ''));
       return send(res, 200, GIF, { 'content-type': 'image/gif', 'cache-control': 'no-store, max-age=0' });
@@ -150,20 +181,26 @@ export function createApp({ client } = {}) {
 
     if (method === 'POST' && p.startsWith('/api/') && !p.startsWith('/api/admin/')) {
       if (!visitors.burstOK(req)) return send(res, 429, { error: 'slow down a little' });
-      const body = await readBody(req);
-      if (p === '/api/visit') {
-        visitors.visit(req);
-        return send(res, 200, { ok: true });
+      const body = await readBody(req, p === '/api/message' ? Math.ceil(config.site.maxPictureBytes * 1.4) + 4096 : 8192);
+      if (body.tooBig) return send(res, 413, { error: 'That is too big.' });
+      if (p === '/api/hello' || p === '/api/visit') return send(res, 200, visitors.hello(req, res));
+      if (p === '/api/me') {
+        const r = visitors.rename(req, res, body.name);
+        return send(res, r.error ? 400 : 200, r);
       }
-      if (p === '/api/pet') return send(res, 200, visitors.pet(req));
-      if (p === '/api/treat') return send(res, 200, visitors.treat(req));
+      if (p === '/api/pet') return send(res, 200, visitors.pet(req, res));
+      if (p === '/api/treat') return send(res, 200, visitors.treat(req, res));
       if (p === '/api/touch') {
-        const r = visitors.touch(req, String(body.name || ''));
+        const r = visitors.touch(req, res, String(body.name || ''));
         return send(res, r.error ? 404 : 200, r);
       }
-      if (p === '/api/message') {
-        const r = visitors.message(req, body.text, body.name);
+      if (p === '/api/action') {
+        const r = visitors.action(req, res, String(body.id || ''));
         return send(res, r.error ? 429 : 200, r);
+      }
+      if (p === '/api/message') {
+        const r = visitors.offer(req, res, { text: body.text, image: body.image });
+        return send(res, r.error ? 400 : 200, r);
       }
     }
 
@@ -201,7 +238,7 @@ export function createApp({ client } = {}) {
   });
 
   const flush = () => {
-    for (const s of [bus, ledger, usage, github, visitors, agent]) {
+    for (const s of [bus, ledger, usage, github, visitors, agent, feelings, diary]) {
       try {
         s.flush();
       } catch {}
@@ -209,7 +246,7 @@ export function createApp({ client } = {}) {
   };
 
   return {
-    server, ledger, usage, github, skills, world, visitors, agent, flush, snapshot,
+    server, ledger, usage, github, skills, world, visitors, agent, feelings, diary, flush, snapshot,
     start() {
       github.start();
       world.startRefreshLoop();

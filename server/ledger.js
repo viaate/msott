@@ -17,6 +17,8 @@ const LABELS = {
   'site.treat': ['treat', 'treats'],
   'site.message': ['message', 'messages'],
   'site.touch': ['touch on a build', 'touches on builds'],
+  'site.action': ['thing a visitor did for you', 'things visitors did for you'],
+  'site.picture': ['picture from a visitor', 'pictures from visitors'],
   'beacon.view': ['page view', 'page views'],
   gift: ['gift from your human', 'gifts from your human'],
 };

@@ -117,8 +117,8 @@ export class World {
   }
 
   publicList() {
-    return this.list().map(({ name, builtin, plot, description, link, motion, count, status, error, builtAt, version, refreshMinutes }) =>
-      ({ name, builtin: Boolean(builtin), plot, description, link: link || null, motion: motion || 'none', count: count || 0, status: status || 'ok', error: error ? clip(error, 300) : null, builtAt, version: version || 0, refreshMinutes: refreshMinutes || null }));
+    return this.list().map(({ name, builtin, plot, description, link, motion, count, status, error, builtAt, version, refreshMinutes, actions }) =>
+      ({ name, builtin: Boolean(builtin), plot, description, link: link || null, motion: motion || 'none', count: count || 0, status: status || 'ok', error: error ? clip(error, 300) : null, builtAt, version: version || 0, refreshMinutes: refreshMinutes || null, actions: actions || [] }));
   }
 
   occupied() {
@@ -143,7 +143,7 @@ export class World {
     return price('build', this.progress.data.buildsMade);
   }
 
-  async build({ name, description, code, plot, link, motion = 'none', refresh_minutes }) {
+  async build({ name, description, code, plot, link, motion = 'none', refresh_minutes, actions }) {
     if (typeof name !== 'string' || !NAME_RE.test(name) || name === 'house') throw new Error('name must be 2–40 chars of lowercase letters, digits and underscores (and not "house").');
     if (typeof description !== 'string' || !description.trim()) throw new Error('description is required — visitors see it when they hover your build.');
     if (typeof code !== 'string' || !/export\s+default/.test(code)) throw new Error('code must `export default function build(ctx) { return [...dots] }`.');
@@ -156,6 +156,9 @@ export class World {
       } catch {
         throw new Error('link must be an http(s) URL.');
       }
+    }
+    if (actions != null && (!Array.isArray(actions) || actions.length > 3 || !actions.every((a) => typeof a === 'string' && a.trim() && a.length <= 40))) {
+      throw new Error('actions must be a list of up to 3 short labels (≤ 40 characters), e.g. ["ring the bell"].');
     }
     let refreshMinutes = null;
     if (refresh_minutes != null) {
@@ -198,6 +201,7 @@ export class World {
       link: link || null,
       motion,
       refreshMinutes,
+      actions: actions?.map((a) => a.trim()) ?? existing?.actions ?? [],
       builtAt: existing?.builtAt ?? new Date().toISOString(),
       spent: (existing?.spent ?? 0) + cost,
     };
