@@ -1,6 +1,6 @@
 import path from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
-import { config, paths, secrets } from '../config.js';
+import { config, paths, secrets, mode } from '../config.js';
 import { JSONStore, clip } from '../store.js';
 import { bus } from '../bus.js';
 import { label } from '../ledger.js';
@@ -116,6 +116,30 @@ export class Agent {
     }
   }
 
+  // For scheduled runs: is it time to wake up?
+  isDue(newMessage = false) {
+    const s = this.s;
+    if (s.paused || !this.client || this.running) return false;
+    if (!s.nextWakeAt || Date.now() >= s.nextWakeAt) return true;
+    return Boolean(newMessage && config.schedule.wakeOnMessage && Date.now() - s.lastWakeAt >= config.schedule.minMinutesBetweenWakes * MIN);
+  }
+
+  // What the world looked like just before a wake, so it can be replayed.
+  beforeSnapshot() {
+    return {
+      t: Date.now(),
+      balance: this.ledger.balance,
+      feedSeq: bus.feedStore.data.seq,
+      diarySeq: this.diary.store.data.seq,
+      ledgerT: this.ledger.recent(1)[0]?.t ?? 0,
+      charlie: this.publicState(),
+      world: this.world.list().map((o) => `${o.name}:${o.version ?? 0}`),
+      skills: this.skills.list().map((k) => k.name),
+      feelings: this.feelings.publicState(),
+      site: this.site.publicState(),
+    };
+  }
+
   publicState() {
     const s = this.s;
     return {
@@ -207,7 +231,7 @@ export class Agent {
     lines.push(`HOW YOU FEEL: ${this.feelings.describe()}`);
     const bowl = this.feelings.d.bowl;
     lines.push(`YOU ARE AT: ${this.s.location}${this.s.location === 'bowl' ? '' : ` · your bowl has ${bowl ? `${bowl} portion${bowl > 1 ? 's' : ''} of food` : 'no food in it'}`}`);
-    lines.push(`WATCHING RIGHT NOW: ${bus.viewers} ${bus.viewers === 1 ? 'person' : 'people'}`);
+    if (mode !== 'github') lines.push(`WATCHING RIGHT NOW: ${bus.viewers} ${bus.viewers === 1 ? 'person' : 'people'}`);
     lines.push(`THINKING BUDGET: ${Math.round(this.usage.energy * 100)}% of today's left`);
     lines.push(...this.visitorLines());
     const req = this.requests.lines(this.s.lastSleepAt || 0);

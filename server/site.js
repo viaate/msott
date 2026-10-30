@@ -179,6 +179,20 @@ export class Site {
     return true;
   }
 
+  // Views counted somewhere else (an analytics service, when she lives on
+  // GitHub Pages) arrive here as already-unique counts.
+  credit(kind, key, n) {
+    if (!(n > 0)) return;
+    const bucket = kind === 'page' ? (this.s.pages[key] ??= { total: 0, days: {}, refs: {} }) : this.s.links[key];
+    if (!bucket) return;
+    const d = today();
+    bucket.total += n;
+    bucket.days[d] = (bucket.days[d] ?? 0) + n;
+    this.store.save();
+    if (kind === 'page') this.ledger.earn('page.view', n, `${n} ${n === 1 ? 'person' : 'people'} read /pages/${key === '/' ? '' : key}`, { quiet: true });
+    else this.ledger.earn('link.click', n, `${n} click${n === 1 ? '' : 's'} on /go/${key}`, { quiet: true });
+  }
+
   // ---------------------------------------------------------------- serving
   serve(req, res, rel) {
     let p;

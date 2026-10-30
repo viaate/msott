@@ -96,7 +96,8 @@ function ago(t) {
 }
 
 export class UI {
-  constructor() {
+  constructor(net) {
+    this.net = net;
     this.state = null;
     this.shown = 0;
     this.live = new Map();
@@ -151,25 +152,35 @@ export class UI {
       $('msg').value = '';
       this.picture = null;
       $('pic-chip').hidden = true;
-      const r = await this.post('/api/message', body);
-      this.toast(r.error ? r.error : 'Charlie got it. She reads things when she wakes up, and remembers who left them.');
+      const r = await this.net.message(body);
+      if (r.opened) this.toast('Finish on GitHub: press Submit (you can add a picture there). She reads it when she wakes up.');
+      else this.toast(r.error ? r.error : 'Charlie got it. She reads things when she wakes up, and remembers who left them.');
       this.refreshMe();
     });
     $('name-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const r = await this.post('/api/me', { name: $('my-name').value });
+      const r = await this.net.rename($('my-name').value);
       if (r.error) this.toast(r.error);
       else this.setMe(r);
     });
+    $('replay-skip').addEventListener('click', () => this.net.skipReplay?.());
+    $('replay-again').addEventListener('click', () => this.net.replayAgain?.());
+    if (net.kind === 'static') {
+      document.body.classList.add('static');
+      $('msg').placeholder = 'leave charlie a message (on GitHub)…';
+      $('name-label').textContent = 'your GitHub name';
+      $('my-name').placeholder = 'octocat';
+      $('name-save').textContent = 'look up';
+    }
     setInterval(() => this.renderStatus(), 20000);
   }
 
-  async post(path, body) {
-    try {
-      const res = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body ?? {}) });
-      return await res.json().catch(() => ({ error: `error ${res.status}` }));
-    } catch {
-      return { error: "Couldn't reach Charlie's house." };
+  setReplay(r) {
+    $('replay').hidden = !r.active;
+    $('replay-again').hidden = r.active || !r.available;
+    if (r.active) {
+      const when = ago(r.endedAt);
+      $('replay-text').textContent = `replaying her latest wake · ${when === 'now' ? 'just now' : `${when} ago`}`;
     }
   }
 
@@ -399,6 +410,7 @@ export class UI {
       }
       menu.append(wrap);
     };
+    if (this.net.kind === 'static') menu.append(el('p', 'menu-note first', 'These open GitHub (a free account is all you need). Press Submit there, and Charlie feels it within about 15 minutes.'));
     section('for charlie', [{ id: 'pet', label: 'pet her' }, { id: 'treat', label: 'toss a treat' }]);
     const acts = this.state.actions ?? [];
     section('around the house', acts.filter((a) => !a.build));
@@ -468,17 +480,18 @@ export class UI {
   }
 
   async refreshMe() {
-    try {
-      const res = await fetch('/api/me');
-      if (res.ok) this.setMe(await res.json());
-    } catch {}
+    this.setMe(await this.net.me());
   }
 
   renderMe() {
     const me = this.me;
     if (!me) return;
     if (document.activeElement !== $('my-name')) $('my-name').value = me.name;
-    $('me-meta').textContent = `${me.visits <= 1 ? 'your first visit' : `visit #${me.visits}`} · first came by ${new Date(me.firstSeen).toLocaleDateString()}`;
+    if (me.github && !me.firstSeen) {
+      $('me-meta').textContent = me.name ? "She hasn't met you yet. Leave her a message or pet her through GitHub." : 'Enter your GitHub name to see what Charlie remembers about you.';
+    } else {
+      $('me-meta').textContent = `${me.visits <= 1 ? 'your first visit' : `visit #${me.visits}`} · first came by ${new Date(me.firstSeen).toLocaleDateString()}`;
+    }
     $('me-notes').textContent = me.notes || "Nothing yet. She hasn't noted anything about you.";
     const replies = $('me-replies');
     replies.textContent = '';
@@ -499,6 +512,7 @@ export class UI {
   }
 
   setViewers(n) {
+    if (this.net.kind === 'static') return;
     $('viewers').textContent = n > 1 ? `${n} watching` : n === 1 ? 'just you watching' : '';
   }
 
@@ -608,9 +622,8 @@ export class UI {
   }
 
   async showSource(name) {
-    const res = await fetch(`/api/skills/${name}`);
-    if (!res.ok) return;
-    const src = await res.json();
+    const src = await this.net.skillSource(name);
+    if (!src) return;
     $('source-title').textContent = src.name;
     $('source-desc').textContent = src.description;
     $('source-code').textContent = src.code;

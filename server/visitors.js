@@ -29,6 +29,8 @@ function sniffImage(buf) {
   return null;
 }
 
+export { sniffImage };
+
 export function cleanName(raw) {
   return String(raw ?? '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 20);
 }
@@ -108,6 +110,14 @@ export class Visitors {
 
   hello(req, res) {
     const p = this.identify(req, res);
+    this.seen(p);
+    const h = this.hash(req);
+    if (this.ledger.allow(`visit:${h}`, 1)) this.ledger.earn('site.visitor', 1, 'a new visitor came by', { quiet: true });
+    return this.about(p);
+  }
+
+  // Counts a visit when someone shows up again after a while.
+  seen(p) {
     const now = Date.now();
     if (now - p.lastSeen > RETURN_GAP) {
       p.visits += 1;
@@ -120,9 +130,31 @@ export class Visitors {
     }
     p.lastSeen = now;
     this.people.save();
-    const h = this.hash(req);
-    if (this.ledger.allow(`visit:${h}`, 1)) this.ledger.earn('site.visitor', 1, 'a new visitor came by', { quiet: true });
-    return this.about(p);
+  }
+
+  // A visitor known by their GitHub username (when she lives on GitHub).
+  github(login) {
+    const key = `gh:${String(login).toLowerCase()}`;
+    let p = this.people.data.byToken[key];
+    if (!p) {
+      p = this.people.data.byToken[key] = { id: key, name: String(login), github: true, firstSeen: Date.now(), lastSeen: 0, visits: 0, notes: '', replies: [] };
+    }
+    this.seen(p);
+    return { p, h: key };
+  }
+
+  who(req, res) {
+    return { p: this.identify(req, res), h: this.hash(req) };
+  }
+
+  // Everyone Charlie knows, as shown on a static site's "about you".
+  publicPeople() {
+    const out = {};
+    for (const p of Object.values(this.people.data.byToken)) {
+      if (!p.github) continue;
+      out[p.name.toLowerCase()] = this.about(p);
+    }
+    return out;
   }
 
   about(p) {
@@ -159,6 +191,7 @@ export class Visitors {
     if (!p) return null;
     p.replies.push({ t: Date.now(), text });
     if (p.replies.length > 30) p.replies.splice(0, p.replies.length - 30);
+    if (p.github) (this.people.data.outbox ??= []).push({ login: p.name, text, t: Date.now() });
     this.people.save();
     return p;
   }
@@ -183,8 +216,11 @@ export class Visitors {
 
   // ---------------------------------------------------------------- interactions
   pet(req, res) {
-    const p = this.identify(req, res);
-    const counted = this.ledger.allow(`pet:${this.hash(req)}`, limits.petsPerVisitorPerDay);
+    return this.petBy(this.who(req, res));
+  }
+
+  petBy({ p, h }) {
+    const counted = this.ledger.allow(`pet:${h}`, limits.petsPerVisitorPerDay);
     if (counted) {
       this.ledger.earn('site.pet', 1, `${p.name} petted you`, { quiet: true });
       this.feelings.bump({ joy: 1.5, calm: 0.5 });
@@ -195,8 +231,11 @@ export class Visitors {
   }
 
   treat(req, res) {
-    const p = this.identify(req, res);
-    const counted = this.ledger.allow(`treat:${this.hash(req)}`, limits.treatsPerVisitorPerDay);
+    return this.treatBy(this.who(req, res));
+  }
+
+  treatBy({ p, h }) {
+    const counted = this.ledger.allow(`treat:${h}`, limits.treatsPerVisitorPerDay);
     if (counted) {
       this.ledger.earn('site.treat', 1, `${p.name} gave you a treat`, { quiet: true });
       this.feelings.bump({ fullness: 6, joy: 3 });
@@ -208,16 +247,22 @@ export class Visitors {
   }
 
   // An offering: a message, a picture, or both.
-  offer(req, res, { text: rawText, image }) {
-    const p = this.identify(req, res);
-    const h = this.hash(req);
-    const text = String(rawText ?? '').replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').trim().slice(0, config.site.maxMessageLength);
-    let file = null;
-    let mediaType = null;
+  offer(req, res, { text, image }) {
+    let picture = null;
     if (image) {
       const m = /^data:(image\/[a-z]+);base64,([A-Za-z0-9+/=]+)$/.exec(String(image));
       if (!m || !IMAGE_TYPES[m[1]]) return { error: 'Pictures need to be PNG, JPEG, WebP or GIF.' };
-      const buf = Buffer.from(m[2], 'base64');
+      picture = Buffer.from(m[2], 'base64');
+    }
+    return this.offerBy(this.who(req, res), { text, picture });
+  }
+
+  offerBy({ p, h }, { text: rawText, picture, maxLength = config.site.maxMessageLength, ref = null }) {
+    const text = String(rawText ?? '').replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').trim().slice(0, maxLength);
+    let file = null;
+    let mediaType = null;
+    if (picture) {
+      const buf = picture;
       mediaType = sniffImage(buf);
       if (!mediaType) return { error: "That file doesn't look like a picture." };
       if (buf.length > config.site.maxPictureBytes) return { error: `Pictures can be up to ${Math.round(config.site.maxPictureBytes / 1e6)} MB.` };
@@ -229,7 +274,7 @@ export class Visitors {
     if (text && !this.ledger.allow(`message:${h}`, limits.messagesPerVisitorPerDay)) {
       return { error: 'Charlie has plenty of your messages for today. Come back tomorrow!' };
     }
-    const msg = { id: ++this.inbox.data.seq, t: Date.now(), from: p.name, visitorId: p.id, text, image: file, mediaType, read: false };
+    const msg = { id: ++this.inbox.data.seq, t: Date.now(), from: p.name, visitorId: p.id, text, image: file, mediaType, read: false, ...(ref ? { ref } : {}) };
     this.inbox.data.messages.push(msg);
     if (this.inbox.data.messages.length > 400) this.inbox.data.messages.splice(0, this.inbox.data.messages.length - 400);
     this.inbox.save();
@@ -249,13 +294,16 @@ export class Visitors {
   }
 
   action(req, res, id) {
-    const p = this.identify(req, res);
+    return this.actionBy(this.who(req, res), id);
+  }
+
+  actionBy({ p, h }, id) {
     const action = allActions(this.world).find((a) => a.id === id);
     if (!action) return { error: 'Nothing like that to do here.' };
-    if (!this.ledger.allow(`action:${this.hash(req)}`, limits.actionsPerVisitorPerDay)) {
+    if (!this.ledger.allow(`action:${h}`, limits.actionsPerVisitorPerDay)) {
       return { error: "You've done plenty for Charlie today. She noticed!" };
     }
-    if (!this.ledger.allow(`action:${this.hash(req)}:${id}`, limits.sameActionPerVisitorPerDay)) {
+    if (!this.ledger.allow(`action:${h}:${id}`, limits.sameActionPerVisitorPerDay)) {
       return { error: 'Maybe try something else for a bit.' };
     }
     this.ledger.earn('site.action', 1, `${p.name} ${action.past}`, { quiet: true });

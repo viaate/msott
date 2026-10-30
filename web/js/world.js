@@ -9,9 +9,10 @@ const GRID = hex('#2a2622');
 
 // Everything outside the house: the plot grid and the things Charlie builds.
 export class WorldView {
-  constructor(scene, plotSize) {
+  constructor(scene, plotSize, pointsUrl) {
     this.scene = scene;
     this.plotSize = plotSize;
+    this.pointsUrl = pointsUrl;
     this.objects = new Map();
     this.ground = null;
     this.group = new THREE.Group();
@@ -105,7 +106,7 @@ export class WorldView {
     let geometry;
     let broken = false;
     if (meta.status === 'ok' && meta.count > 0) {
-      const res = await fetch(`/api/world/${meta.name}/points?v=${meta.version}`);
+      const res = await fetch(this.pointsUrl(meta));
       if (!res.ok) return;
       geometry = decodePoints(await res.arrayBuffer());
     } else {

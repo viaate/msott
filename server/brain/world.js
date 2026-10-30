@@ -258,19 +258,22 @@ export class World {
     bus.emit('world', { objects: this.publicList(), changed: name, buildable: this.buildable() });
   }
 
-  startRefreshLoop() {
-    setInterval(async () => {
-      if (this.refreshing) return;
-      this.refreshing = true;
-      try {
-        for (const obj of this.list()) {
-          if (!obj.refreshMinutes || obj.builtin) continue;
-          const last = Date.parse(obj.generatedAt || obj.builtAt || 0);
-          if (Date.now() - last >= obj.refreshMinutes * 60_000) await this.generate(obj.name);
-        }
-      } finally {
-        this.refreshing = false;
+  // Re-runs builds that asked to refresh on a schedule.
+  async refreshDue() {
+    if (this.refreshing) return;
+    this.refreshing = true;
+    try {
+      for (const obj of this.list()) {
+        if (!obj.refreshMinutes || obj.builtin) continue;
+        const last = Date.parse(obj.generatedAt || obj.builtAt || 0);
+        if (Date.now() - last >= obj.refreshMinutes * 60_000) await this.generate(obj.name);
       }
-    }, 60_000).unref();
+    } finally {
+      this.refreshing = false;
+    }
+  }
+
+  startRefreshLoop() {
+    setInterval(() => this.refreshDue(), 60_000).unref();
   }
 }

@@ -8,6 +8,7 @@ import { WorldView } from './world.js';
 import { buildSky } from './sky.js';
 import { Minimap } from './minimap.js';
 import { UI } from './ui.js';
+import { createNet } from './net.js';
 
 const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
@@ -24,7 +25,8 @@ const fx = new Particles();
 scene.add(fx.points);
 const sky = buildSky();
 scene.add(sky);
-const ui = new UI();
+const net = createNet();
+const ui = new UI(net);
 const minimap = new Minimap(document.getElementById('minimap'));
 let world = null;
 
@@ -210,14 +212,7 @@ function idlePoses(now) {
 // ---------------------------------------------------------------- server
 let selfPets = 0;
 let selfTreats = 0;
-async function post(path, body) {
-  try {
-    const res = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body ?? {}) });
-    return await res.json().catch(() => ({}));
-  } catch {
-    return { error: 'offline' };
-  }
-}
+let petHinted = false;
 
 function headScreen() {
   const v = charlie.headPosition(new THREE.Vector3()).project(cam());
@@ -256,36 +251,47 @@ function actionEffect(a) {
   }, 500);
 }
 
+// Clicking her is always a pet you can see. On GitHub Pages, a pet that she
+// actually feels goes through a GitHub issue (from the actions menu).
 async function pet() {
   petEffect();
+  if (net.kind === 'static') {
+    if (!petHinted) ui.toast('She liked that! To pet her so she really feels it, use actions → pet her (it opens GitHub).');
+    petHinted = true;
+    return;
+  }
   selfPets++;
-  await post('/api/pet');
+  await net.pet();
 }
 
 async function treat() {
   treatEffect();
   selfTreats++;
-  const r = await post('/api/treat');
+  const r = await net.treat();
   if (r && r.counted === false) ui.toast("Charlie loved it (that's enough treats from you for today, though)");
 }
 
 async function act(id) {
+  if (net.kind === 'static') {
+    const r = net.act(id);
+    ui.toast(r.error ?? 'Finish on GitHub: press Submit and Charlie feels it within about 15 minutes.');
+    return;
+  }
   if (id === 'pet') return pet();
   if (id === 'treat') return treat();
-  const r = await post('/api/action', { id });
+  const r = await net.act(id);
   if (r.error) ui.toast(r.error);
 }
 
 function connect() {
-  const es = new EventSource('/api/events');
-  const on = (type, fn) => es.addEventListener(type, (e) => fn(JSON.parse(e.data)));
+  const on = (type, fn) => net.on(type, fn);
 
   on('hello', async (s) => {
     ui.load(s);
     house.setBowl(s.feelings.bowl);
     Object.assign(B, { status: s.charlie.status, activity: s.charlie.activity, paused: s.charlie.paused, location: s.charlie.location });
     const first = !world;
-    if (first) world = new WorldView(scene, s.world.plotSize);
+    if (first) world = new WorldView(scene, s.world.plotSize, (meta) => net.pointsUrl(meta));
     await world.sync(s.world.objects, s.world.buildable, null);
     if (first) {
       const where = asleep() ? 'bed' : s.charlie.location;
@@ -355,8 +361,8 @@ function connect() {
     const obj = world?.objects.get(name);
     if (obj) fx.sparks(world.plotCenter(obj.meta.plot).add(new THREE.Vector3(0, 1, 0)), 14, [0.58, 0.71, 0.85]);
   });
-  es.onerror = () => ui.setConnection(false);
-  es.onopen = () => ui.setConnection(true);
+  on('replay', (r) => ui.setReplay(r));
+  on('connection', (ok) => ui.setConnection(ok));
 }
 
 // ---------------------------------------------------------------- cameras in motion
@@ -454,7 +460,7 @@ canvas.addEventListener('pointerup', async (e) => {
   if (hit?.charlie) pet();
   else if (hit?.obj) {
     const meta = hit.obj.meta;
-    const r = await post('/api/touch', { name: meta.name });
+    const r = await net.touch(meta.name);
     if (meta.link && r?.link) window.open(meta.link, '_blank', 'noopener');
   }
 });
@@ -466,7 +472,7 @@ ui.onAction = act;
 ui.onView = (v) => setView(v);
 
 // Owner controls: open the site with ?admin
-if (new URLSearchParams(location.search).has('admin')) {
+if (net.kind === 'live' && new URLSearchParams(location.search).has('admin')) {
   let token = '';
   try {
     token = localStorage.getItem('charlie-admin') || '';
@@ -494,7 +500,7 @@ if (new URLSearchParams(location.search).has('admin')) {
       const reply = prompt('Your answer (she reads it next time she wakes):') ?? '';
       body = { id, reply, status: confirm('OK = done / granted, Cancel = declined') ? 'done' : 'declined' };
     }
-    const res = await fetch(`/api/admin/${action}`, { method: 'POST', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const res = await fetch(`api/admin/${action}`, { method: 'POST', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (res.status === 403) {
       try {
         localStorage.removeItem('charlie-admin');
@@ -564,5 +570,6 @@ if (new URLSearchParams(location.search).has('debug')) {
 }
 
 connect();
-post('/api/hello').then((me) => ui.setMe(me));
+net.start();
+net.hello().then((me) => ui.setMe(me));
 requestAnimationFrame(frame);

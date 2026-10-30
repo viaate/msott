@@ -9,6 +9,18 @@ try {
   process.loadEnvFile(path.join(ROOT, '.env'));
 } catch {}
 
+// On GitHub, every extra setting comes in one secret, CHARLIE_ENV, written
+// like a .env file (KEY=value per line).
+if (process.env.CHARLIE_ENV) {
+  for (const line of process.env.CHARLIE_ENV.split(/\r?\n/)) {
+    const m = line.match(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+    if (!m || line.trim().startsWith('#')) continue;
+    const value = m[2].replace(/^(['"])(.*)\1$/, '$2');
+    if (process.env[m[1]] === undefined || process.env[m[1]] === '') process.env[m[1]] = value;
+  }
+  delete process.env.CHARLIE_ENV;
+}
+
 function deepMerge(base, extra) {
   if (!extra || typeof extra !== 'object' || Array.isArray(extra)) return extra ?? base;
   const out = { ...base };
@@ -44,6 +56,13 @@ paths.workspace = path.join(paths.home, 'workspace');
 paths.logs = path.join(paths.home, 'logs');
 paths.memory = path.join(paths.home, 'memory.md');
 
+// On GitHub Pages, her address follows from the repo name.
+if (!env.PUBLIC_URL && env.CHARLIE_MODE === 'github' && env.GITHUB_REPOSITORY) {
+  const [owner, name] = env.GITHUB_REPOSITORY.split('/');
+  const host = `${owner.toLowerCase()}.github.io`;
+  env.PUBLIC_URL = name.toLowerCase() === host ? `https://${host}` : `https://${host}/${name}`;
+}
+
 export const secrets = {
   anthropicKey: env.ANTHROPIC_API_KEY || '',
   githubToken: env.GITHUB_TOKEN || '',
@@ -54,6 +73,10 @@ export const secrets = {
 
 export const port = Number(env.PORT || config.site.port || 8787);
 
+// "server": a long-running Node server you host. "github": GitHub Actions
+// runs her on a schedule and GitHub Pages hosts everything.
+export const mode = env.CHARLIE_MODE === 'github' ? 'github' : 'server';
+
 // Optional: run Charlie's code as a separate, low-privilege OS user (POSIX).
 export const runAs = env.CHARLIE_UID ? { uid: Number(env.CHARLIE_UID), gid: Number(env.CHARLIE_GID || env.CHARLIE_UID) } : {};
 
@@ -62,7 +85,7 @@ export const runAs = env.CHARLIE_UID ? { uid: Number(env.CHARLIE_UID), gid: Numb
 export function charlieEnv() {
   const out = {};
   for (const [k, v] of Object.entries(env)) {
-    if (k.startsWith('CHARLIE_') && !['CHARLIE_DATA_DIR', 'CHARLIE_HOME_DIR', 'CHARLIE_UID', 'CHARLIE_GID'].includes(k)) out[k] = v;
+    if (k.startsWith('CHARLIE_') && !['CHARLIE_DATA_DIR', 'CHARLIE_HOME_DIR', 'CHARLIE_UID', 'CHARLIE_GID', 'CHARLIE_MODE', 'CHARLIE_SITE_OUT'].includes(k)) out[k] = v;
   }
   return out;
 }

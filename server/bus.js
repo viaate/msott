@@ -9,6 +9,7 @@ class Bus {
     this.clients = new Set();
     this.feedStore = new JSONStore(path.join(paths.data, 'feed.json'), { seq: 0, items: [] });
     this.listeners = new Map();
+    this.recording = null;
   }
 
   get feedItems() {
@@ -20,7 +21,40 @@ class Bus {
     this.listeners.get(type).add(fn);
   }
 
+  // Records what happens during a wake so a static site can replay it later.
+  startRecording() {
+    this.recording = { started: Date.now(), events: [], code: new Map() };
+  }
+
+  stopRecording() {
+    const r = this.recording;
+    this.recording = null;
+    return r ? r.events : [];
+  }
+
+  record(type, data) {
+    const r = this.recording;
+    if (!r || type === 'thought_delta' || type === 'viewers') return;
+    const t = Date.now() - r.started;
+    if (type === 'code_start') {
+      const entry = { t, type: 'code', data: { key: data.key, tool: data.tool, title: '', code: '' } };
+      r.code.set(data.key, entry.data);
+      r.events.push(entry);
+    } else if (type === 'code_title') {
+      const c = r.code.get(data.key);
+      if (c) c.title = data.title;
+    } else if (type === 'code_delta') {
+      const c = r.code.get(data.key);
+      if (c) c.code += data.text;
+    } else if (type !== 'code_end') {
+      const last = r.events.at(-1);
+      if (type === 'charlie' && last?.type === 'charlie' && JSON.stringify(last.data) === JSON.stringify(data)) return;
+      r.events.push({ t, type, data });
+    }
+  }
+
   emit(type, data) {
+    this.record(type, data);
     const frame = `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`;
     for (const client of this.clients) client.write(frame);
     for (const fn of this.listeners.get(type) ?? []) fn(data);

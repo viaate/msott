@@ -325,6 +325,20 @@ table.earn td:last-child { text-align: right; color: var(--gold); white-space: n
 .action-list button { padding: 5px 12px; font-size: 12px; }
 .action-list button.here { border-color: rgba(214, 131, 74, 0.55); color: var(--copper); }
 .menu-note { margin: 12px 0 0; color: var(--faint); font-size: 12px; }
+.menu-note.first { margin: 0 0 4px; color: var(--dim); }
+.replay {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 6px 5px 14px;
+  border-radius: 999px;
+  background: rgba(214, 131, 74, 0.14);
+  border: 1px solid rgba(214, 131, 74, 0.4);
+  color: var(--copper);
+  font-size: 12px;
+}
+.replay .blink { width: 7px; height: 7px; border-radius: 50%; background: var(--copper); animation: blink 1s steps(2) infinite; }
+.replay button { padding: 2px 10px; font-size: 12px; }
+#replay-again { font-size: 12px; color: var(--dim); }
+body.static .attach { display: none; }
 
 /* actions */
 .actions {

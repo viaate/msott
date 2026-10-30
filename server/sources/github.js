@@ -46,12 +46,19 @@ export class GitHubWatcher {
     };
   }
 
-  start() {
+  async pollOnce() {
     if (!this.enabled) return;
-    const run = () => this.poll().catch((err) => {
+    try {
+      await this.poll();
+    } catch (err) {
       this.error = String(err.message || err);
       console.error('[github] poll failed:', this.error);
-    });
+    }
+  }
+
+  start() {
+    if (!this.enabled) return;
+    const run = () => this.pollOnce();
     setTimeout(run, 3000);
     this.timer = setInterval(run, config.sources.pollMinutes * 60_000);
   }

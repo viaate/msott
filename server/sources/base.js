@@ -24,20 +24,25 @@ export class Source {
     return false;
   }
 
+  // One poll, never throwing: errors are kept for the wake summary.
+  async pollOnce() {
+    if (!this.enabled) return;
+    try {
+      await this.poll();
+      this.s.initialized = true;
+      this.s.lastPoll = new Date().toISOString();
+      this.error = null;
+      this.store.save();
+      bus.emit('sources', { name: this.name, status: this.status() });
+    } catch (err) {
+      this.error = String(err.message || err).slice(0, 300);
+      console.error(`[${this.name}] poll failed:`, this.error);
+    }
+  }
+
   start() {
     if (!this.enabled) return;
-    const run = () => this.poll()
-      .then(() => {
-        this.s.initialized = true;
-        this.s.lastPoll = new Date().toISOString();
-        this.error = null;
-        this.store.save();
-        bus.emit('sources', { name: this.name, status: this.status() });
-      })
-      .catch((err) => {
-        this.error = String(err.message || err).slice(0, 300);
-        console.error(`[${this.name}] poll failed:`, this.error);
-      });
+    const run = () => this.pollOnce();
     setTimeout(run, 5000).unref?.();
     this.timer = setInterval(run, config.sources.pollMinutes * 60_000);
     this.timer.unref?.();

@@ -6,13 +6,13 @@
   <title>Charlie</title>
   <meta name="description" content="Charlie is a dog made of dots. She lives on a server, makes things for the web, keeps a diary, remembers the people who visit, and writes her own code to grow.">
   <meta name="theme-color" content="#0e0d0c">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght@500;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="css/style.css">
   <script type="importmap">
-    { "imports": { "three": "/vendor/three/build/three.module.js", "three/addons/": "/vendor/three/examples/jsm/" } }
+    { "imports": { "three": "./vendor/three/build/three.module.js", "three/addons/": "./vendor/three/examples/jsm/" } }
   </script>
 </head>
 <body>
@@ -57,9 +57,11 @@
 
   <div class="center-dock">
     <section class="panel actions-menu" id="actions-menu" hidden aria-label="Things you can do"></section>
+    <div class="replay" id="replay" hidden><span class="blink"></span><span id="replay-text">replaying her latest wake</span><button id="replay-skip" type="button">skip</button></div>
     <div class="doing" id="doing"><span class="pip"></span><span id="doing-text">Charlie is napping on her bed</span></div>
     <div class="dock-row">
       <button id="actions-btn" aria-expanded="false" aria-controls="actions-menu">actions</button>
+      <button id="replay-again" type="button" hidden>replay her last wake</button>
       <div class="view-toggle" role="group" aria-label="View">
         <button data-view="2.5d" aria-pressed="true">2.5D</button>
         <button data-view="3d" aria-pressed="false">3D</button>
@@ -101,9 +103,9 @@
     </div>
     <div data-dpane="you" hidden>
       <form id="name-form" class="name-form" autocomplete="off">
-        <label for="my-name">you are</label>
-        <input id="my-name" maxlength="20">
-        <button type="submit">save</button>
+        <label for="my-name" id="name-label">you are</label>
+        <input id="my-name" maxlength="39">
+        <button type="submit" id="name-save">save</button>
       </form>
       <p class="me-meta" id="me-meta"></p>
       <h3>what charlie remembers about you</h3>
@@ -157,6 +159,6 @@
   </div>
 
   <noscript><p class="noscript">Charlie's world needs JavaScript and WebGL.</p></noscript>
-  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

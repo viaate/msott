@@ -15,6 +15,7 @@ import { Requests } from './requests.js';
 import { RedditSource } from './sources/reddit.js';
 import { BlueskySource } from './sources/bluesky.js';
 import { SalesSource } from './sources/sales.js';
+import { GoatCounterSource } from './sources/goatcounter.js';
 import { GitHubWatcher } from './sources/github.js';
 import { Usage } from './brain/usage.js';
 import { Skills } from './brain/skills.js';
@@ -130,7 +131,7 @@ export function createApp({ client } = {}) {
   const visitors = new Visitors({ ledger, world, feelings, agentState: () => agent.s });
   const site = new Site({ ledger, visitors });
   const requests = new Requests();
-  const sources = [github, new RedditSource(ledger), new BlueskySource(ledger), new SalesSource(ledger)];
+  const sources = [github, new RedditSource(ledger), new BlueskySource(ledger), new SalesSource(ledger), new GoatCounterSource(ledger, site)];
   agent = new Agent({ ledger, skills, world, visitors, usage, github, feelings, diary, site, requests, sources, client });
   site.init();
   feelings.isAsleep = () => agent.s.status !== 'awake';
