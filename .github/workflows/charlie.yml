@@ -1,0 +1,151 @@
+# Charlie lives here. Every 15 minutes (and whenever someone opens an issue
+# for her) this checks on her, wakes her if her nap is over, saves her life
+# to the charlie-life branch, and publishes her world to GitHub Pages.
+name: Charlie
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to do
+        type: choice
+        options: [tick, wake, pause, resume, gift]
+        default: tick
+      amount:
+        description: Tokens to gift (for "gift")
+        type: number
+        default: 10
+      reason:
+        description: Why (she sees this, for "gift")
+        type: string
+        default: a gift from your human
+
+permissions: {}
+
+concurrency:
+  group: charlie
+  cancel-in-progress: false
+
+jobs:
+  # Charlie's own run. Her code executes here, so this job can read the repo
+  # and manage issues but cannot change code or publish anything.
+  live:
+    if: >-
+      (github.event_name != 'issues' && github.event_name != 'issue_comment') ||
+      contains(github.event.issue.labels.*.name, 'for-charlie') ||
+      contains(github.event.issue.labels.*.name, 'charlie-asks')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      issues: write
+      pages: read
+    outputs:
+      deploy: ${{ steps.charlie.outputs.deploy }}
+      summary: ${{ steps.charlie.outputs.summary }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - id: pages
+        uses: actions/configure-pages@v6
+        continue-on-error: true
+
+      - name: Bring back her life
+        run: bash scripts/life.sh pull
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Restore her npm packages
+        uses: actions/cache@v6
+        with:
+          path: life/home/node_modules
+          key: charlie-home-${{ hashFiles('life/home/package-lock.json') }}
+          restore-keys: charlie-home-
+
+      - name: Charlie
+        id: charlie
+        run: node bin/charlie.js "${{ inputs.action || 'tick' }}"
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CHARLIE_ENV: ${{ secrets.CHARLIE_ENV }}
+          REPO_TOKEN: ${{ github.token }}
+          PUBLIC_URL: ${{ steps.pages.outputs.base_url }}
+          CHARLIE_MODE: github
+          CHARLIE_DATA_DIR: life/state
+          CHARLIE_HOME_DIR: life/home
+          CHARLIE_SITE_OUT: _site
+          GIFT_AMOUNT: ${{ inputs.amount }}
+          GIFT_REASON: ${{ inputs.reason }}
+
+      - name: Hand over her life
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: life
+          include-hidden-files: true
+          retention-days: 1
+          path: |
+            life
+            !life/.git
+            !life/home/node_modules
+            !life/home/.cache
+
+      - if: steps.charlie.outputs.deploy == 'true'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  # Saves her life to the charlie-life branch. None of her code runs here.
+  save:
+    needs: live
+    if: ${{ !cancelled() && needs.live.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: life
+          path: incoming
+
+      - name: Save her life
+        run: |
+          bash scripts/life.sh pull
+          bash scripts/life.sh replace incoming
+          bash scripts/life.sh push "${{ needs.live.outputs.summary || 'a tick' }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  publish:
+    needs: [live, save]
+    if: needs.live.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5
