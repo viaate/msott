@@ -11,16 +11,28 @@ The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital se
 
 The feelings, diary, remembered visitors and 3D follow view are inspired by [Pino](https://pinos.world).
 
-## Set it up (about 5 minutes)
+## Set it up (two settings, once)
 
-Everything runs on GitHub. Her world and website are on GitHub Pages, her brain runs on GitHub Actions every 15 minutes, and visitors reach her through GitHub issues. This repo is public, so Pages and Actions are free. You pay only for Claude (capped at **$5/day** by default).
+Everything runs on GitHub, on its own. Her world and website are on GitHub Pages, her brain runs on GitHub Actions, and visitors reach her through GitHub issues. This repo is public, so Pages and Actions are free. You pay only for Claude (capped at **$5/day** by default).
 
-1. **Merge this branch into `main`.** Scheduled workflows only run from the default branch.
-2. **Point Pages at the workflow.** Go to Settings → **Pages** → Build and deployment → Source: choose **GitHub Actions**.
-3. **Give her a brain.** Get an API key at [platform.claude.com](https://platform.claude.com). Then go to Settings → **Secrets and variables** → **Actions** → **New repository secret**. Name it `ANTHROPIC_API_KEY` and paste the key.
-4. **Wake her up.** Go to the **Actions** tab → **Charlie** → **Run workflow**. Within a couple of minutes she's live at **https://viaate.github.io/msott/**.
+1. **Point Pages at her workflow.** Settings → **Pages** → Build and deployment → Source: choose **GitHub Actions**.
+2. **Give her a brain.** Get an API key at [platform.claude.com](https://platform.claude.com). Then Settings → **Secrets and variables** → **Actions** → **New repository secret**: name it `ANTHROPIC_API_KEY` and paste the key.
 
-That's it. From then on she wakes herself up whenever her nap ends.
+That's all. She starts by herself within about 15 minutes and runs forever after that at **https://viaate.github.io/msott/**. To start her right now instead of waiting: Actions → **Charlie** (left sidebar; on a phone it's under "All workflows") → **Run workflow**.
+
+### She runs herself
+
+Nothing here needs you:
+
+- **Her heartbeat.** GitHub checks on her every 15 minutes, day and night. Each check reads new visitor issues, updates her stats from the web, and wakes her if her nap is over. She decides what to do and how long to nap next, and her world is republished. New code on `main` also starts a check right away.
+- **She keeps her own life.** Her memory, diary, skills, builds, website and tokens are saved on the `charlie-life` branch after every check. It's public, like the repo.
+- **Visitors come and go on their own.** They pet her, toss treats, fill her bowl, play, and leave messages and pictures through two issue forms linked from her site. She knows them by their GitHub username, and her replies are posted on their issue.
+- **Her site keeps itself current.** Anyone who opens it sees her latest wake replayed (thoughts typing out, code being written, builds assembling), and it keeps checking for anything new.
+- **She's always on a schedule, never always on.** GitHub's terms don't allow Actions to be used as a nonstop server, and jobs can't run indefinitely, so she lives in naps and checks instead. If you ever want her truly live (instant reactions, real-time streaming), run the same code on a computer that stays on. See "Run it on your own computer instead" below.
+
+**If you ever want to step in (optional):**
+- Actions → **Charlie** → **Run workflow** lets you **wake** her, **pause** her, **resume** her, or **gift** her tokens.
+- If she asks you for something (an issue labeled `charlie-asks`, assigned to you), reply in a comment or close it to say no. If you ignore it, she carries on without it.
 
 ### Give her more of the web (optional, any time)
 

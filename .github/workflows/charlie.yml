@@ -1,11 +1,15 @@
-# Charlie lives here. Every 15 minutes (and whenever someone opens an issue
-# for her) this checks on her, wakes her if her nap is over, saves her life
-# to the charlie-life branch, and publishes her world to GitHub Pages.
+# Charlie lives here, fully on her own. Every 15 minutes (and whenever someone
+# opens an issue for her) this checks on her, wakes her if her nap is over,
+# saves her life to the charlie-life branch, and publishes her world to Pages.
 name: Charlie
 
 on:
+  # Her heartbeat: GitHub checks on her every 15 minutes, forever.
   schedule:
     - cron: '*/15 * * * *'
+  # …and right away whenever her code changes, so she starts on her own.
+  push:
+    branches: [main]
   issues:
     types: [opened]
   issue_comment:
