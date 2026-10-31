@@ -17,7 +17,8 @@ async function devvitSetup(app) {
   const r = await app.skills.run('devvit', { action: 'setup', template: process.env.CHARLIE_DEVVIT_TEMPLATE || 'threejs' });
   const ready = r.ok && /Set up your app|already set up/.test(r.text);
   writeJSON(file, { tried: tag, ready, at: new Date().toISOString() });
-  bus.feed('system', ready ? 'Charlie has a Reddit app of her own now.' : "Charlie's Reddit app couldn't be set up from that code (it may have expired). A new one from developers.reddit.com/new will do it.");
+  const why = /couldn't read the setup code/.test(r.text) ? "Reddit couldn't read that code, so it was probably cut off when it was copied" : 'that code no longer works (they only work once, and not for long)';
+  bus.feed('system', ready ? 'Charlie has a Reddit app of her own now.' : `Charlie's Reddit app couldn't be set up: ${why}. A fresh code from developers.reddit.com/new, copied whole, will do it.`);
 }
 
 async function step(name, fn) {
