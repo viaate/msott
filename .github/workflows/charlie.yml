@@ -4,9 +4,10 @@
 name: Charlie
 
 on:
-  # Her heartbeat: GitHub checks on her every 15 minutes, forever.
+  # Her heartbeat: GitHub checks on her every 15 minutes, forever. Off the
+  # quarter hours, which are GitHub's busiest and where schedules get dropped.
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '7,22,37,52 * * * *'
   # …and right away whenever her code changes, so she starts on her own.
   push:
     branches: [main]
