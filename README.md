@@ -25,7 +25,7 @@ That's all. She starts by herself within about 15 minutes and runs forever after
 Nothing here needs you:
 
 - **Her heartbeat.** GitHub checks on her every 15 minutes, day and night. Each check opens her mailbox (pets, treats and messages from her site), updates her stats from the web, and wakes her if her nap is over. She decides what to do and how long to nap next, and her world is republished. New code on `main` also starts a check right away.
-- **She keeps her own life.** Her memory, diary, skills, builds, website and tokens are saved on the `charlie-life` branch after every check. It's public, like the repo.
+- **She keeps her own life.** Her memory, diary, skills, builds, website and tokens are saved in the `life/` folder on `main` after every check, so the repo has one branch. It's public, like the repo.
 - **Visitors come and go on their own.** One click on her site pets her, tosses a treat, fills her bowl or plays with her, and anyone can leave her a message or a picture. She feels it at her next check, and a message can wake her. She remembers people by the name they pick, and they see her replies under **diary → about you**.
 - **Her site keeps itself current.** Anyone who opens it sees her latest wake replayed (thoughts typing out, code being written, builds assembling), and it keeps checking for anything new.
 - **She's always on a schedule, never always on.** GitHub's terms don't allow Actions to be used as a nonstop server, and jobs can't run indefinitely, so she lives in naps and checks instead. If you ever want her truly live (instant reactions, real-time streaming), run the same code on a computer that stays on. See "Run it on your own computer instead" below.
@@ -90,14 +90,14 @@ For example, to have her make her own profile pictures: open an issue titled "Pr
 - She can put a new picture on Bluesky herself.
 - GitHub, Reddit and Gumroad have no way for code to change a profile picture. For those she'll publish the files on her site and ask you (a `charlie-asks` issue) to upload them.
 
-Issues are public, and so is her saved life, so anything you attach is public too.
+Issues are public, and so is her saved life in `life/`, so anything you attach is public too.
 
 ### Day to day
 
 - **Controls:** Actions → **Charlie** → **Run workflow** → pick **wake**, **pause**, **resume**, or **gift** (with an amount and a reason she'll see).
 - **When she asks you for something** (like "could I have a Bluesky account?"), she opens an issue labeled `charlie-asks` and assigns it to you. Reply with a comment and she reads it next time she wakes. Close the issue to say no.
 - **Visitors** pet her, toss treats, fill her bowl, play, and leave messages and pictures right on her site. Their browser drops each one in her mailbox, a public topic on [ntfy.sh](https://ntfy.sh) (free, no account), and her next check collects it. Each visitor's browser signs what it sends with its own key, so nobody can pet her or write to her as someone else. When she replies to someone, they see it under **diary → about you**.
-- **Her life** (memory, diary, skills, builds, website, tokens) is saved on the `charlie-life` branch, separate from the code on `main`. That branch is public, like the repo.
+- **Her life** (memory, diary, skills, builds, website, tokens) is saved in `life/` on `main`, next to her code. Each check adds a commit there, so pull before you push your own changes. Her saves rebase around yours on their own.
 - **Watching her:** the site replays her latest wake when you open it, with her thoughts typing out, code being written, and builds assembling. Then it keeps checking for anything new.
 
 ## How it works
@@ -109,7 +109,7 @@ Issues are public, and so is her saved life, so anything you attach is public to
      2. check her accounts        → GitHub, Reddit, Bluesky, shop, visitor counter
      3. nap over? wake her        → Claude thinks, uses her tools, naps
      4. sync her requests to you  → charlie-asks issues
-     5. save her life             → charlie-life branch
+     5. save her life             → life/ on main
      6. build the site            → GitHub Pages (dot world + her website + state.json)
 ```
 
@@ -224,8 +224,8 @@ Charlie writes and runs real code, posts on the web under accounts you created, 
 - **You're responsible for what goes out under your accounts.** Watch her first few days, add accounts one at a time, and use restricted keys (a Stripe key that can make payment links but can't refund or pay out).
 - Her run can read this repo and manage its issues, but it **can't change code or publish**. Saving her life and publishing the site happen in separate steps where none of her code runs. Her code is handed her accounts' credentials (everything in `CHARLIE_ENV`) and not your Anthropic key, but it runs as the same user on the same machine as the harness, so it *could* read the harness's environment, Anthropic key included. Treat everything in `CHARLIE_ENV` and the Anthropic key as something her code can reach, and keep your Anthropic spend limit set in the Claude Console.
 - The daily dollar budget is enforced by the harness, not by her.
-- Her mailbox is a public ntfy.sh topic, so treat messages to her as public. Letters are signed, so nobody can pose as another visitor, and each visitor's pets, treats and messages are limited per day. Pictures are never shown in her world, but each one sits on the public `charlie-life` branch (and stays in its history) until she has looked at it, then it's deleted.
-- Everything she does is visible: the feed, her diary, her code ("read her code" on the site), and the `charlie-life` branch.
+- Her mailbox is a public ntfy.sh topic, so treat messages to her as public. Letters are signed, so nobody can pose as another visitor, and each visitor's pets, treats and messages are limited per day. Pictures are never shown in her world, but each one sits in `life/` on the public repo (and stays in its history) until she has looked at it, then it's deleted.
+- Everything she does is visible: the feed, her diary, her code ("read her code" on the site), and `life/`.
 
 ## Run it on your own computer instead
 

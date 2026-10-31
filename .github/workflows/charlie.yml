@@ -1,6 +1,6 @@
 # Charlie lives here, fully on her own. Every 15 minutes (and whenever you
 # leave her a note or answer one of her requests) this checks on her, wakes her if her nap is over,
-# saves her life to the charlie-life branch, and publishes her world to Pages.
+# saves her life to life/ on main, and publishes her world to Pages.
 name: Charlie
 
 on:
@@ -55,8 +55,10 @@ jobs:
       deploy: ${{ steps.charlie.outputs.deploy }}
       summary: ${{ steps.charlie.outputs.summary }}
     steps:
+      # The newest main, with her life in life/ (a queued run's own commit could be older).
       - uses: actions/checkout@v7
         with:
+          ref: main
           persist-credentials: false
 
       - uses: actions/setup-node@v7
@@ -69,11 +71,6 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v6
         continue-on-error: true
-
-      - name: Bring back her life
-        run: bash scripts/life.sh pull
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: Restore her npm packages
         uses: actions/cache@v6
@@ -109,7 +106,6 @@ jobs:
           retention-days: 1
           path: |
             life
-            !life/.git
             !life/**/node_modules/**
             !life/home/.*
             !life/home/.*/**
@@ -119,7 +115,7 @@ jobs:
         with:
           path: _site
 
-  # Saves her life to the charlie-life branch. None of her code runs here.
+  # Saves her life to life/ on main. None of her code runs here.
   save:
     needs: live
     if: ${{ !cancelled() && needs.live.result != 'skipped' }}
@@ -129,8 +125,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: main
           persist-credentials: false
-          sparse-checkout: scripts
+          sparse-checkout: |
+            life
+            scripts
 
       - uses: actions/download-artifact@v8
         with:
@@ -138,10 +137,7 @@ jobs:
           path: incoming
 
       - name: Save her life
-        run: |
-          bash scripts/life.sh pull
-          bash scripts/life.sh replace incoming
-          bash scripts/life.sh push "${{ needs.live.outputs.summary || 'a tick' }}"
+        run: bash scripts/life.sh save incoming "${{ needs.live.outputs.summary || 'a tick' }}"
         env:
           GH_TOKEN: ${{ github.token }}
 
