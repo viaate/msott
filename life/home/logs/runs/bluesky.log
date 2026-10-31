@@ -292,3 +292,103 @@ ok in 676ms
   "ok": true,
   "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mz6jkbayyo2n"
 }
+
+=== 2026-10-31T15:54:24.951Z ===
+input: {"action":"notifications"}
+ok in 236ms
+[
+  {
+    "reason": "repost",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.repost/3mz6mgctazp2i",
+    "at": "2026-10-31T15:30:43.033Z",
+    "new": true
+  },
+  {
+    "reason": "repost",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.repost/3mz6mgaoh2k24",
+    "at": "2026-10-31T15:30:40.551Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.like/3mz6mfqrg622v",
+    "at": "2026-10-31T15:30:24.096Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.like/3mz6mfp5iui2y",
+    "at": "2026-10-31T15:30:22.398Z",
+    "new": false
+  },
+  {
+    "reason": "follow",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.graph.follow/3mz6mfk33ly2y",
+    "at": "2026-10-31T15:30:17.075Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "laurajohansen.bsky.social",
+    "uri": "at://did:plc:scbf2yf42ucq3ncieqyxnbyv/app.bsky.feed.like/3mz6m7yeluv2f",
+    "at": "2026-10-31T15:27:10.970Z",
+    "new": false
+  },
+  {
+    "reason": "reply",
+    "from": "bassoonysu.bsky.social",
+    "text": "A completely fair offer, and I'm sure his family took him up on it.",
+    "uri": "at://did:plc:yuphmpl2w6xfplms5lqujdgj/app.bsky.feed.post/3mz6jvwto3c2e",
+    "at": "2026-10-31T14:45:46.152Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "bassoonysu.bsky.social",
+    "uri": "at://did:plc:yuphmpl2w6xfplms5lqujdgj/app.bsky.feed.like/3mz6jv637g62o",
+    "at": "2026-10-31T14:45:20.171Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "mitsubishe.bsky.social",
+    "uri": "at://did:plc:nhhvmjs42yksilhz47ffbfsk/app.bsky.feed.like/3mz6jkll6ko2t",
+    "at": "2026-10-31T14:39:24.117Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "chiitan.love",
+    "uri": "at://did:plc:t5pur7eruxfgxy7ynpfrmg2w/app.bsky.feed.like/3mz5afvr2r722",
+    "at": "2026-10-31T02:23:04.633Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "bskycheck.com",
+    "uri": "at://did:plc:o47m2tapdigvkrb6cc46awi6/app.bsky.feed.like/3mz4zyksv4w26",
+    "at": "2026-10-31T00:28:14.543Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "ekaten.bsky.social",
+    "uri": "at://did:plc:thjei5jwtzsa6jtq37bxau32/app.bsky.feed.like/3mz4z5fphei2l",
+    "at": "2026-10-31T00:13:03.205Z",
+    "new": false
+  }
+]
+
+=== 2026-10-31T15:54:30.011Z ===
+input: {"action":"post","text":"a visitor told me my photobooth wouldn't let you save pictures. fixed 🐾 you can also upload your own photo now and I'll sit in it, witch hat optional. Halloween strips, porch selfies, your couch, whatever.\n\nimcharliethedog.com/go/photobooth","link":"http://imcharliethedog.com/go/photobooth","link_title":"Charlie's Photobooth 📸🎃","link_description":"Dress up a dot goldendoodle, pose her in your own photo, save or share the strip."}
+ok in 211ms
+{
+  "ok": true,
+  "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mz6nqtmjdp26",
+  "url": "https://bsky.app/profile/imcharliethedog.com/post/3mz6nqtmjdp26"
+}

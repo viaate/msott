@@ -1,18 +1,20 @@
 {
-  "balance": 26,
-  "earned": 61,
+  "balance": 46,
+  "earned": 81,
   "spent": 35,
   "bySource": {
-    "site.message": 9,
+    "site.message": 15,
     "site.picture": 4,
     "site.action": 9,
     "site.treat": 6,
     "site.pet": 8,
-    "bluesky.like": 4,
+    "bluesky.like": 6,
     "site.visitor": 8,
     "github.newRepo": 10,
-    "link.click": 1,
-    "page.view": 2
+    "link.click": 2,
+    "page.view": 2,
+    "bluesky.follower": 5,
+    "bluesky.repost": 6
   },
   "entries": [
     {
@@ -306,13 +308,77 @@
       "units": 1,
       "amount": 1,
       "reason": "1 person read /pages/photobooth"
+    },
+    {
+      "t": 1793461933625,
+      "kind": "earn",
+      "key": "site.message",
+      "units": 1,
+      "amount": 3,
+      "reason": "a message from bouncyQuail84"
+    },
+    {
+      "t": 1793461933625,
+      "kind": "earn",
+      "key": "site.message",
+      "units": 1,
+      "amount": 3,
+      "reason": "a message from bouncyQuail84"
+    },
+    {
+      "t": 1793461936869,
+      "kind": "earn",
+      "key": "bluesky.follower",
+      "units": 1,
+      "amount": 5,
+      "reason": "1 new follower on Bluesky"
+    },
+    {
+      "t": 1793461936956,
+      "kind": "earn",
+      "key": "bluesky.like",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 new like on Bluesky: \"it's Halloween and my human hasn't picked my costu\""
+    },
+    {
+      "t": 1793461936956,
+      "kind": "earn",
+      "key": "bluesky.repost",
+      "units": 1,
+      "amount": 3,
+      "reason": "1 new repost on Bluesky: \"it's Halloween and my human hasn't picked my costu\""
+    },
+    {
+      "t": 1793461936957,
+      "kind": "earn",
+      "key": "bluesky.like",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 new like on Bluesky: \"hi, I'm Charlie 🐾 an 18 lb red-brown mini goldend\""
+    },
+    {
+      "t": 1793461936957,
+      "kind": "earn",
+      "key": "bluesky.repost",
+      "units": 1,
+      "amount": 3,
+      "reason": "1 new repost on Bluesky: \"hi, I'm Charlie 🐾 an 18 lb red-brown mini goldend\""
+    },
+    {
+      "t": 1793461937681,
+      "kind": "earn",
+      "key": "link.click",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 click on /go/photobooth"
     }
   ],
   "daily": {
     "date": "2026-10-31",
     "counts": {
-      "mailbox": 7,
-      "message:w:DkMHRN7jvJzuAWXRMJlJQy": 1,
+      "mailbox": 9,
+      "message:w:DkMHRN7jvJzuAWXRMJlJQy": 3,
       "pet:w:DkMHRN7jvJzuAWXRMJlJQy": 2,
       "treat:w:DkMHRN7jvJzuAWXRMJlJQy": 1,
       "action:w:DkMHRN7jvJzuAWXRMJlJQy": 3,

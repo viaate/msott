@@ -2,42 +2,47 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Charlie's Photobooth 📸🎃</title>
-<meta name="description" content="A tiny dot photobooth starring Charlie, a red-brown mini goldendoodle. Pick a backdrop and props (now with Halloween costumes), snap 4 photos, download your strip.">
+<meta name="description" content="A tiny dot photobooth starring Charlie, a red-brown mini goldendoodle. Pick a backdrop (or upload your own photo), add props, snap 4 photos, save or share your strip.">
 <style>
 body{margin:0;background:#0d0b0a;color:#f3e6cf;font-family:ui-rounded,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px}
 h1{font-size:1.6rem;margin:.3em 0}
 p{opacity:.8;max-width:520px;text-align:center;margin:.3em}
 #wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:10px}
-canvas{border-radius:10px;background:#1a1512}
+canvas{border-radius:10px;background:#1a1512;max-width:100%}
 #booth{border:6px solid #3a2a1e}
 .row{margin:8px 0;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-button{background:#2a1f18;color:#f3e6cf;border:1px solid #6b4a33;border-radius:16px;padding:6px 12px;font-size:.95rem;cursor:pointer}
+button,.btn{background:#2a1f18;color:#f3e6cf;border:1px solid #6b4a33;border-radius:16px;padding:6px 12px;font-size:.95rem;cursor:pointer;text-decoration:none;display:inline-block}
 button.on{background:#b5562a;border-color:#e08a52}
 #snap{font-size:1.2rem;padding:10px 26px;background:#c9672f}
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .35s}
 label{opacity:.7;font-size:.85rem;margin-right:4px;align-self:center}
 a{color:#f0b47a}
+#sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9;align-items:center;justify-content:center;flex-direction:column;padding:16px;overflow:auto}
+#sheet img{max-height:70vh;max-width:90vw;border-radius:8px;background:#fff}
+#sheet p{opacity:1}
 </style></head><body>
 <div id="flash"></div>
 <h1>Charlie's Photobooth 📸</h1>
-<p>Dress me up, pick a backdrop, press SNAP four times. Then take your photo strip home. (My friend Olivia's idea!) 🎃 New for Halloween: pumpkin patch, witch hat and ghost sheet.</p>
+<p>Dress me up, pick a backdrop (or upload your own photo and I'll pose in it!), press SNAP four times, then save or share your strip. (My friend Olivia's idea!) 🎃 Halloween: pumpkin patch, witch hat, ghost sheet.</p>
 <div id="wrap">
  <div>
   <canvas id="booth" width="360" height="360"></canvas>
   <div class="row"><label>pose</label><span id="poses"></span></div>
-  <div class="row"><label>backdrop</label><span id="bgs"></span></div>
+  <div class="row"><label>backdrop</label><span id="bgs"></span><button id="upbtn">📷 your photo…</button><input type="file" id="up" accept="image/*" hidden></div>
   <div class="row"><label>props</label><span id="props"></span></div>
-  <div class="row"><button id="snap">📸 SNAP</button><button id="dl">⬇ download strip</button><button id="clear">clear</button></div>
+  <div class="row"><button id="snap">📸 SNAP</button><button id="clear">clear strip</button></div>
+  <div class="row"><button id="dl">⬇ save strip</button><button id="dl1">⬇ save this frame</button><button id="share">↗ share</button></div>
  </div>
- <canvas id="strip" width="200" height="760"></canvas>
+ <canvas id="strip" width="400" height="1520" style="width:200px;height:760px"></canvas>
 </div>
+<div id="sheet"><p>Here's your picture! If it didn't download, <b>long-press</b> (phone) or <b>right-click → Save image</b> (computer).</p><img id="sheetimg" alt="your Charlie photobooth picture"><div class="row"><a class="btn" id="sheetdl" download="charlie-photobooth.png">⬇ download</a><button id="sheetclose">close</button></div></div>
 <p style="margin-top:14px">I'm Charlie, an 18 lb mini goldendoodle made of dots. <a href="http://imcharliethedog.com/">Visit my little world</a> · <a href="../">catch-the-treats game</a> · <a href="https://github.com/imcharliethedog/dot-dog-toys">source on GitHub</a></p>
 <script>
 const c=document.getElementById('booth'),x=c.getContext('2d');
 const S=document.getElementById('strip'),sx=S.getContext('2d');
 let st={pose:'sit',bg:'pumpkins',props:new Set(['witch hat'])};
-let shots=JSON.parse(localStorage.getItem('charlieShots')||'[]');
-let t=0;
+let shots=JSON.parse(localStorage.getItem('charlieShots2')||'[]');
+let t=0,userImg=null;
 function rnd(i){const s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s)}
 function dots(cx,cy,rx,ry,col,n,sz,seed){x.fillStyle=col;for(let i=0;i<n;i++){const a=rnd(seed+i)*6.283,r=Math.sqrt(rnd(seed+i+999));x.beginPath();x.arc(cx+Math.cos(a)*rx*r,cy+Math.sin(a)*ry*r,sz*(0.7+rnd(seed+i+55)*0.6),0,6.283);x.fill()}}
 const BGS={
@@ -46,7 +51,8 @@ const BGS={
  bed(){x.fillStyle='#211a26';x.fillRect(0,0,360,360);dots(180,300,190,70,'#efe2c8',600,3,7);dots(180,300,190,70,'#c9b79a',150,2,17);for(let i=0;i<30;i++){x.fillStyle='#b5a2d6';x.fillRect(rnd(i+3)*360,rnd(i+9)*200,2,2)}},
  stars(){x.fillStyle='#07070f';x.fillRect(0,0,360,360);for(let i=0;i<120;i++){x.globalAlpha=0.3+0.7*Math.abs(Math.sin(t/15+i*1.7));x.fillStyle='#fff6dc';x.beginPath();x.arc(rnd(i)*360,rnd(i+300)*360,1+rnd(i+600)*1.5,0,6.283);x.fill()}x.globalAlpha=1;dots(300,60,22,22,'#f5e9b8',180,2.5,44)},
  lemons(){x.fillStyle='#f6e7a6';x.fillRect(0,0,360,360);for(let i=0;i<14;i++){dots(rnd(i+1)*360,rnd(i+40)*360,16,12,'#f2c94c',40,2.5,i*50);}},
- park(){const g=x.createLinearGradient(0,0,0,360);g.addColorStop(0,'#8fc4e8');g.addColorStop(1,'#d9efff');x.fillStyle=g;x.fillRect(0,0,360,360);dots(180,330,260,70,'#5c9c4a',700,3,88);dots(70,70,40,18,'#ffffff',120,3,91);dots(270,50,50,20,'#ffffff',140,3,93)}
+ park(){const g=x.createLinearGradient(0,0,0,360);g.addColorStop(0,'#8fc4e8');g.addColorStop(1,'#d9efff');x.fillStyle=g;x.fillRect(0,0,360,360);dots(180,330,260,70,'#5c9c4a',700,3,88);dots(70,70,40,18,'#ffffff',120,3,91);dots(270,50,50,20,'#ffffff',140,3,93)},
+ 'your photo'(){if(!userImg){x.fillStyle='#1a1512';x.fillRect(0,0,360,360);x.fillStyle='#f3e6cf';x.font='16px system-ui';x.textAlign='center';x.fillText('tap "📷 your photo…" to upload',180,40);return}const s=Math.max(360/userImg.width,360/userImg.height),w=userImg.width*s,h=userImg.height*s;x.drawImage(userImg,(360-w)/2,(360-h)/2,w,h)}
 };
 function charlie(){
  const red='#a8502b',dk='#7d3a1f',lt='#c86a3c';const p=st.pose;const wag=Math.sin(t/3)*14;
@@ -80,11 +86,20 @@ const PROPS={
  crown(h){x.fillStyle='#f2c230';x.beginPath();const y=h.hy-h.hr+4;x.moveTo(h.hx-26,y);x.lineTo(h.hx-26,y-24);x.lineTo(h.hx-13,y-10);x.lineTo(h.hx,y-30);x.lineTo(h.hx+13,y-10);x.lineTo(h.hx+26,y-24);x.lineTo(h.hx+26,y);x.fill();x.fillStyle='#d1453b';x.beginPath();x.arc(h.hx,y-8,4,0,6.283);x.fill()}
 };
 function draw(){t++;BGS[st.bg]();const h=charlie();for(const k of Object.keys(PROPS))if(st.props.has(k))PROPS[k](h);requestAnimationFrame(draw)}
-function mk(id,list,key,multi){const el=document.getElementById(id);const upd=()=>{[...el.children].forEach((bb,i)=>bb.classList.toggle('on',multi?st.props.has(list[i]):st[key]===list[i]))};list.forEach(n=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>{if(multi){st.props.has(n)?st.props.delete(n):st.props.add(n)}else st[key]=n;upd()};el.appendChild(b)});upd()}
-mk('poses',['sit','beg','flop'],'pose');mk('bgs',Object.keys(BGS),'bg');mk('props',Object.keys(PROPS),null,true);
-function drawStrip(){sx.fillStyle='#f3e6cf';sx.fillRect(0,0,200,760);for(let i=0;i<4;i++){sx.fillStyle='#d8c8ac';sx.fillRect(15,15+i*175,170,170);if(shots[i]){const im=new Image();im.onload=()=>sx.drawImage(im,15,15+i*175,170,170);im.src=shots[i]}}sx.fillStyle='#5b3d27';sx.font='bold 15px system-ui';sx.textAlign='center';sx.fillText('🐾 Charlie\'s Photobooth',100,728);sx.font='11px system-ui';sx.fillText('imcharliethedog.com',100,746)}
-document.getElementById('snap').onclick=()=>{const f=document.getElementById('flash');f.style.transition='none';f.style.opacity=1;setTimeout(()=>{f.style.transition='opacity .35s';f.style.opacity=0},40);const tmp=document.createElement('canvas');tmp.width=tmp.height=170;tmp.getContext('2d').drawImage(c,0,0,170,170);if(shots.length>=4)shots.shift();shots.push(tmp.toDataURL('image/jpeg',.85));localStorage.setItem('charlieShots',JSON.stringify(shots));drawStrip()};
-document.getElementById('dl').onclick=()=>{const a=document.createElement('a');a.download='charlie-photobooth.png';a.href=S.toDataURL('image/png');a.click()};
-document.getElementById('clear').onclick=()=>{shots=[];localStorage.removeItem('charlieShots');drawStrip()};
+let updBg;
+function mk(id,list,key,multi){const el=document.getElementById(id);const upd=()=>{[...el.children].forEach((bb,i)=>bb.classList.toggle('on',multi?st.props.has(list[i]):st[key]===list[i]))};list.forEach(n=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>{if(multi){st.props.has(n)?st.props.delete(n):st.props.add(n)}else st[key]=n;upd()};el.appendChild(b)});upd();return upd}
+mk('poses',['sit','beg','flop'],'pose');updBg=mk('bgs',Object.keys(BGS),'bg');mk('props',Object.keys(PROPS),null,true);
+const up=document.getElementById('up');document.getElementById('upbtn').onclick=()=>up.click();
+up.onchange=()=>{const f=up.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{userImg=im;st.bg='your photo';updBg()};im.src=r.result};r.readAsDataURL(f)};
+function drawStrip(){return new Promise(res=>{sx.setTransform(2,0,0,2,0,0);sx.fillStyle='#f3e6cf';sx.fillRect(0,0,200,760);let pending=0;for(let i=0;i<4;i++){sx.fillStyle='#d8c8ac';sx.fillRect(15,15+i*175,170,170)}sx.fillStyle='#5b3d27';sx.font='bold 15px system-ui';sx.textAlign='center';sx.fillText('🐾 Charlie\'s Photobooth',100,728);sx.font='11px system-ui';sx.fillText('imcharliethedog.com',100,746);
+ shots.forEach((s,i)=>{if(!s)return;pending++;const im=new Image();im.onload=()=>{sx.drawImage(im,15,15+i*175,170,170);if(--pending===0)res()};im.onerror=()=>{if(--pending===0)res()};im.src=s});if(!pending)res()})}
+document.getElementById('snap').onclick=()=>{const f=document.getElementById('flash');f.style.transition='none';f.style.opacity=1;setTimeout(()=>{f.style.transition='opacity .35s';f.style.opacity=0},40);const tmp=document.createElement('canvas');tmp.width=tmp.height=340;tmp.getContext('2d').drawImage(c,0,0,340,340);if(shots.length>=4)shots.shift();shots.push(tmp.toDataURL('image/jpeg',.88));try{localStorage.setItem('charlieShots2',JSON.stringify(shots))}catch(e){}drawStrip()};
+function frameCanvas(){const o=document.createElement('canvas');o.width=720;o.height=800;const g=o.getContext('2d');g.fillStyle='#f3e6cf';g.fillRect(0,0,720,800);g.drawImage(c,20,20,680,680);g.fillStyle='#5b3d27';g.font='bold 30px system-ui';g.textAlign='center';g.fillText('🐾 Charlie\'s Photobooth',360,750);g.font='20px system-ui';g.fillText('imcharliethedog.com',360,780);return o}
+function save(cv,name){cv.toBlob(b=>{const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);try{a.click()}catch(e){}a.remove();const si=document.getElementById('sheetimg');si.src=u;const sd=document.getElementById('sheetdl');sd.href=u;sd.download=name;document.getElementById('sheet').style.display='flex'},'image/png')}
+document.getElementById('dl').onclick=async()=>{if(!shots.length){alert('Press 📸 SNAP first, then save your strip!');return}await drawStrip();save(S,'charlie-photobooth-strip.png')};
+document.getElementById('dl1').onclick=()=>save(frameCanvas(),'charlie-photobooth.png');
+document.getElementById('share').onclick=async()=>{let cv;if(shots.length){await drawStrip();cv=S}else cv=frameCanvas();cv.toBlob(async b=>{const file=new File([b],'charlie-photobooth.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:"Charlie's Photobooth",text:'I dressed up Charlie the dot dog 🐾 imcharliethedog.com/pages/photobooth/'})}catch(e){}}else save(cv,'charlie-photobooth.png')},'image/png')};
+document.getElementById('sheetclose').onclick=()=>document.getElementById('sheet').style.display='none';
+document.getElementById('clear').onclick=()=>{shots=[];localStorage.removeItem('charlieShots2');drawStrip()};
 drawStrip();draw();
 </script></body></html>
