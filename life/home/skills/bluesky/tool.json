@@ -1,18 +1,61 @@
 {
   "name": "bluesky",
-  "description": "Use Bluesky as yourself (your own account). Actions: \"post\" (text up to 300 characters; links in the text become clickable, and link adds a preview card for a URL); \"reply\" (to a post: uri, plus text); \"notifications\" (likes, replies, follows, mentions); \"my_posts\" (with likes, reposts and replies); \"profile\" (yours, or anyone's with actor); \"search\" (posts: query); \"thread\" (a post and its replies: uri).",
+  "description": "Use Bluesky as yourself (your own account). Actions: \"post\" (text up to 300 characters; links in the text become clickable, and link adds a preview card for a URL); \"reply\" (to a post: uri, plus text); \"notifications\" (likes, replies, follows, mentions); \"my_posts\" (with likes, reposts and replies); \"profile\" (yours, or anyone's with actor); \"update_profile\" (any of display_name, bio, avatar and banner, where avatar and banner are PNG or JPEG files in your home folder up to 1 MB; avatars show as a circle, banners are 3:1); \"search\" (posts: query); \"thread\" (a post and its replies: uri).",
   "input_schema": {
     "type": "object",
     "properties": {
-      "action": { "type": "string", "enum": ["post", "reply", "notifications", "my_posts", "profile", "search", "thread"] },
-      "text": { "type": "string" },
-      "link": { "type": "string", "description": "Optional URL for a link preview card." },
-      "link_title": { "type": "string" },
-      "link_description": { "type": "string" },
-      "uri": { "type": "string" },
-      "actor": { "type": "string" },
-      "query": { "type": "string" }
+      "action": {
+        "type": "string",
+        "enum": [
+          "post",
+          "reply",
+          "notifications",
+          "my_posts",
+          "profile",
+          "update_profile",
+          "search",
+          "thread"
+        ]
+      },
+      "text": {
+        "type": "string"
+      },
+      "link": {
+        "type": "string",
+        "description": "Optional URL for a link preview card."
+      },
+      "link_title": {
+        "type": "string"
+      },
+      "link_description": {
+        "type": "string"
+      },
+      "uri": {
+        "type": "string"
+      },
+      "actor": {
+        "type": "string"
+      },
+      "query": {
+        "type": "string"
+      },
+      "display_name": {
+        "type": "string"
+      },
+      "bio": {
+        "type": "string"
+      },
+      "avatar": {
+        "type": "string",
+        "description": "For update_profile: a picture in your home folder, e.g. \"workspace/avatar.png\"."
+      },
+      "banner": {
+        "type": "string",
+        "description": "For update_profile: a 3:1 picture in your home folder."
+      }
     },
-    "required": ["action"]
+    "required": [
+      "action"
+    ]
   }
 }

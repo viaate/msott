@@ -100,6 +100,17 @@ function listFiles(dir, base = dir, out = []) {
 
 export const _sealing = { seal, unseal, stash, SEALED, PLAIN };
 
+// Reddit's code is one long base64 string, but what gets pasted may be the
+// whole command Reddit showed ("npx devvit@latest init <code>"), quoted, or
+// wrapped onto several lines.
+export function setupCode(raw) {
+  const text = String(raw ?? '').replace(/--code[= ]/g, ' ').replace(/[`'"]/g, ' ').trim();
+  const b64 = (t) => /^[A-Za-z0-9+/_-]+={0,2}$/.test(t);
+  const lines = text.split(/\s*\n\s*/);
+  if (lines.length > 1 && !/[ \t]/.test(lines.join('')) && lines.every(b64)) return lines.join('');
+  return text.split(/\s+/).filter((t) => b64(t) && t.length >= 16).sort((a, b) => b.length - a.length)[0] ?? text;
+}
+
 export default async function run(input) {
   if (!env.CHARLIE_DEVVIT_CODE) throw new Error('No Devvit setup code yet (CHARLIE_DEVVIT_CODE). Ask your human for one.');
   fs.mkdirSync(ROOT, { recursive: true });
@@ -107,11 +118,18 @@ export default async function run(input) {
 
   if (input.action === 'setup') {
     if (dir) return `Your app is already set up at ${path.relative(HOME, dir)}.`;
-    const args = ['new', env.CHARLIE_DEVVIT_CODE];
+    const args = ['init', setupCode(env.CHARLIE_DEVVIT_CODE)];
     if (input.template) args.push(`--template=${input.template}`);
     const r = await devvit(args, ROOT);
     dir = project();
-    if (!dir) return `Setup didn't finish:\n${r.out}\n\n(If the code was already used, ask your human for a new one from https://developers.reddit.com/new.)`;
+    if (!dir) {
+      const why = /Invalid code provided/.test(r.out)
+        ? "Reddit couldn't read the setup code at all, so it was probably cut off or mangled when it was copied."
+        : /Failed to login|No auth code/.test(r.out)
+          ? 'Reddit read the setup code but it no longer works (it was already used, or it expired).'
+          : "Here's what Devvit said.";
+      return `Setup didn't finish. ${why}\n${r.out}\n\n(Ask your human for a new code from https://developers.reddit.com/new, copied whole.)`;
+    }
     fs.rmSync(path.join(dir, '.git'), { recursive: true, force: true });
     return `Set up your app in ${path.relative(HOME, dir)}.\n${r.out.slice(-2000)}\n\nFiles:\n${listFiles(dir).join('\n')}`;
   }

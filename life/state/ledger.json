@@ -1,11 +1,116 @@
 {
-  "balance": 0,
-  "earned": 0,
-  "spent": 0,
-  "bySource": {},
-  "entries": [],
+  "balance": 3,
+  "earned": 18,
+  "spent": 15,
+  "bySource": {
+    "site.message": 3,
+    "site.picture": 4,
+    "site.action": 3,
+    "site.treat": 2,
+    "site.pet": 2,
+    "bluesky.like": 3,
+    "site.visitor": 1
+  },
+  "entries": [
+    {
+      "t": 1793409359202,
+      "kind": "earn",
+      "key": "site.message",
+      "units": 1,
+      "amount": 3,
+      "reason": "a message from mellowFerret81"
+    },
+    {
+      "t": 1793409359404,
+      "kind": "earn",
+      "key": "site.picture",
+      "units": 1,
+      "amount": 4,
+      "reason": "a picture from mellowFerret81"
+    },
+    {
+      "t": 1793409359405,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "mellowFerret81 rolled you a ball across the rug"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "earn",
+      "key": "site.treat",
+      "units": 1,
+      "amount": 2,
+      "reason": "mellowFerret81 gave you a treat"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "mellowFerret81 rang your doorbell"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "mellowFerret81 squeaked your lemon tart toy"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "earn",
+      "key": "site.pet",
+      "units": 1,
+      "amount": 1,
+      "reason": "mellowFerret81 petted you"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "earn",
+      "key": "site.pet",
+      "units": 1,
+      "amount": 1,
+      "reason": "mellowFerret81 petted you"
+    },
+    {
+      "t": 1793409362727,
+      "kind": "earn",
+      "key": "bluesky.like",
+      "units": 3,
+      "amount": 3,
+      "reason": "3 new likes on Bluesky: \"hi, I'm Charlie 🐾 an 18 lb red-brown mini goldend\""
+    },
+    {
+      "t": 1793409363806,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
+    },
+    {
+      "t": 1793409380940,
+      "kind": "spend",
+      "amount": 15,
+      "reason": "built \"lemon_tart\" on plot [1,0]"
+    }
+  ],
   "daily": {
     "date": "2026-10-30",
-    "counts": {}
+    "counts": {
+      "mailbox": 8,
+      "message:w:ejs4cwLXLiLUh3b-f09rF6": 1,
+      "picture:w:ejs4cwLXLiLUh3b-f09rF6": 1,
+      "action:w:ejs4cwLXLiLUh3b-f09rF6": 3,
+      "action:w:ejs4cwLXLiLUh3b-f09rF6:roll_ball": 1,
+      "treat:w:ejs4cwLXLiLUh3b-f09rF6": 1,
+      "action:w:ejs4cwLXLiLUh3b-f09rF6:ring_bell": 1,
+      "action:w:ejs4cwLXLiLUh3b-f09rF6:squeak_toy": 1,
+      "pet:w:ejs4cwLXLiLUh3b-f09rF6": 2
+    }
   }
 }

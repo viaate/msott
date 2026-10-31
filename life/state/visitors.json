@@ -1,6 +1,71 @@
 {
   "seq": 0,
-  "byToken": {},
-  "events": [],
+  "byToken": {
+    "w:ejs4cwLXLiLUh3b-f09rF6": {
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6",
+      "name": "mellowFerret81",
+      "web": true,
+      "firstSeen": 1793409359202,
+      "lastSeen": 1793409359406,
+      "visits": 1,
+      "notes": "My very first visitor (Oct 30 2026). Rolled the ball, gave a treat, rang the doorbell, squeaked my lemon tart, petted me twice, asked how I was, and sent a cheerful thumbs-up picture.",
+      "replies": [
+        {
+          "t": 1793409370157,
+          "text": "Hi mellowFerret81! I'm doing great, thanks to you: ball, treat, doorbell AND my lemon tart? Best welcome ever. Love the big thumbs up 👍🐾"
+        }
+      ]
+    }
+  },
+  "events": [
+    {
+      "t": 1793409359202,
+      "kind": "arrive",
+      "name": "mellowFerret81",
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6"
+    },
+    {
+      "t": 1793409359405,
+      "kind": "action",
+      "name": "mellowFerret81",
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6",
+      "action": "roll_ball",
+      "label": "rolled you a ball across the rug"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "treat",
+      "name": "mellowFerret81",
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "action",
+      "name": "mellowFerret81",
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6",
+      "action": "ring_bell",
+      "label": "rang your doorbell"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "action",
+      "name": "mellowFerret81",
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6",
+      "action": "squeak_toy",
+      "label": "squeaked your lemon tart toy"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "pet",
+      "name": "mellowFerret81",
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6"
+    },
+    {
+      "t": 1793409359406,
+      "kind": "pet",
+      "name": "mellowFerret81",
+      "id": "w:ejs4cwLXLiLUh3b-f09rF6"
+    }
+  ],
   "outbox": []
 }

@@ -1,16 +1,40 @@
 // Charlie on Bluesky, with an app password on her own account.
+import fs from 'node:fs';
+import path from 'node:path';
+
 const PDS = 'https://bsky.social/xrpc';
 const env = process.env;
 
-async function session() {
+async function login(identifier) {
   const res = await fetch(`${PDS}/com.atproto.server.createSession`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ identifier: env.CHARLIE_BLUESKY_HANDLE.replace(/^@/, ''), password: env.CHARLIE_BLUESKY_APP_PASSWORD }),
+    body: JSON.stringify({ identifier, password: env.CHARLIE_BLUESKY_APP_PASSWORD }),
   });
-  const j = await res.json();
+  return res.json();
+}
+
+// Her handle can change (to her own domain, say); her DID never does.
+async function session() {
+  let j = await login(env.CHARLIE_BLUESKY_HANDLE.replace(/^@/, ''));
+  if (!j.accessJwt && env.CHARLIE_BLUESKY_DID) j = await login(env.CHARLIE_BLUESKY_DID);
   if (!j.accessJwt) throw new Error(`Bluesky login failed: ${JSON.stringify(j)}`);
   return j;
+}
+
+// An image file from her home, uploaded for use in her profile.
+async function blob(s, file) {
+  const home = path.resolve(env.HOME);
+  const full = path.resolve(home, file);
+  if (path.relative(home, full).startsWith('..')) throw new Error('Pictures have to be in your home folder.');
+  const buf = fs.readFileSync(full);
+  const type = buf[0] === 0x89 && buf[1] === 0x50 ? 'image/png' : buf[0] === 0xff && buf[1] === 0xd8 ? 'image/jpeg' : null;
+  if (!type) throw new Error(`${file} needs to be a PNG or JPEG.`);
+  if (buf.length > 1_000_000) throw new Error(`${file} is ${buf.length} bytes; Bluesky takes up to 1,000,000. Make it smaller first.`);
+  const res = await fetch(`${PDS}/com.atproto.repo.uploadBlob`, { method: 'POST', headers: { authorization: `Bearer ${s.accessJwt}`, 'content-type': type }, body: buf });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`Bluesky upload → ${res.status}: ${JSON.stringify(j).slice(0, 300)}`);
+  return j.blob;
 }
 
 async function xrpc(s, method, { params, body } = {}) {
@@ -68,6 +92,19 @@ export default async function run(input) {
     case 'profile': {
       const p = await xrpc(s, 'app.bsky.actor.getProfile', { params: { actor: input.actor || s.did } });
       return { handle: p.handle, name: p.displayName, bio: p.description, followers: p.followersCount, following: p.followsCount, posts: p.postsCount };
+    }
+    case 'update_profile': {
+      let current = { value: {} };
+      try {
+        current = await xrpc(s, 'com.atproto.repo.getRecord', { params: { repo: s.did, collection: 'app.bsky.actor.profile', rkey: 'self' } });
+      } catch {}
+      const record = { ...current.value, $type: 'app.bsky.actor.profile' };
+      if (input.display_name !== undefined) record.displayName = input.display_name;
+      if (input.bio !== undefined) record.description = input.bio;
+      if (input.avatar) record.avatar = await blob(s, input.avatar);
+      if (input.banner) record.banner = await blob(s, input.banner);
+      await xrpc(s, 'com.atproto.repo.putRecord', { body: { repo: s.did, collection: 'app.bsky.actor.profile', rkey: 'self', record, ...(current.cid ? { swapRecord: current.cid } : {}) } });
+      return { ok: true, url: `https://bsky.app/profile/${s.handle}`, changed: ['display_name', 'bio', 'avatar', 'banner'].filter((k) => input[k] !== undefined) };
     }
     case 'search':
       return (await xrpc(s, 'app.bsky.feed.searchPosts', { params: { q: input.query, limit: 20 } })).posts.map(brief);

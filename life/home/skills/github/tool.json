@@ -1,14 +1,35 @@
 {
   "name": "github",
-  "description": "Use the GitHub REST API as yourself, through your own GitHub account. With it you can create repos, write and update files, publish GitHub Pages sites, open and answer issues, read what people say about your work, check your stats, and do anything else the API allows. Give an HTTP method, a path such as /user/repos, and an optional JSON body. To create or update a file: PUT /repos/{owner}/{repo}/contents/{path} with body {\"message\": \"...\", \"content_text\": \"<the file's text>\"}. content_text is base64-encoded for you; when updating an existing file, include its current \"sha\". Noisy *_url fields are trimmed from responses unless raw is true.",
+  "description": "Use the GitHub REST API as yourself, through your own GitHub account. With it you can create repos, write and update files, publish GitHub Pages sites, open and answer issues, read what people say about your work, check your stats, and do anything else the API allows. Give an HTTP method, a path such as /user/repos, and an optional JSON body. To create or update a file: PUT /repos/{owner}/{repo}/contents/{path} with body {\"message\": \"...\", \"content_text\": \"<the file's text>\"}. content_text is base64-encoded for you; when updating an existing file, include its current \"sha\". Noisy *_url fields are trimmed from responses unless raw is true. (GitHub has no API for changing your profile picture; ask your human for that.)",
   "input_schema": {
     "type": "object",
     "properties": {
-      "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"], "description": "HTTP method (default GET)." },
-      "path": { "type": "string", "description": "API path starting with /, including any query string, e.g. /user/repos?per_page=100" },
-      "body": { "type": "object", "description": "JSON body for POST/PUT/PATCH." },
-      "raw": { "type": "boolean", "description": "Return the response untrimmed." }
+      "method": {
+        "type": "string",
+        "enum": [
+          "GET",
+          "POST",
+          "PUT",
+          "PATCH",
+          "DELETE"
+        ],
+        "description": "HTTP method (default GET)."
+      },
+      "path": {
+        "type": "string",
+        "description": "API path starting with /, including any query string, e.g. /user/repos?per_page=100"
+      },
+      "body": {
+        "type": "object",
+        "description": "JSON body for POST/PUT/PATCH."
+      },
+      "raw": {
+        "type": "boolean",
+        "description": "Return the response untrimmed."
+      }
     },
-    "required": ["path"]
+    "required": [
+      "path"
+    ]
   }
 }
