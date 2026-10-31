@@ -5,6 +5,7 @@ import { buildHouse, PLACES, DOOR_IN, DOOR_OUT, HALF } from './house.js';
 import { Charlie } from './charlie.js';
 import { Particles } from './fx.js';
 import { WorldView } from './world.js';
+import { planAt, isNight, rand } from './life.js';
 import { buildSky } from './sky.js';
 import { Minimap } from './minimap.js';
 import { UI } from './ui.js';
@@ -99,7 +100,7 @@ resize();
 // centered in what they leave free: between the ones along the top and the
 // bottom, and on a phone turned sideways, between the columns at either side.
 const free = { top: 0, bottom: 0, left: 0, right: 0, at: -Infinity };
-const EDGES = ['.brand h1', '.status', '#feelings', '#tokens', '#mind', '.center-dock', '.actions'];
+const EDGES = ['.brand h1', '.status', '#feelings', '#tokens', '#mind', '.controls', '.center-dock', '.actions'];
 const sideways = matchMedia('(orientation: landscape) and (max-width: 1020px), (orientation: landscape) and (max-height: 500px)');
 window.addEventListener('resize', () => Object.assign(free, { top: NaN, at: -Infinity }));
 
@@ -129,7 +130,7 @@ function measureFree(now) {
     if (sideways.matches) {
       // Her thoughts run down the left, and the controls down the right.
       left = rect('#mind')?.right ?? 0;
-      right = w - Math.min(rect('.center-dock')?.left ?? w, rect('.actions')?.left ?? w);
+      right = w - Math.min(...['.controls', '.center-dock', '.actions'].map((sel) => rect(sel)?.left ?? w));
     }
     [top, bottom] = squeeze(top, bottom, h);
     [left, right] = squeeze(left, right, w);
@@ -210,9 +211,10 @@ function placeFor(name) {
   }
   const obj = world?.objects.get(name);
   if (!obj) return null;
-  const c = world.plotCenter(obj.meta.plot);
+  // Just in front of it, on the side facing her house.
+  const c = world.spotCenter(obj.meta);
   const dir = new THREE.Vector3(-c.x, 0, -c.z).normalize();
-  const p = c.clone().addScaledVector(dir, world.plotSize / 2 - 0.6);
+  const p = c.clone().addScaledVector(dir, Math.min(world.plotSize / 2 - 0.6, (world.plotSize / 2) * world.spotScale(obj.meta) + 0.4));
   return { x: p.x, z: p.z, face: Math.atan2(c.z - p.z, c.x - p.x) };
 }
 
@@ -224,46 +226,158 @@ function placePoint(name, y = 0.4) {
   if (name === 'door') return new THREE.Vector3(-5.9, 4.5, 2.6);
   if (name === 'rug') return new THREE.Vector3(1.3, y, 1.9);
   const obj = world?.objects.get(name);
-  return obj ? world.plotCenter(obj.meta.plot).setY(1.5) : null;
+  return obj ? world.spotCenter(obj.meta).setY(1.5) : null;
 }
 
 let currentPlace = 'bed';
-function goTo(name, then) {
+function goTo(name, then, speed) {
   const place = placeFor(name);
   if (!place) return;
   currentPlace = name;
   charlie.walkTo(route(place), () => {
     if (place.face != null) charlie.heading = place.face;
     then?.();
-  });
+  }, speed);
+}
+
+function goToPoint(p, then, speed) {
+  currentPlace = null;
+  charlie.walkTo(route(p), then, speed);
+}
+
+function faceCamera() {
+  const c = cam().position;
+  charlie.heading = Math.atan2(c.z - charlie.pos.z, c.x - charlie.pos.x);
 }
 
 // ---------------------------------------------------------------- her body
-// The server says where she is and what she's doing; this only decides how
-// that looks. It never moves her anywhere she didn't choose to go.
+// While she's awake and thinking, the server says where she goes and what
+// she's doing, and this only decides how that looks. Between her thoughts her
+// body lives on its own (see life.js): her habits by day, her bed at night,
+// and whatever a visitor gets her excited about.
 const B = { status: 'sleeping', activity: 'sleeping', paused: false, location: 'bed', poseAt: 0, fxT: 0 };
+const L = { ready: false, plan: null, busyUntil: 0, wanderAt: 0 };
 
-function asleep() {
-  return B.status !== 'awake' || B.paused;
+function thinking() {
+  return B.status === 'awake' && !B.paused;
 }
 
 function settle() {
-  if (asleep()) return charlie.setPose(currentPlace === 'bed' ? 'sleep' : 'sploot');
+  if (!thinking()) return charlie.setPose(L.plan?.pose ?? 'sleep');
   if (B.activity === 'coding') return charlie.setPose('sploot');
   if (B.activity === 'skill' || B.activity === 'waking' || B.activity === 'browsing') return charlie.setPose('stand');
   charlie.setPose('sit');
 }
 
 function applyActivity() {
-  if (asleep() && currentPlace !== 'bed') return goTo('bed', settle);
+  // Her mind just went to rest: her body picks up its own day from here.
+  if (!thinking()) {
+    L.plan = null;
+    return;
+  }
+  ui.setBody(null);
   if (B.activity === 'waking') charlie.wiggle(0.4);
   if (!charlie.walking) settle();
 }
 
 function idlePoses(now) {
-  if (asleep() || charlie.walking || B.activity !== 'thinking' || now < B.poseAt) return;
+  if (!thinking() || charlie.walking || B.activity !== 'thinking' || now < B.poseAt) return;
   B.poseAt = now + 12000 + Math.random() * 14000;
   charlie.setPose(['sit', 'sit', 'stand', 'sploot'][Math.floor(Math.random() * 4)]);
+}
+
+function lifePlan(t) {
+  if (isNight(ui.state?.tz, t)) return { key: 'night', place: 'bed', doing: 'asleep for the night', pose: 'sleep' };
+  return planAt(t, {
+    habits: ui.state?.charlie?.habits ?? [],
+    builds: world ? [...world.objects.values()].map((o) => o.meta).filter((m) => m.status === 'ok') : [],
+    energy: ui.state?.feelings?.values?.energy ?? 70,
+    canGo: (place) => Boolean(placeFor(place)),
+  });
+}
+
+function live(now) {
+  if (!L.ready || thinking() || now < L.busyUntil) return;
+  const plan = lifePlan(Date.now());
+  if (!plan) return;
+  if (L.plan?.key !== plan.key) {
+    L.plan = plan;
+    ui.setBody(plan.doing);
+    charlie.setPose(plan.pose);
+    goTo(plan.place, () => {
+      settle();
+      L.wanderAt = performance.now() + 4000;
+    }, plan.wander ? 1.4 : 2.3);
+    return;
+  }
+  // Sniffing about: a few slow steps here and there around the spot.
+  if (plan.wander && !charlie.walking && now > L.wanderAt) {
+    const home = placeFor(plan.place);
+    const r = rand(plan.seed + Math.floor(now / 6000));
+    const p = { x: home.x + (r() - 0.5) * 3, z: home.z + (r() - 0.5) * 3 };
+    if (inside(home) === inside(p)) charlie.walkTo([p], settle, 1.2);
+    L.wanderAt = now + 5000 + r() * 4000;
+  }
+}
+
+// Something got her attention: she's on it right away, for a little while.
+function busy(doing, pose, ms) {
+  L.busyUntil = performance.now() + ms;
+  L.plan = { key: `busy|${doing}`, doing, pose };
+  ui.setBody(doing);
+  charlie.setPose(pose);
+}
+
+const REACTIONS = {
+  fill_bowl: { place: 'bowl', doing: 'eating from her bowl', pose: 'sniff' },
+  squeak_toy: { place: 'toy', doing: 'pouncing on her squeaky lemon tart', pose: 'play' },
+  tap_window: { place: 'window', doing: 'peering out the window', pose: 'sit' },
+  ring_bell: { place: 'door', doing: 'answering the door', pose: 'stand', bark: 'woof!' },
+  fluff_bed: { place: 'bed', doing: 'flopping onto her fluffed blanket', pose: 'sploot' },
+};
+
+function react(a) {
+  if (thinking()) return;
+  if (a.id === 'roll_ball') {
+    // The ball rolls off somewhere near her, and she's after it.
+    const indoors = inside(charlie.pos);
+    const to = indoors
+      ? new THREE.Vector3((Math.random() - 0.5) * 8, 0.2, (Math.random() - 0.5) * 8)
+      : charlie.pos.clone().add(new THREE.Vector3((Math.random() - 0.5) * 9, 0, (Math.random() - 0.5) * 9)).setY(0.2);
+    fx.ball(charlie.pos.clone().setY(0.2), to);
+    busy('chasing the ball', 'play', 12000);
+    setTimeout(() => goToPoint(to, () => {
+      faceCamera();
+      settle();
+    }, 4.2), 250);
+    return;
+  }
+  const r = REACTIONS[a.id] ?? (a.build ? { place: a.place, doing: `checking out ${a.place.replace(/_/g, ' ')}`, pose: 'play' } : null);
+  if (!r || !placeFor(r.place)) return;
+  busy(r.doing, r.pose, 20000);
+  goTo(r.place, () => {
+    settle();
+    if (r.bark) ui.say(r.bark);
+  }, 4);
+}
+
+// Called over from wherever she is: she trots to the spot and looks up at you.
+function callOver(x, y) {
+  if (thinking() || !world) return false;
+  ndc.set((x / innerWidth) * 2 - 1, -(y / innerHeight) * 2 + 1);
+  raycaster.setFromCamera(ndc, cam());
+  const p = raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), new THREE.Vector3());
+  if (!p) return false;
+  const P = world.plotSize;
+  const extent = 2 + Math.max(1, ...[...world.objects.values()].map((o) => Math.max(Math.abs(o.meta.plot[0]), Math.abs(o.meta.plot[1]))));
+  if (Math.max(Math.abs(p.x), Math.abs(p.z)) > (extent + 0.5) * P) return false;
+  busy('trotting over to say hi', 'sit', 15000);
+  goToPoint(p, () => {
+    faceCamera();
+    settle();
+    charlie.wiggle(0.6);
+  }, 3.4);
+  return true;
 }
 
 // ---------------------------------------------------------------- server
@@ -277,6 +391,11 @@ function headScreen() {
 
 function petEffect() {
   charlie.pet();
+  if (!thinking() && !charlie.walking && L.plan?.pose !== 'sleep') {
+    busy('soaking up the pets', 'sit', 6000);
+    faceCamera();
+    settle();
+  }
   for (let i = 0; i < 2; i++) setTimeout(() => fx.heart(charlie.headPosition(new THREE.Vector3())), i * 260);
 }
 
@@ -284,6 +403,10 @@ function treatEffect() {
   const head = charlie.headPosition(new THREE.Vector3());
   const from = view === '3d' ? head.clone().lerp(persp.position, 0.6).add(new THREE.Vector3(0, 1, 0)) : head.clone().add(new THREE.Vector3(3, 2.5, 3));
   fx.treat(from, head);
+  if (!thinking() && !charlie.walking) {
+    busy('munching a treat', 'sit', 7000);
+    settle();
+  }
   setTimeout(() => {
     charlie.wiggle(1);
     fx.sparks(head, 10, [0.92, 0.85, 0.7]);
@@ -295,12 +418,13 @@ function actionEffect(a) {
   if (at) {
     if (a.id === 'fill_bowl') fx.pour(at);
     else if (a.id === 'squeak_toy') fx.ring(at.clone().setY(0.3), [0.95, 0.8, 0.3]);
-    else if (a.id === 'roll_ball') fx.ball(new THREE.Vector3(3.4, 0.2, 3.3), charlie.pos.clone().setY(0.2));
+    else if (a.id === 'roll_ball' && thinking()) fx.ball(new THREE.Vector3(3.4, 0.2, 3.3), charlie.pos.clone().setY(0.2));
     else if (a.id === 'tap_window') fx.ring(at, [0.6, 0.72, 0.85]);
     else if (a.id === 'ring_bell') fx.ring(at, [0.95, 0.85, 0.55]);
     else if (a.id === 'fluff_bed') fx.puff(at);
     else fx.sparks(at, 18, [0.58, 0.71, 0.85]);
   }
+  react(a);
   setTimeout(() => {
     charlie.tiltHead((Math.random() < 0.5 ? -1 : 1) * 0.3);
     charlie.wiggle(a.ate ? 1 : 0.5);
@@ -357,9 +481,16 @@ function connect() {
     if (first) world = new WorldView(scene, s.world.plotSize, (meta) => net.pointsUrl(meta));
     await world.sync(s.world.objects, s.world.buildable, null);
     if (first) {
-      const where = asleep() ? 'bed' : s.charlie.location;
+      // She's found wherever her mind, or her own day, has her right now.
+      if (!thinking()) {
+        L.plan = lifePlan(Date.now());
+        ui.setBody(L.plan?.doing ?? null);
+      }
+      const where = thinking() ? s.charlie.location : L.plan?.place ?? 'bed';
       const p = placeFor(where) ?? PLACES.bed;
+      charlie.walkTo([]);
       charlie.pos.set(p.x, 0, p.z);
+      L.ready = true;
       if (p.face != null) charlie.heading = p.face;
       currentPlace = placeFor(where) ? where : 'bed';
       settle();
@@ -373,7 +504,7 @@ function connect() {
     if (changed) applyActivity();
   });
   on('go', ({ to }) => {
-    if (to !== currentPlace || !charlie.walking) goTo(to, settle);
+    if (thinking() && (to !== currentPlace || !charlie.walking)) goTo(to, settle);
   });
   on('feed', (item) => ui.addFeed(item));
   on('thought_delta', (d) => ui.thoughtDelta(d));
@@ -534,6 +665,7 @@ canvas.addEventListener('pointerup', (e) => {
   if (hit?.charlie) pet();
   else if (hit?.obj) {
     const meta = hit.obj.meta;
+    react({ build: true, place: meta.name });
     if (touch && tapped !== meta.name) {
       tapped = meta.name;
       ui.showTip(e.clientX, e.clientY, meta, { touch });
@@ -548,7 +680,7 @@ canvas.addEventListener('pointerup', (e) => {
     // Opened during the tap itself, so Safari doesn't block it as a popup.
     if (meta.link) window.open(meta.link, '_blank', 'noopener');
     if (!touch) net.touch(meta.name);
-  }
+  } else callOver(e.clientX, e.clientY);
   tapped = null;
   if (touch) ui.showTip(0, 0, null);
 });
@@ -662,6 +794,7 @@ function frame(time) {
   globals.uScale.value = view === '3d' ? h / (2 * Math.tan(THREE.MathUtils.degToRad(persp.fov) / 2)) : (h / (ortho.top - ortho.bottom)) * ortho.zoom;
 
   idlePoses(now);
+  live(now);
   const onBed = currentPlace === 'bed' && !charlie.walking && Math.hypot(charlie.pos.x - PLACES.bed.x, charlie.pos.z - PLACES.bed.z) < 0.6;
   charlie.floor += ((onBed ? 0.22 : 0) - charlie.floor) * Math.min(1, dt * 4);
   charlie.update(dt, t);
@@ -671,7 +804,7 @@ function frame(time) {
   B.fxT -= dt;
   if (B.fxT <= 0) {
     const head = charlie.headPosition(new THREE.Vector3());
-    if (asleep() && !charlie.walking) {
+    if (charlie.poseName === 'sleep' && !charlie.walking) {
       fx.zee(head);
       B.fxT = 2.4;
     } else if (B.activity === 'coding' || B.activity === 'building') {
@@ -704,7 +837,6 @@ if (new URLSearchParams(location.search).has('debug')) {
   window.__charlie = { charlie, ortho, persp, orthoControls, perspControls, fx, ui, scene, goTo, setView, B, get world() { return world; } };
 }
 
-if (matchMedia('(pointer: coarse)').matches) document.getElementById('hint').textContent = 'drag to look around · pinch to zoom · tap charlie to pet her';
 
 connect();
 net.start();

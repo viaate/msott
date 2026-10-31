@@ -8,6 +8,11 @@ import { checkSyntax, runModule, appendLog, scrubSecrets } from './sandbox.js';
 import { NAME_RE } from './skills.js';
 
 export const MOTIONS = ['none', 'spin', 'bob', 'pulse', 'twinkle'];
+// Where on a plot a build sits: all of it, or one quarter (shown at half size).
+// North is −z and east is +x; her front door faces west.
+export const SPOTS = ['whole', 'nw', 'ne', 'sw', 'se'];
+const spotOf = (o) => o.spot || 'whole';
+export const placeLabel = (plot, spot = 'whole') => `[${plot}]${spot === 'whole' ? '' : ` (${spot} quarter)`}`;
 const DEFAULT_COLOR = [232, 220, 198];
 
 export const HOUSE = {
@@ -101,6 +106,12 @@ export function encodePoints({ count, positions, colors, sizes, frame }) {
 
 const key = ([x, z]) => `${x},${z}`;
 
+function checkPlace({ plot, spot, scale }) {
+  if (plot != null && (!Array.isArray(plot) || plot.length !== 2 || !plot.every(Number.isInteger))) throw new Error('plot must be [x, z] integers.');
+  if (spot != null && !SPOTS.includes(spot)) throw new Error(`spot must be one of: ${SPOTS.join(', ')}.`);
+  if (scale != null && !(Number(scale) >= 0.25 && Number(scale) <= 1)) throw new Error('scale must be between 0.25 and 1.');
+}
+
 // Charlie's world is a grid of plots. The house is plot [0,0]; every build is
 // code she wrote that returns dots, placed on a free plot next to the others.
 export class World {
@@ -133,12 +144,42 @@ export class World {
   }
 
   publicList() {
-    return this.list().map(({ name, builtin, plot, description, link, motion, count, frames, fps, status, error, builtAt, version, refreshMinutes, actions }) =>
-      ({ name, builtin: Boolean(builtin), plot, description, link: link || null, motion: motion || 'none', count: count || 0, frames: frames || 1, fps: fps || null, status: status || 'ok', error: error ? clip(error, 300) : null, builtAt, version: version || 0, refreshMinutes: refreshMinutes || null, actions: actions || [] }));
+    return this.list().map(({ name, builtin, origin, plot, spot, scale, description, link, motion, count, frames, fps, status, error, builtAt, version, refreshMinutes, actions }) =>
+      ({ name, builtin: Boolean(builtin), starter: origin === 'starter', plot, spot: spot || 'whole', scale: scale || 1, description, link: link || null, motion: motion || 'none', count: count || 0, frames: frames || 1, fps: fps || null, status: status || 'ok', error: error ? clip(error, 300) : null, builtAt, version: version || 0, refreshMinutes: refreshMinutes || null, actions: actions || [] }));
   }
 
   at(plot) {
     return this.list().find((o) => key(o.plot) === key(plot)) ?? null;
+  }
+
+  // Everything on a plot, leaving one build out.
+  on(plot, except) {
+    return this.list().filter((o) => o.name !== except && key(o.plot) === key(plot));
+  }
+
+  // Can a build go here? A plot already in her world takes it in any spot
+  // nothing else covers; a new plot has to touch her world.
+  fits(plot, spot, except) {
+    const here = this.on(plot, except);
+    if (!here.length) return this.buildable(except).some((p) => key(p) === key(plot));
+    return spot !== 'whole' && here.every((o) => spotOf(o) !== 'whole' && spotOf(o) !== spot);
+  }
+
+  // Free quarters on plots that are already split up.
+  freeQuarters(except) {
+    const out = [];
+    const seen = new Set();
+    for (const o of this.list()) {
+      if (o.name === except || seen.has(key(o.plot))) continue;
+      seen.add(key(o.plot));
+      for (const q of SPOTS.slice(1)) if (spotOf(o) !== 'whole' && this.fits(o.plot, q, except)) out.push(placeLabel(o.plot, q));
+    }
+    return out;
+  }
+
+  freeText(except) {
+    const quarters = this.freeQuarters(except);
+    return `Free plots: ${this.buildable(except).map((p) => `[${p}]`).join(' ')}${quarters.length ? `. Free quarters: ${quarters.join(', ')}` : ''}`;
   }
 
   // How far she can wander: a couple of plots past the edge of her world.
@@ -169,12 +210,13 @@ export class World {
     return price('build', this.progress.data.buildsMade);
   }
 
-  async build({ name, description, code, plot, link, motion = 'none', refresh_minutes, actions, replaces }) {
+  async build({ name, description, code, plot, spot, scale, link, motion = 'none', refresh_minutes, actions, replaces }) {
     if (typeof name !== 'string' || !NAME_RE.test(name) || name === 'house') throw new Error('name must be 2–40 chars of lowercase letters, digits and underscores (and not "house").');
     if (typeof description !== 'string' || !description.trim()) throw new Error('description is required — visitors see it when they hover your build.');
     if (typeof code !== 'string' || !/export\s+default/.test(code)) throw new Error('code must `export default function build(ctx) { return [...dots] }`.');
     if (code.length > config.skills.maxCodeChars) throw new Error('code is too long.');
     if (!MOTIONS.includes(motion)) throw new Error(`motion must be one of: ${MOTIONS.join(', ')}.`);
+    checkPlace({ spot, scale });
     if (link != null && link !== '') {
       try {
         const u = new URL(link);
@@ -200,18 +242,19 @@ export class World {
       if (!old || old.builtin) throw new Error(`You don't have a build called "${replaces}" to replace.`);
       if (existing) throw new Error(`You already have a build called "${name}". Pick a new name, or leave out replaces to rebuild it.`);
     }
-    let target = existing?.plot ?? old?.plot;
+    const prev = existing ?? old;
+    let target = prev?.plot;
+    const where = spot ?? (prev ? spotOf(prev) : 'whole');
     if (plot != null) {
-      if (!Array.isArray(plot) || plot.length !== 2 || !plot.every(Number.isInteger)) throw new Error('plot must be [x, z] integers.');
-      if (old && key(plot) !== key(old.plot)) throw new Error(`A replacement goes on the plot of the build it replaces, [${old.plot}]. Leave out plot, or move it afterwards with move_build.`);
-      if (!old && (!existing || key(plot) !== key(existing.plot))) {
-        if (!this.buildable(name).some((p) => key(p) === key(plot))) {
-          throw new Error(`Plot [${plot}] isn't free next to your world. Free plots: ${this.buildable(name).map((p) => `[${p}]`).join(' ')}`);
-        }
-      }
+      checkPlace({ plot });
       target = plot;
     }
+    if (old && (key(target) !== key(old.plot) || where !== spotOf(old))) {
+      throw new Error(`A replacement takes the place of the build it replaces, ${placeLabel(old.plot, spotOf(old))}. Leave out plot and spot, or move it afterwards with move_build.`);
+    }
     target ??= this.buildable()[0];
+    const moved = !prev || key(target) !== key(prev.plot) || where !== spotOf(prev);
+    if (!old && moved && !this.fits(target, where, name)) throw new Error(`${placeLabel(target, where)} isn't free. ${this.freeText(name)}`);
 
     const cost = existing || old ? price('rebuild') : this.nextPrice();
     if (!this.ledger.canAfford(cost)) throw new Error(`${existing ? 'Rebuilding' : 'Building'} costs ${cost} tokens and you have ${this.ledger.balance}. Nothing was charged.`);
@@ -232,6 +275,8 @@ export class World {
     const meta = {
       ...(existing ?? {}),
       plot: target,
+      spot: where,
+      scale: Number(scale ?? existing?.scale ?? 1),
       description: description.trim().slice(0, 600),
       link: link || null,
       motion,
@@ -247,7 +292,7 @@ export class World {
       this.progress.save();
     }
     const r = await this.generate(name);
-    return { cost, plot: target, rebuilt: Boolean(existing), replaced: old?.name ?? null, ...r };
+    return { cost, plot: target, spot: where, rebuilt: Boolean(existing), replaced: old?.name ?? null, ...r };
   }
 
   // Runs the build code and stores the dots. Keeps the previous dots on failure.
@@ -284,27 +329,53 @@ export class World {
     return NAME_RE.test(name) && fs.existsSync(f) ? f : null;
   }
 
-  // Moving is free, so she can rearrange her world whenever she likes. Onto
-  // another build's plot, the two swap places.
-  move(name, plot) {
+  // Moving and resizing are free, so she can rearrange her world whenever she
+  // likes. Into another build's exact place, the two swap.
+  move(name, { plot, spot, scale } = {}) {
     if (name === 'house') throw new Error('Your house stays where it is.');
     const obj = this.get(name);
     if (!obj) throw new Error(`There's nothing called "${name}" in your world.`);
-    if (!Array.isArray(plot) || plot.length !== 2 || !plot.every(Number.isInteger)) throw new Error('plot must be [x, z] integers.');
-    if (key(plot) === key(obj.plot)) throw new Error(`"${name}" is already on plot [${plot}].`);
-    const other = this.at(plot);
-    if (other?.builtin) throw new Error(`Plot [${plot}] is your house.`);
-    if (!other && !this.buildable(name).some((p) => key(p) === key(plot))) {
-      throw new Error(`Plot [${plot}] isn't next to the rest of your world. Plots it could go to: ${this.buildable(name).map((p) => `[${p}]`).join(' ')}, or any other build's plot to swap.`);
+    checkPlace({ plot, spot, scale });
+    const to = plot ?? obj.plot;
+    const where = spot ?? spotOf(obj);
+    const moving = key(to) !== key(obj.plot) || where !== spotOf(obj);
+    if (!moving && scale == null) throw new Error(`"${name}" is already at ${placeLabel(to, where)}.`);
+    let other = null;
+    if (moving) {
+      other = this.on(to, name).find((o) => spotOf(o) === where) ?? null;
+      if (other?.builtin) throw new Error(`Plot [${to}] is your house.`);
+      if (!other && !this.fits(to, where, name)) throw new Error(`${placeLabel(to, where)} isn't free. ${this.freeText(name)}, or any other build's place to swap.`);
     }
-    const setPlot = (n, p) => {
+    const update = (n, patch) => {
       const file = path.join(this.dir(n), 'meta.json');
-      writeJSON(file, { ...readJSON(file, {}), plot: p });
+      writeJSON(file, { ...readJSON(file, {}), ...patch });
     };
-    setPlot(name, plot);
-    if (other) setPlot(other.name, obj.plot);
+    update(name, { plot: to, spot: where, ...(scale != null ? { scale: Number(scale) } : {}) });
+    if (other) update(other.name, { plot: obj.plot, spot: spotOf(obj) });
     bus.emit('world', { objects: this.publicList(), changed: name, buildable: this.buildable() });
-    return { from: obj.plot, to: plot, swapped: other?.name ?? null };
+    return { from: placeLabel(obj.plot, spotOf(obj)), to: placeLabel(to, where), scale: Number(scale ?? obj.scale ?? 1), moved: moving, swapped: other?.name ?? null };
+  }
+
+  // Her world starts with a few places to go besides her house. Each one is
+  // planted once; after that it's hers to keep, move, replace or demolish.
+  async plantStarters() {
+    const planted = new Set(this.progress.data.startersPlanted ?? []);
+    for (const s of config.starterBuilds ?? []) {
+      const from = path.join(paths.starter, 'builds', `${s.name}.mjs`);
+      if (planted.has(s.name) || !fs.existsSync(from)) continue;
+      planted.add(s.name);
+      this.progress.data.startersPlanted = [...planted];
+      this.progress.save();
+      if (this.get(s.name)) continue;
+      const plot = this.fits(s.plot, 'whole') ? s.plot : this.buildable()[0];
+      const dir = ensureDir(this.dir(s.name));
+      fs.copyFileSync(from, path.join(dir, 'build.mjs'));
+      writeJSON(path.join(dir, 'meta.json'), {
+        origin: 'starter', plot, spot: 'whole', scale: 1, description: s.description, link: null,
+        motion: s.motion ?? 'none', refreshMinutes: null, actions: s.actions ?? [], builtAt: new Date().toISOString(), spent: 0,
+      });
+      await this.generate(s.name);
+    }
   }
 
   demolish(name) {

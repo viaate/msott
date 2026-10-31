@@ -2,10 +2,12 @@ import * as THREE from 'three';
 import { Dots, dotMaterial, decodePoints, hex, scale } from './dots.js';
 
 const GROUND = hex('#2f2b27');
-const EDGE = hex('#4a443d');
 const FREE = hex('#26231f');
 const HAZARD = hex('#d6834a');
 const GRID = hex('#2a2622');
+const STONES = ['#8c8170', '#9a8e7b', '#a69a86', '#7f7566'].map(hex);
+// Quarters of a plot (north is −z), where a build is shown at half size.
+const QUARTERS = { nw: [-1, -1], ne: [1, -1], sw: [-1, 1], se: [1, 1] };
 
 // Everything outside the house: the plot grid and the things Charlie builds.
 export class WorldView {
@@ -22,6 +24,17 @@ export class WorldView {
 
   plotCenter([px, pz]) {
     return new THREE.Vector3(px * this.plotSize, 0, pz * this.plotSize);
+  }
+
+  // Where a build sits: the middle of its plot, or of its quarter.
+  spotCenter(meta) {
+    const c = this.plotCenter(meta.plot);
+    const q = QUARTERS[meta.spot];
+    return q ? c.add(new THREE.Vector3((q[0] * this.plotSize) / 4, 0, (q[1] * this.plotSize) / 4)) : c;
+  }
+
+  spotScale(meta) {
+    return (QUARTERS[meta.spot] ? 0.5 : 1) * (meta.scale || 1);
   }
 
   bounds() {
@@ -42,16 +55,30 @@ export class WorldView {
     const d = new Dots(99);
     const half = this.plotSize / 2;
     const r = d.r;
+    const edges = new Set();
     for (const o of objects) {
-      if (o.builtin) continue;
       const c = this.plotCenter(o.plot);
-      for (let x = -half + 0.3; x < half; x += 0.6) {
-        for (let z = -half + 0.3; z < half; z += 0.6) {
-          d.add(c.x + x + (r() - 0.5) * 0.2, 0, c.z + z + (r() - 0.5) * 0.2, scale(GROUND, 0.8 + r() * 0.4), 0.05);
+      if (!o.builtin) {
+        for (let x = -half + 0.3; x < half; x += 0.6) {
+          for (let z = -half + 0.3; z < half; z += 0.6) {
+            d.add(c.x + x + (r() - 0.5) * 0.2, 0, c.z + z + (r() - 0.5) * 0.2, scale(GROUND, 0.8 + r() * 0.4), 0.05);
+          }
         }
       }
-      for (let t = -half; t <= half; t += 0.25) {
-        for (const [x, z] of [[t, -half], [t, half], [-half, t], [half, t]]) d.add(c.x + x, 0, c.z + z, EDGE, 0.05);
+      // A stone path around every lot, so her world reads as neat blocks
+      // joined by walkways, whatever she puts on them.
+      for (const [ax, az, bx, bz] of [[-1, -1, 1, -1], [-1, 1, 1, 1], [-1, -1, -1, 1], [1, -1, 1, 1]]) {
+        const k = [c.x + ax * half, c.z + az * half, c.x + bx * half, c.z + bz * half].map((v) => Math.round(v)).join(',');
+        if (edges.has(k)) continue;
+        edges.add(k);
+        for (let t = -half - 0.4; t <= half + 0.4; t += 0.34) {
+          for (const off of [-0.24, 0.24]) {
+            const jx = (r() - 0.5) * 0.12, jz = (r() - 0.5) * 0.12;
+            const x = c.x + (ax === bx ? ax * half + off : t) + jx;
+            const z = c.z + (ax === bx ? t : az * half + off) + jz;
+            d.add(x, 0.01, z, scale(STONES[Math.floor(r() * STONES.length)], 0.55 + r() * 0.25), 0.09);
+          }
+        }
       }
     }
     for (const p of buildable) {
@@ -91,7 +118,8 @@ export class WorldView {
       if (meta.builtin) continue;
       seen.add(meta.name);
       const existing = this.objects.get(meta.name);
-      if (existing && existing.meta.version === meta.version && existing.meta.status === meta.status && String(existing.meta.plot) === String(meta.plot)) {
+      const same = (k) => String(existing.meta[k]) === String(meta[k]);
+      if (existing && ['version', 'status', 'plot', 'spot', 'scale'].every(same)) {
         existing.meta = meta;
         continue;
       }
@@ -113,10 +141,11 @@ export class WorldView {
       geometry = construction(this.plotSize).geometry();
       broken = true;
     }
-    const center = this.plotCenter(meta.plot);
+    const center = this.spotCenter(meta);
+    const size = this.spotScale(meta);
     const n = geometry.attributes.position.count;
     const start = new Float32Array(n * 3);
-    const src = from ? from.clone().sub(center) : new THREE.Vector3(0, 8, 0);
+    const src = from ? from.clone().sub(center).divideScalar(size) : new THREE.Vector3(0, 8, 0);
     for (let i = 0; i < n; i++) {
       start[i * 3] = src.x + (Math.random() - 0.5) * 2;
       start[i * 3 + 1] = src.y + 1 + Math.random() * 3;
@@ -130,6 +159,7 @@ export class WorldView {
     pts.frustumCulled = false;
     const holder = new THREE.Group();
     holder.position.copy(center);
+    holder.scale.setScalar(size);
     holder.add(pts);
     this.group.add(holder);
     if (existing) this.dispose(existing);
@@ -139,7 +169,7 @@ export class WorldView {
     box.min.y = Math.min(box.min.y, 0);
     box.max.y = Math.max(box.max.y, 1.5);
     box.expandByScalar(0.3);
-    const obj = { meta, holder, pts, material, box, broken, assembling: Boolean(from), t0: performance.now() };
+    const obj = { meta, holder, pts, material, box, broken, size, assembling: Boolean(from), t0: performance.now() };
     this.objects.set(meta.name, obj);
     return obj;
   }
@@ -190,8 +220,8 @@ export class WorldView {
       const m = obj.meta.motion;
       const h = obj.holder;
       if (m === 'spin') h.rotation.y += dt * 0.35;
-      if (m === 'bob') h.position.y = Math.sin(t * 1.2 + name.length) * 0.35 + 0.35;
-      if (m === 'pulse') h.scale.setScalar(1 + Math.sin(t * 2) * 0.04);
+      if (m === 'bob') h.position.y = (Math.sin(t * 1.2 + name.length) * 0.35 + 0.35) * obj.size;
+      if (m === 'pulse') h.scale.setScalar(obj.size * (1 + Math.sin(t * 2) * 0.04));
       if (obj.meta.frames > 1) u.uFrame.value = Math.floor(t * (obj.meta.fps || 8)) % obj.meta.frames;
       if (obj.broken) u.uBright.value = 0.75 + 0.25 * Math.sin(t * 3);
     }

@@ -58,6 +58,7 @@ export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
   if (process.env.CHARLIE_DEVVIT_CODE && app.skills.get('devvit')) await step('devvit', () => devvitSetup(app));
 
   for (const src of app.sources) await src.pollOnce();
+  await step('starters', () => app.world.plantStarters());
   await step('refresh', () => app.world.refreshDue());
   if (home.enabled) await step('requests', () => home.syncRequests());
 

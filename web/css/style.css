@@ -328,6 +328,7 @@ table.earn td:last-child { text-align: right; color: var(--gold); white-space: n
 }
 .doing .pip { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #6d7c8e; }
 .doing.awake .pip { background: var(--copper); animation: pulse 1.6s infinite; }
+.controls { display: contents; }
 .dock-row { display: flex; gap: 8px; align-items: center; }
 #actions-btn { color: var(--gold); }
 .view-toggle { display: flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: rgba(239, 230, 216, 0.04); }
@@ -548,44 +549,80 @@ body.view-3d .tokens .num { text-shadow: 0 1px 14px #000; }
   .feelings { gap: 12px; }
 }
 
+/* Phones, upright or on their side: the controls become one tidy bar, with
+   what she's up to on top, five even buttons, and the message box. */
+@media (max-width: 760px) and (orientation: portrait), (orientation: landscape) and (max-width: 1020px), (orientation: landscape) and (max-height: 500px) {
+  .controls {
+    position: fixed;
+    z-index: 4;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    padding: 8px;
+    background: var(--panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+  }
+  .center-dock, .dock-row, .actions, .actions .buttons { display: contents; }
+  .actions-menu, .replay, #replay-again, .doing, #msg-form, .pic-chip, .toast { grid-column: 1 / -1; }
+  .actions-menu { order: 1; max-height: 40dvh; }
+  .replay, #replay-again { order: 2; justify-self: center; }
+  .doing { order: 3; justify-content: center; padding: 2px 6px 2px; background: none; border: none; backdrop-filter: none; -webkit-backdrop-filter: none; font-size: 12.5px; min-width: 0; }
+  #doing-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dock-row > button, .view-toggle, .buttons > button { order: 4; }
+  #msg-form { order: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px; }
+  .pic-chip, .toast { order: 6; }
+  .toast { text-align: center; }
+  .dock-row > button, .buttons > button, .view-toggle button {
+    width: 100%; height: 40px; padding: 0 2px; border-radius: 12px; font-size: 12px; white-space: nowrap;
+  }
+  .view-toggle { display: block; border: none; border-radius: 0; padding: 0; background: none; }
+  .view-toggle button, #follow-btn { border: 1px solid var(--line); background: rgba(239, 230, 216, 0.06); color: var(--ink); }
+  /* One button that switches to the other view. */
+  .view-toggle button[aria-pressed='true'] { display: none; }
+  #msg-form > * { height: 42px; }
+  .attach { justify-content: center; border-radius: 12px; }
+  #msg { border-radius: 12px; }
+  #msg-form button[type='submit'] { border-radius: 12px; padding: 0 14px; }
+  .roomy, .hint { display: none; }
+}
+
 @media (max-width: 760px) and (orientation: portrait) {
   :root { --gutter: 16px; }
   .brand h1 { font-size: 40px; }
   .brand .tag { display: none; }
   .tokens .num { font-size: 44px; }
   .token-pop { top: calc(var(--gt) + 58px); }
+  .controls { left: var(--gl); right: var(--gr); bottom: var(--gb); }
   .ledger { top: calc(var(--gt) + 76px); max-height: calc(100dvh - var(--gt) - 76px - 300px); }
-  .mind { max-height: 18dvh; bottom: calc(var(--gb) + 184px); width: calc(100vw - var(--gl) - var(--gr)); }
+  .mind { max-height: 18dvh; bottom: calc(var(--gb) + 156px); width: calc(100vw - var(--gl) - var(--gr)); }
   #feed { padding-top: 18px; mask-image: linear-gradient(to bottom, transparent 0, #000 22px); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22px); }
-  .center-dock { bottom: calc(var(--gb) + 92px); width: calc(100vw - var(--gl) - var(--gr)); gap: 6px; }
-  .feelings { top: calc(var(--gt) + 58px); gap: 8px; padding: 7px 12px; }
-  .feel { font-size: 0; column-gap: 0; }
+  .feelings { top: calc(var(--gt) + 66px); left: var(--gl); right: var(--gr); transform: none; justify-content: space-between; gap: 12px; padding: 8px 14px; }
+  .feel { flex: 1; font-size: 0; column-gap: 0; }
   .feel .pip { margin: 0 auto; }
-  .feel .meter { width: 44px; }
-  .minimap { width: 96px; height: 96px; margin-top: 96px; }
-  .diary { top: calc(var(--gt) + 104px); max-height: calc(100dvh - var(--gt) - 104px - var(--gb) - 220px); }
+  .feel .meter { width: auto; }
+  .minimap { width: 96px; height: 96px; margin-top: 104px; }
+  .diary { top: calc(var(--gt) + 108px); max-height: calc(100dvh - var(--gt) - 108px - var(--gb) - 160px); }
   .clock { display: none; }
-  .actions { left: var(--gl); width: auto; }
-  .actions .buttons { position: absolute; right: 0; bottom: 50px; }
-  .buttons { justify-content: flex-start; }
-  .code { top: calc(var(--gt) + 144px); transform: none; width: calc(100vw - var(--gl) - var(--gr)); max-height: 26dvh; left: var(--gl); }
-  .info { bottom: calc(var(--gb) + 112px); left: var(--gl); width: auto; max-height: 56dvh; }
-  .hint { display: none; }
-  .admin { top: auto; bottom: calc(var(--gb) + 152px); }
+  .code { top: calc(var(--gt) + 148px); transform: none; width: calc(100vw - var(--gl) - var(--gr)); max-height: 26dvh; left: var(--gl); }
+  .info { bottom: calc(var(--gb) + 156px); left: var(--gl); width: auto; max-height: 52dvh; }
+  .admin { top: auto; bottom: calc(var(--gb) + 200px); }
 }
 
 /* Short portrait screens (a small iPhone, or the folded iPhone Duo): her
    thoughts get a few lines, so there's room left to see her world. */
 @media (max-width: 760px) and (orientation: portrait) and (max-height: 700px) {
-  .mind { max-height: 104px; }
-  .view-3d .mind { max-height: 116px; }
-  .mind-head { margin-bottom: 2px; }
+  .mind { max-height: 78px; }
+  .view-3d .mind { max-height: 92px; }
+  .mind-head { display: none; }
 }
 
 /* On its side (a phone turned sideways, or an unfolded iPhone Duo): her world
-   in the middle, her thoughts down the left, everything else down the right. */
+   in the middle, her thoughts down the left, the controls down the right. */
 @media (orientation: landscape) and (max-width: 1020px), (orientation: landscape) and (max-height: 500px) {
-  :root { --gutter: 12px; --side: min(300px, 38vw); }
+  :root { --gutter: 12px; --side: min(320px, 40vw); }
   .brand h1 { font-size: 34px; }
   .brand .tag { display: none; }
   .clock { display: none; }
@@ -598,20 +635,14 @@ body.view-3d .tokens .num { text-shadow: 0 1px 14px #000; }
   .feel { font-size: 0; column-gap: 0; }
   .feel .pip { margin: 0 auto; }
   .feel .meter { width: 40px; }
+  .controls { right: var(--gr); bottom: var(--gb); width: var(--side); }
+  .actions-menu { max-height: calc(100dvh - var(--gt) - var(--gb) - 200px); }
   .mind { top: calc(var(--gt) + 64px); bottom: var(--gb); max-height: none; width: min(280px, calc(100vw - var(--gl) - var(--gr) - var(--side) - 24px)); justify-content: flex-end; }
   #feed { padding-top: 18px; mask-image: linear-gradient(to bottom, transparent 0, #000 22px); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22px); }
-  .center-dock { left: auto; right: var(--gr); transform: none; width: var(--side); bottom: calc(var(--gb) + 84px); gap: 6px; }
-  .actions-menu { max-height: calc(100dvh - var(--gt) - var(--gb) - 200px); }
-  .doing { width: 100%; justify-content: center; padding: 7px 14px; font-size: 12px; }
-  .dock-row { width: 100%; justify-content: flex-end; gap: 6px; }
-  .dock-row > button, .buttons button { padding: 6px 11px; font-size: 12px; }
-  .view-toggle button { padding: 4px 9px; }
-  .actions { width: var(--side); gap: 6px; }
   .ledger { top: calc(var(--gt) + 56px); max-height: calc(100dvh - var(--gt) - 56px - var(--gb)); z-index: 7; }
   .diary { top: var(--gt); left: var(--gl); max-height: calc(100dvh - var(--gt) - var(--gb)); width: min(390px, calc(100vw - var(--gl) - var(--gr) - var(--side) - 12px)); }
   .info { top: var(--gt); bottom: var(--gb); right: calc(var(--gr) + var(--side) + 12px); max-height: none; width: min(420px, calc(100vw - var(--gl) - var(--gr) - var(--side) - 12px)); }
   .code { top: calc(var(--gt) + 64px); bottom: var(--gb); left: var(--gl); right: auto; transform: none; width: min(380px, calc(100vw - var(--gl) - var(--gr) - var(--side) - 24px)); max-height: none; }
   .source { max-height: calc(100dvh - var(--gt) - var(--gb)); }
-  .hint { display: none; }
   .admin { top: auto; bottom: var(--gb); left: var(--gl); transform: none; }
 }

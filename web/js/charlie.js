@@ -108,6 +108,8 @@ const POSES = {
   sit: { by: -0.27, bz: 0.55, bx: 0, hy: 0, hz: -0.45, hx: 0, fl: -0.36, bl: 0.82, tz: 0.55, ear: 0.05 },
   sploot: { by: -0.4, bz: 0, bx: 0, hy: -0.22, hz: -0.18, hx: 0.32, fl: 1.42, bl: -1.38, tz: 0.15, ear: 0.25 },
   sleep: { by: -0.38, bz: 0, bx: 1.3, hy: -0.12, hz: -0.1, hx: -0.15, fl: 0.55, bl: -0.35, tz: 0.6, ear: 0.3 },
+  sniff: { by: -0.04, bz: -0.12, bx: 0, hy: -0.1, hz: 0.62, hx: 0, fl: 0.12, bl: 0, tz: -0.25, ear: 0.12 },
+  play: { by: -0.12, bz: -0.38, bx: 0, hy: 0.02, hz: -0.25, hx: 0, fl: 0.95, bl: 0.05, tz: -0.95, ear: -0.05 },
 };
 
 // Charlie's dot body and everything she does with it.
@@ -205,9 +207,11 @@ export class Charlie {
     if (POSES[name]) this.poseName = name;
   }
 
-  walkTo(points, onArrive) {
+  // speed: about 1.2 for a sniffing stroll, 2.3 to walk, 4 to run.
+  walkTo(points, onArrive, speed = 2.3) {
     this.path = points.map((p) => new THREE.Vector3(p.x, 0, p.z));
     this.onArrive = onArrive ?? null;
+    this.speed = speed;
   }
 
   get walking() {
@@ -260,13 +264,13 @@ export class Charlie {
     const movingTarget = this.path.length ? 1 : 0;
     this.moving += (movingTarget - this.moving) * Math.min(1, dt * 6);
 
-    // Blend toward the pose (walking always uses the standing pose).
-    const goal = POSES[this.path.length ? 'stand' : this.poseName];
+    // Blend toward the pose (walking always uses the standing pose, nose down if she's sniffing).
+    const goal = POSES[this.path.length ? (this.poseName === 'sniff' ? 'sniff' : 'stand') : this.poseName];
     const k = Math.min(1, dt * 3.2);
     for (const key of Object.keys(goal)) this.p[key] += (goal[key] - this.p[key]) * k;
     const p = this.p;
 
-    this.walkPhase += dt * 9.5 * this.moving;
+    this.walkPhase += dt * 9.5 * this.moving * Math.max(0.7, this.speed / 2.3);
     const swing = 0.5 * this.moving;
     this.excite = Math.max(0, this.excite - dt * 0.35);
     this.tilt += (this.tiltTarget - this.tilt) * Math.min(1, dt * 4);
