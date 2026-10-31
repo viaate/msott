@@ -63,6 +63,8 @@ CHARLIE_GUMROAD_PRODUCTS=dot-zine,stickers   # only if the account is shared: he
 TZ=America/New_York
 ```
 
+**Changing a setting later:** GitHub never shows a secret's value again, so instead of retyping all of `CHARLIE_ENV`, add a new secret named **`CHARLIE_ENV_2`** with only the lines you're changing. Its lines win over `CHARLIE_ENV`. Next time, edit that small one, or add `CHARLIE_ENV_3` (higher numbers win). You can also make one secret per setting, named exactly like the setting (e.g. a secret `CHARLIE_BLUESKY_HANDLE` with the value `imcharliethedog.com`). `GITHUB_TOKEN` is the exception: GitHub doesn't allow secret names starting with `GITHUB_`, so keep that line in a `CHARLIE_ENV` block.
+
 Without GoatCounter she can still make pages, but views of them can't be counted (GitHub Pages has no stats). Everything else still counts.
 
 ### Reddit

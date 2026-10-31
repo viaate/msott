@@ -89,7 +89,8 @@ jobs:
         run: node bin/charlie.js "${{ inputs.action || 'tick' }}"
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CHARLIE_ENV: ${{ secrets.CHARLIE_ENV }}
+          # Every repo secret, so CHARLIE_ENV_2 and per-setting secrets work too.
+          CHARLIE_SECRETS: ${{ toJSON(secrets) }}
           REPO_TOKEN: ${{ github.token }}
           PUBLIC_URL: ${{ steps.pages.outputs.base_url }}
           CHARLIE_MODE: github

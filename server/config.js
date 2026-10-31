@@ -9,16 +9,33 @@ try {
   process.loadEnvFile(path.join(ROOT, '.env'));
 } catch {}
 
-// On GitHub, every extra setting comes in one secret, CHARLIE_ENV, written
-// like a .env file (KEY=value per line).
-if (process.env.CHARLIE_ENV) {
-  for (const line of process.env.CHARLIE_ENV.split(/\r?\n/)) {
-    const m = line.match(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
-    if (!m || line.trim().startsWith('#')) continue;
-    const value = m[2].replace(/^(['"])(.*)\1$/, '$2');
-    if (process.env[m[1]] === undefined || process.env[m[1]] === '') process.env[m[1]] = value;
+// On GitHub, settings come from repo secrets. CHARLIE_ENV holds them like a
+// .env file (KEY=value per line). GitHub never shows a secret's value again,
+// so a change can go in another secret instead of retyping that one: a
+// CHARLIE_ENV_ block (CHARLIE_ENV_2, CHARLIE_ENV_3…, where later names win),
+// or one secret named after the setting itself (CHARLIE_BLUESKY_HANDLE…).
+// Real environment variables beat all of them.
+{
+  const env = process.env;
+  const unset = (k) => env[k] === undefined || env[k] === '';
+  let secretsJSON = {};
+  try {
+    secretsJSON = JSON.parse(env.CHARLIE_SECRETS || '{}') ?? {};
+  } catch {}
+  delete env.CHARLIE_SECRETS;
+  const isBlock = (k) => /^CHARLIE_ENV(_\w+)?$/.test(k);
+  for (const [k, v] of Object.entries(secretsJSON)) {
+    if (typeof v === 'string' && /^(CHARLIE_|GOATCOUNTER_)[A-Z0-9_]+$/.test(k) && !isBlock(k) && unset(k)) env[k] = v;
   }
-  delete process.env.CHARLIE_ENV;
+  const blocks = { ...Object.fromEntries(Object.entries(secretsJSON).filter(([k]) => isBlock(k))), ...Object.fromEntries(Object.entries(env).filter(([k]) => isBlock(k))) };
+  for (const name of Object.keys(blocks).sort((a, b) => b.localeCompare(a, 'en', { numeric: true }))) {
+    for (const line of String(blocks[name] ?? '').split(/\r?\n/)) {
+      const m = line.match(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+      if (!m || line.trim().startsWith('#')) continue;
+      if (unset(m[1])) env[m[1]] = m[2].replace(/^(['"])(.*)\1$/, '$2');
+    }
+    delete env[name];
+  }
 }
 
 function deepMerge(base, extra) {

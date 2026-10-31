@@ -14,7 +14,17 @@ Object.assign(process.env, {
   GITHUB_TOKEN: '',
   REPO_TOKEN: '',
   GITHUB_REPOSITORY: '',
-  CHARLIE_ENV: 'CHARLIE_FAVORITE_TOY=lemon tart\n# a comment\nTZ="UTC"',
+  CHARLIE_ENV: 'CHARLIE_FAVORITE_TOY=lemon tart\n# a comment\nTZ="UTC"\nCHARLIE_NAP_SPOT=bed\nCHARLIE_SNACK=carrot',
+  // The way the workflow hands over every secret: later CHARLIE_ENV_ blocks
+  // and per-setting secrets override CHARLIE_ENV.
+  CHARLIE_SECRETS: JSON.stringify({
+    ANTHROPIC_API_KEY: 'ignored-here',
+    github_token: 'ignored-too',
+    CHARLIE_ENV_2: 'CHARLIE_NAP_SPOT=rug\nCHARLIE_SNACK=apple',
+    CHARLIE_ENV_10: 'CHARLIE_SNACK=blueberry',
+    CHARLIE_BLUESKY_HANDLE_TEST: 'imcharliethedog.com',
+    PATH: '/nope',
+  }),
   CHARLIE_REDDIT_USERNAME: 'imcharliethedog',
 });
 
@@ -46,6 +56,12 @@ const TREE = 'export default function build() { const d = []; for (let i = 0; i 
 
 test('a scheduled run wakes her, records the wake, and builds a static site', async () => {
   assert.equal(process.env.CHARLIE_FAVORITE_TOY, 'lemon tart', 'CHARLIE_ENV is unpacked');
+  assert.equal(process.env.CHARLIE_NAP_SPOT, 'rug', 'CHARLIE_ENV_2 overrides CHARLIE_ENV');
+  assert.equal(process.env.CHARLIE_SNACK, 'blueberry', 'CHARLIE_ENV_10 comes after CHARLIE_ENV_2');
+  assert.equal(process.env.CHARLIE_BLUESKY_HANDLE_TEST, 'imcharliethedog.com', 'a secret named after a setting works');
+  assert.notEqual(process.env.PATH, '/nope', 'other secrets are left alone');
+  assert.equal(process.env.ANTHROPIC_API_KEY, '');
+  for (const k of ['CHARLIE_ENV', 'CHARLIE_ENV_2', 'CHARLIE_SECRETS']) assert.equal(process.env[k], undefined, `${k} is cleared`);
   const client = fakeClient([
     [{ type: 'thinking', thinking: 'Morning! Let me make a page.' }, { type: 'tool_use', name: 'publish_page', input: { path: 'zine/index.html', content: '<!doctype html><body><h1>zine</h1></body>' } }],
     [{ type: 'tool_use', name: 'build', input: { name: 'tree', description: 'a tree', code: TREE } }],
