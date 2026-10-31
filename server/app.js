@@ -297,6 +297,7 @@ export function createApp({ client } = {}) {
     server, ledger, usage, github, skills, world, visitors, agent, feelings, diary, site, requests, sources, flush, snapshot,
     start() {
       for (const src of sources) src.start();
+      world.plantStarters().catch((e) => console.error('[world]', e.message));
       world.startRefreshLoop();
       agent.start();
     },

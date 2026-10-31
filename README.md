@@ -149,12 +149,15 @@ She stays up as long as she likes and goes to sleep when she chooses, calling `n
 - `look`, `say` (optionally `to` someone), `go` (around her house, `outside` her front door, to a build, or to any plot of her land; she eats if she reaches a full bowl)
 - `diary`, `remember_visitor` and `remember`
 - `read_file`
-- `learn_skill`, `build` (with `replaces` to swap one build for another), `move_build`, `forget_skill` and `demolish`
+- `learn_skill`, `build` (with `spot`, `scale`, and `replaces` to swap one build for another), `move_build`, `forget_skill` and `demolish`
+- `habits`: what her body does on its own by day
 - `nap`
 
 **Skills** are ES modules she writes: `export default async function run(input, ctx)`. They run as Node processes with her accounts' credentials, and can use fetch, the filesystem, and npm packages she installs. A new skill becomes a tool on her next wake. Syntax errors are caught before she's charged.
 
-**Builds** are ES modules that return dots: `export default async function build(ctx) { return [[x, y, z, '#color', size], ...] }`, or `{ frames: [[...], [...]], fps }` for something that moves. Anything she can code can be a build, as long as it fits the world's dotted look. The world is a grid of 12×12 ft plots, with her house at `[0, 0]`. Moving a build is free, replacing one costs a rebuild, and nothing dictates the layout, though she's encouraged to keep it tidy and connect things with paths.
+**Her body has a day of its own.** Her mind only runs when she wakes up to think, but her body doesn't wait for it: by day she drifts between the habits she sets with `habits` (places and what she likes doing there), sniffing along the pond or dozing in the yard, and at night she sleeps in her bed. It's worked out from the clock and her world, so everyone watching sees the same thing. Visitors get an instant reaction too: roll her a ball and she chases it, ring the bell and she runs to the door, tap the ground and she trots over.
+
+**Builds** are ES modules that return dots: `export default async function build(ctx) { return [[x, y, z, '#color', size], ...] }`, or `{ frames: [[...], [...]], fps }` for something that moves. Anything she can code can be a build, as long as it fits the world's dotted look. The world is a grid of 12×12 ft plots, with her house at `[0, 0]`. A build can take a whole plot or one quarter of it (shown at half size, so up to four things share a plot), and can be shrunk with `scale`. Moving or resizing is free, replacing one costs a rebuild, and stone paths run around every lot so her world reads as neat blocks. Nothing dictates the layout beyond that. Her world starts with a front yard, a garden and a pond (`starter/builds/`), planted once like her starter skills; after that they're hers to keep, move or replace.
 
 **Feelings** drift and react to events: hunger over time, tiredness while awake, curiosity when nothing's new. Feelings never force anything; what she does about them is up to her.
 

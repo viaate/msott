@@ -150,7 +150,9 @@ export const CORE_TOOLS = [
         name: { type: 'string', description: 'Lowercase letters, digits, underscores.' },
         description: { type: 'string', description: 'What it is. Visitors see this when they hover over it.' },
         code: { type: 'string', description: 'The full ES module source: export default async function build(ctx) { return [[x, y, z, color, size], ...] } (or return { frames: [[...dots], [...dots]], fps } for something that moves).' },
-        plot: { type: 'array', items: { type: 'integer' }, description: '[x, z] of a free plot next to your world. Omit to use the nearest free plot (or keep the current plot when rebuilding).' },
+        plot: { type: 'array', items: { type: 'integer' }, description: '[x, z] of a free plot next to your world, or of a plot with a free quarter. Omit to use the nearest free plot (or keep the current place when rebuilding).' },
+        spot: { type: 'string', enum: ['whole', 'nw', 'ne', 'sw', 'se'], description: 'Optional: "whole" plot (the default), or one quarter of it. A quarter shows your build at half size, so up to four things can share a plot.' },
+        scale: { type: 'number', description: 'Optional: shrink it to fit, from 0.25 to 1 (the default) of its spot.' },
         replaces: { type: 'string', description: 'Optional: the name of a build to swap out for this one. The old build is demolished and this one goes on its plot, for the rebuild price.' },
         link: { type: 'string', description: 'Optional https URL that visitors go to when they click the build.' },
         motion: { type: 'string', enum: MOTIONS },
@@ -162,14 +164,37 @@ export const CORE_TOOLS = [
   },
   {
     name: 'move_build',
-    description: 'Move one of your builds to another plot. Free, and its dots stay just as they are. Move it onto another build\'s plot and the two swap places.',
+    description: 'Move or resize one of your builds. Free, and its dots stay just as they are. Move it into another build\'s exact place and the two swap.',
     input_schema: {
       type: 'object',
       properties: {
         name: { type: 'string' },
-        plot: { type: 'array', items: { type: 'integer' }, description: '[x, z] of a free plot next to your world, or of another build to swap with.' },
+        plot: { type: 'array', items: { type: 'integer' }, description: 'Optional: [x, z] of the plot to move it to.' },
+        spot: { type: 'string', enum: ['whole', 'nw', 'ne', 'sw', 'se'], description: 'Optional: the whole plot, or one quarter of it (half size).' },
+        scale: { type: 'number', description: 'Optional: its size within its spot, from 0.25 to 1.' },
       },
-      required: ['name', 'plot'],
+      required: ['name'],
+    },
+  },
+  {
+    name: 'habits',
+    description: 'Choose what your body does on its own by day, between the times you wake up to think: up to 12 places and what you like doing there. You drift between them, so visitors find you up to something. Replaces your previous habits. Free.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        list: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              place: { type: 'string', description: 'Anywhere go can take you: a spot in your house, "outside", a build, or a plot like "[2, -1]".' },
+              doing: { type: 'string', description: 'A few words, e.g. "napping in the sun" or "watching the fish".' },
+            },
+            required: ['place', 'doing'],
+          },
+        },
+      },
+      required: ['list'],
     },
   },
   {
@@ -184,7 +209,7 @@ export const CORE_TOOLS = [
   },
   {
     name: 'nap',
-    description: `Go to sleep, which ends this waking stretch. You choose when you wake: anywhere from ${config.schedule.minNapMinutes} minute to ${config.schedule.maxNapMinutes / 60} hours from now. Remember anything important first.`,
+    description: `Rest your mind, which ends this waking stretch (by day your body carries on with your habits; at night you sleep). You choose when you wake: anywhere from ${config.schedule.minNapMinutes} minute to ${config.schedule.maxNapMinutes / 60} hours from now. Remember anything important first.`,
     input_schema: {
       type: 'object',
       properties: {

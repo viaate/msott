@@ -100,6 +100,7 @@ export class UI {
   constructor(net) {
     this.net = net;
     this.state = null;
+    this.body = null; // what her body is up to while her mind rests
     this.shown = 0;
     this.live = new Map();
     this.code = null;
@@ -244,18 +245,20 @@ export class UI {
     let text;
     pip.className = 'pip';
     if (c.paused) text = 'paused by her human';
-    else if (!c.brain.ready) text = 'asleep · no brain connected yet';
+    else if (!c.brain.ready) text = 'no brain connected yet';
     else if (c.status === 'awake') {
       pip.classList.add('awake');
       text = c.activity === 'skill' && c.detail ? `awake · using ${c.detail}` : `awake · ${ACTIVITY[c.activity] ?? 'thinking'}`;
     } else {
       pip.classList.add('sleeping');
-      text = c.energy <= 0.001 ? 'all thought out · back tomorrow' : c.nextWakeAt ? `napping · wakes in ${minutesUntil(c.nextWakeAt)}` : 'napping';
+      const next = c.nextWakeAt > Date.now() ? `thinks again in ${minutesUntil(c.nextWakeAt)}` : 'thinks again at her next check';
+      text = c.energy <= 0.001 ? 'all thought out · back tomorrow' : c.nextWakeAt ? `mind resting · ${next}` : 'mind resting';
     }
     $('status-text').textContent = text;
     $('budget-bar').style.width = `${Math.round(Math.max(0, Math.min(1, c.energy)) * 100)}%`;
-    $('doing-text').textContent = `Charlie is ${this.doing(c)}`;
-    $('doing').classList.toggle('awake', c.status === 'awake' && !c.paused);
+    const thinking = c.status === 'awake' && !c.paused;
+    $('doing-text').textContent = `Charlie is ${thinking || !this.body ? this.doing(c) : this.body}`;
+    $('doing').classList.toggle('awake', thinking);
     const tz = this.state.tz;
     try {
       $('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });
@@ -277,6 +280,11 @@ export class UI {
     return `having a think${where ? ` ${where}` : ''}`;
   }
 
+  setBody(text) {
+    this.body = text;
+    this.renderStatus();
+  }
+
   setConnection(ok) {
     if (!ok) $('status-text').textContent = 'reconnecting…';
     else this.renderStatus();
@@ -285,7 +293,10 @@ export class UI {
   setView(v) {
     document.querySelectorAll('[data-view]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
     document.body.classList.toggle('view-3d', v === '3d');
-    $('hint').textContent = v === '3d' ? 'drag to look around her · scroll to move closer · click charlie to pet her' : 'drag to look around · scroll to zoom · click charlie to pet her';
+    const touch = matchMedia('(pointer: coarse)').matches;
+    $('hint').textContent = touch
+      ? 'drag to look around · pinch to zoom · tap charlie to pet her, or the ground to call her'
+      : `drag to look around · scroll to ${v === '3d' ? 'move closer' : 'zoom'} · click charlie to pet her, or the ground to call her`;
   }
 
   // ---- her web presence ----

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import { config, paths, secrets, mode } from '../config.js';
+import { placeLabel } from './world.js';
 import { JSONStore, clip } from '../store.js';
 import { bus } from '../bus.js';
 import { label } from '../ledger.js';
@@ -35,7 +36,8 @@ function summarizeInput(name, input) {
   if (!input || typeof input !== 'object') return name;
   if (name === 'learn_skill') return `writing a skill: "${input.name}"`;
   if (name === 'build') return `building "${input.name}"${input.replaces ? ` in place of "${input.replaces}"` : input.plot ? ` on plot [${input.plot}]` : ''}`;
-  if (name === 'move_build') return `moving "${input.name}" to plot [${input.plot}]`;
+  if (name === 'move_build') return input.plot || input.spot ? `moving "${input.name}" to ${placeLabel(input.plot ?? '…', input.spot)}` : `resizing "${input.name}"`;
+  if (name === 'habits') return 'settling into some habits';
   if (name === 'read_file') return `reading ${input.path}`;
   if (name === 'remember') return input.mode === 'rewrite' ? 'tidying up memory' : 'making a note in memory';
   if (name === 'go') return `walking to ${input.to}`;
@@ -72,6 +74,7 @@ export class Agent {
       napNote: '',
       location: 'bed',
       doing: '',
+      habits: [],
       lastSession: [],
       brainError: null,
     }));
@@ -155,6 +158,7 @@ export class Agent {
       lastWakeAt: s.lastWakeAt,
       location: s.location,
       doing: s.doing,
+      habits: s.habits ?? [],
       wakes: s.wakes,
       born: s.born,
       energy: this.usage.energy,
@@ -227,9 +231,12 @@ export class Agent {
     lines.push('');
     lines.push('WORLD:');
     for (const o of this.world.publicList()) {
-      lines.push(`- ${o.name} @ plot [${o.plot}]${o.builtin ? ' (built-in)' : ` — ${o.count} dots, ${o.status}${o.error ? `: ${clip(o.error, 120)}` : ''}${o.link ? `, links to ${o.link}` : ''}`}`);
+      const size = o.scale < 1 ? `, ${Math.round(o.scale * 100)}% size` : '';
+      lines.push(`- ${o.name} @ plot ${placeLabel(o.plot, o.spot)}${o.builtin ? ' (built-in)' : ` — ${o.count} dots${size}, ${o.status}${o.error ? `: ${clip(o.error, 120)}` : ''}${o.starter ? ', was here when you arrived' : ''}${o.link ? `, links to ${o.link}` : ''}`}`);
     }
-    lines.push(`Free plots you can build on: ${this.world.buildable().map((p) => `[${p}]`).join(' ')}`);
+    lines.push(`${this.world.freeText()}`);
+    const habits = this.s.habits ?? [];
+    lines.push(`YOUR HABITS (what your body does on its own by day): ${habits.length ? habits.map((h) => `${h.doing} at ${h.place}`).join('; ') : 'none set yet, so you just potter around'}`);
     lines.push('');
     lines.push(`HOW YOU FEEL: ${this.feelings.describe()}`);
     const bowl = this.feelings.d.bowl;
@@ -758,10 +765,21 @@ export class Agent {
         return `Forgot "${input.name}". It's gone from your tools after your next nap.`;
 
       case 'move_build': {
-        const r = this.world.move(String(input.name), input.plot);
-        if (this.s.location === input.name) this.moveTo(`[${r.from}]`, this.s.doing);
-        bus.feed('result', `✓ moved "${input.name}" to plot [${r.to}]${r.swapped ? `, swapping with "${r.swapped}"` : ''}`, { ok: true, tool: name });
-        return `"${input.name}" is now on plot [${r.to}]${r.swapped ? `, and "${r.swapped}" moved to [${r.from}]` : ''}.`;
+        const r = this.world.move(String(input.name), { plot: input.plot, spot: input.spot, scale: input.scale });
+        const size = input.scale != null ? ` at ${Math.round(r.scale * 100)}% size` : '';
+        bus.feed('result', `✓ ${r.moved ? `moved "${input.name}" to ${r.to}` : `resized "${input.name}"`}${size}${r.swapped ? `, swapping with "${r.swapped}"` : ''}`, { ok: true, tool: name });
+        return `"${input.name}" is now at ${r.to}${size}${r.swapped ? `, and "${r.swapped}" moved to ${r.from}` : ''}.`;
+      }
+
+      case 'habits': {
+        const list = (Array.isArray(input.list) ? input.list : []).slice(0, 12).map((h) => ({
+          place: this.placeFor(String(h?.place ?? '').trim()),
+          doing: String(h?.doing ?? '').trim().slice(0, 60),
+        })).filter((h) => h.doing);
+        this.s.habits = list;
+        this.store.save();
+        this.broadcast();
+        return list.length ? `Your body will drift between these by day: ${list.map((h) => `${h.doing} at ${h.place}`).join('; ')}.` : 'Cleared your habits. Your body will just potter around.';
       }
 
       case 'demolish': {

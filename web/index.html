@@ -62,13 +62,15 @@
     <pre id="code-text"></pre>
   </section>
 
+  <!-- On a desktop these sit in their own corners; on a phone they become one tidy bar. -->
+  <div class="controls">
   <div class="center-dock">
     <section class="panel actions-menu" id="actions-menu" hidden aria-label="Things you can do"></section>
     <div class="replay" id="replay" hidden><span class="blink"></span><span id="replay-text">replaying her latest wake</span><button id="replay-skip" type="button">skip</button></div>
+    <button id="replay-again" type="button" hidden>replay her last wake</button>
     <div class="doing" id="doing"><span class="pip"></span><span id="doing-text">Charlie is napping on her bed</span></div>
     <div class="dock-row">
       <button id="actions-btn" aria-expanded="false" aria-controls="actions-menu">actions</button>
-      <button id="replay-again" type="button" hidden>replay her last wake</button>
       <div class="view-toggle" role="group" aria-label="View">
         <button data-view="2.5d" aria-pressed="true">2.5D</button>
         <button data-view="3d" aria-pressed="false">3D</button>
@@ -80,7 +82,7 @@
   <section class="actions">
     <div class="buttons">
       <button id="diary-btn" aria-expanded="false" aria-controls="diary-panel">diary</button>
-      <button id="info-btn" aria-expanded="false" aria-controls="info-panel">her stuff</button>
+      <button id="info-btn" aria-expanded="false" aria-controls="info-panel"><span class="roomy">her </span>stuff</button>
     </div>
     <form id="msg-form" autocomplete="off">
       <label class="attach" title="Leave her a picture (what you leave her is public)">
@@ -93,6 +95,7 @@
     <div class="pic-chip" id="pic-chip" hidden><span id="pic-name">picture</span><button type="button" id="pic-clear" aria-label="Remove picture">×</button></div>
     <div class="toast" id="toast" hidden></div>
   </section>
+  </div>
 
   <section class="panel diary" id="diary-panel" hidden>
     <div class="panel-head">
@@ -155,7 +158,7 @@
 
   <div class="bubble" id="bubble" hidden></div>
   <div class="tip" id="tip" hidden></div>
-  <div class="hint" id="hint">drag to look around · scroll to zoom · click charlie to pet her</div>
+  <div class="hint" id="hint">drag to look around · scroll to zoom · click charlie to pet her, or the ground to call her</div>
   <button class="follow-exit" id="follow-exit" type="button">exit follow mode</button>
 
   <div class="admin" id="admin" hidden>

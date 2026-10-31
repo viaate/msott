@@ -60,7 +60,7 @@ test('she can head outside, wander her land, make things that move, and rearrang
   assert.match(result(4).content, /240 dots across 6 frames/);
 
   // Moving swaps with whatever is there, and can't strand a build.
-  assert.match(result(6).content, /"roller" is now on plot \[-1,0\], and "shed" moved to \[0,1\]/);
+  assert.match(result(6).content, /"roller" is now at \[-1,0\], and "shed" moved to \[0,1\]/);
   assert.ok(result(7).is_error);
   assert.deepEqual(app.world.get('shed').plot, [0, 1]);
 
@@ -91,5 +91,55 @@ test('a tired dog stays up as long as she likes', async () => {
   assert.equal(client.calls.length, 31, 'nothing cut her wake short');
   assert.ok(!client.calls.some((c) => JSON.stringify(c.messages).includes('nearly as long as one can be')));
   assert.ok(Math.abs(app.agent.s.nextWakeAt - (Date.now() + 5 * 60000)) < 5000);
+  app.flush();
+});
+
+test('her world starts with places to go, and builds can share a plot, shrink and swap', async () => {
+  const use = (name, input) => [{ type: 'tool_use', name, input }];
+  const client = fakeClient([
+    use('build', { name: 'lamp', description: 'a lamp', code: dots('#e9bd62'), plot: [1, 1], spot: 'ne' }),
+    use('build', { name: 'bench', description: 'a bench', code: dots('#7a5636'), plot: [1, 1], spot: 'ne' }),
+    use('build', { name: 'bench', description: 'a bench', code: dots('#7a5636'), plot: [1, 1], spot: 'sw' }),
+    use('build', { name: 'barn', description: 'a barn', code: dots('#c8553d'), plot: [1, 1] }),
+    use('move_build', { name: 'lamp', scale: 0.5 }),
+    use('move_build', { name: 'bench', spot: 'ne' }),
+    use('habits', { list: [{ place: 'pond', doing: 'watching the water' }, { place: '[1, 1]', doing: 'sniffing around' }] }),
+    use('habits', { list: [{ place: 'the moon', doing: 'howling' }] }),
+    use('nap', { minutes: 30 }),
+  ]);
+  const app = createApp({ client });
+  app.ledger.earn('gift', 200, 'test gift');
+  const before = app.world.progress.data.buildsMade;
+
+  // Starter places are planted once, for free, and stay gone if she removes one.
+  await app.world.plantStarters();
+  for (const name of ['front_yard', 'garden', 'pond']) {
+    const o = app.world.get(name);
+    assert.equal(o.origin, 'starter');
+    assert.equal(o.status, 'ok', `${name} drew`);
+  }
+  assert.deepEqual(app.world.get('front_yard').plot, [-1, 0]);
+  assert.notDeepEqual(app.world.get('pond').plot, [0, 1], 'its plot was taken, so it went elsewhere');
+  assert.equal(app.world.progress.data.buildsMade, before);
+  app.world.demolish('garden');
+  await app.world.plantStarters();
+  assert.equal(app.world.get('garden'), null);
+
+  await app.agent.wake('the test said so');
+  const result = (turn) => client.calls[turn + 1].messages.at(-1).content.find((b) => b.type === 'tool_result');
+  assert.match(result(0).content, /Built "lamp"/);
+  assert.ok(result(1).is_error, 'that quarter is taken');
+  assert.match(result(1).content, /Free quarters: .*\[1,1\] \(nw quarter\)/);
+  assert.match(result(2).content, /Built "bench"/);
+  assert.ok(result(3).is_error, 'a whole build needs an empty plot');
+  assert.match(result(4).content, /50% size/);
+  assert.match(result(5).content, /"bench" is now at \[1,1\] \(ne quarter\), and "lamp" moved to \[1,1\] \(sw quarter\)/);
+  const lamp = app.world.publicList().find((o) => o.name === 'lamp');
+  assert.deepEqual([lamp.spot, lamp.scale], ['sw', 0.5]);
+
+  // Habits are hers to set, anywhere go can take her.
+  assert.match(result(6).content, /watching the water at pond/);
+  assert.ok(result(7).is_error);
+  assert.deepEqual(app.agent.publicState().habits.map((h) => h.place), ['pond', 'lamp']);
   app.flush();
 });

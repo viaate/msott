@@ -79,6 +79,11 @@
   },
 
   "starterSkills": ["github", "http", "reddit", "bluesky", "devvit"],
+  "starterBuilds": [
+    { "name": "front_yard", "plot": [-1, 0], "description": "Charlie's front yard: a stepping-stone path from her door, a shade tree, a mailbox and a patch of clover.", "actions": ["toss a stick", "check the mailbox"] },
+    { "name": "garden", "plot": [0, -1], "description": "A little garden behind the house: sunflowers, tomatoes, lavender and a watering can.", "actions": ["water the flowers"] },
+    { "name": "pond", "plot": [0, 1], "description": "A small pond with lily pads, cattails and smooth stones around the edge.", "actions": ["skip a stone"] }
+  ],
 
   "web": {
     "search": true,
