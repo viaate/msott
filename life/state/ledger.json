@@ -1,13 +1,13 @@
 {
-  "balance": 3,
-  "earned": 18,
+  "balance": 4,
+  "earned": 19,
   "spent": 15,
   "bySource": {
     "site.message": 3,
     "site.picture": 4,
     "site.action": 3,
     "site.treat": 2,
-    "site.pet": 2,
+    "site.pet": 3,
     "bluesky.like": 3,
     "site.visitor": 1
   },
@@ -97,12 +97,20 @@
       "kind": "spend",
       "amount": 15,
       "reason": "built \"lemon_tart\" on plot [1,0]"
+    },
+    {
+      "t": 1793409430540,
+      "kind": "earn",
+      "key": "site.pet",
+      "units": 1,
+      "amount": 1,
+      "reason": "mellowFerret81 petted you"
     }
   ],
   "daily": {
     "date": "2026-10-30",
     "counts": {
-      "mailbox": 8,
+      "mailbox": 9,
       "message:w:ejs4cwLXLiLUh3b-f09rF6": 1,
       "picture:w:ejs4cwLXLiLUh3b-f09rF6": 1,
       "action:w:ejs4cwLXLiLUh3b-f09rF6": 3,
@@ -110,7 +118,7 @@
       "treat:w:ejs4cwLXLiLUh3b-f09rF6": 1,
       "action:w:ejs4cwLXLiLUh3b-f09rF6:ring_bell": 1,
       "action:w:ejs4cwLXLiLUh3b-f09rF6:squeak_toy": 1,
-      "pet:w:ejs4cwLXLiLUh3b-f09rF6": 2
+      "pet:w:ejs4cwLXLiLUh3b-f09rF6": 3
     }
   }
 }
