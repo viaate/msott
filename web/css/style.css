@@ -338,6 +338,27 @@ table.earn td:last-child { text-align: right; color: var(--gold); white-space: n
 .replay .blink { width: 7px; height: 7px; border-radius: 50%; background: var(--copper); animation: blink 1s steps(2) infinite; }
 .replay button { padding: 2px 10px; font-size: 12px; }
 #replay-again { font-size: 12px; color: var(--dim); }
+#follow-btn { padding: 6px 12px; font-size: 12px; color: var(--dim); }
+
+/* Follow mode: nothing on screen but her world (and what she says). */
+body.following > :not(#scene):not(#bubble):not(#follow-exit) { display: none !important; }
+body.following #scene { cursor: none; }
+body.following.stirred #scene { cursor: auto; }
+.follow-exit {
+  display: none;
+  position: fixed;
+  top: max(var(--gutter), env(safe-area-inset-top));
+  right: var(--gutter);
+  z-index: 40;
+  font-size: 12px;
+  color: var(--dim);
+  background: var(--panel);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+body.following .follow-exit { display: block; }
+body.following.stirred .follow-exit { opacity: 1; pointer-events: auto; }
 
 /* actions */
 .actions {

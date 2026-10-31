@@ -32,16 +32,23 @@ function parseColor(c) {
   return DEFAULT_COLOR;
 }
 
-// Turns whatever Charlie's build() returned into compact dot buffers.
-export function normalizePoints(result, { half, maxHeight, maxPoints }) {
-  const list = Array.isArray(result) ? result : result?.points;
-  if (!Array.isArray(list)) throw new Error('build() must return an array of dots, or { points: [...] }.');
+// Turns whatever Charlie's build() returned into compact dot buffers: one
+// list of dots, or { frames: [dots, dots, ...], fps } for something that moves.
+export function normalizePoints(result, { half, maxHeight, maxPoints, maxFrames = 1 }) {
+  let frames = Array.isArray(result?.frames) ? result.frames : [Array.isArray(result) ? result : result?.points];
+  if (!frames.length || !frames.every(Array.isArray)) throw new Error('build() must return an array of dots, { points: [...] }, or { frames: [[...], [...]], fps }.');
   const warnings = [];
-  if (list.length > maxPoints) warnings.push(`returned ${list.length} dots; only the first ${maxPoints} were kept`);
-  const n = Math.min(list.length, maxPoints);
+  if (frames.length > maxFrames) {
+    warnings.push(`returned ${frames.length} frames; only the first ${maxFrames} were kept`);
+    frames = frames.slice(0, maxFrames);
+  }
+  const total = frames.reduce((s, f) => s + f.length, 0);
+  if (total > maxPoints) warnings.push(`returned ${total} dots${frames.length > 1 ? ' across all frames' : ''}; only the first ${maxPoints} were kept`);
+  const n = Math.min(total, maxPoints);
   const positions = new Float32Array(n * 3);
   const colors = new Uint8Array(n * 3);
   const sizes = new Uint8Array(n);
+  const frameOf = new Uint8Array(n);
   let count = 0;
   let clamped = 0;
   let skipped = 0;
@@ -49,8 +56,9 @@ export function normalizePoints(result, { half, maxHeight, maxPoints }) {
     if (v < lo || v > hi) clamped++;
     return Math.max(lo, Math.min(hi, v));
   };
+  const list = frames.flatMap((f, fi) => f.map((p) => [fi, p])).slice(0, n);
   for (let i = 0; i < n; i++) {
-    const p = list[i];
+    const [fi, p] = list[i];
     let x, y, z, color, size;
     if (Array.isArray(p)) [x, y, z, color, size] = p;
     else if (p && typeof p === 'object') ({ x, y, z, color = p.c, size = p.s } = p);
@@ -64,22 +72,30 @@ export function normalizePoints(result, { half, maxHeight, maxPoints }) {
     colors.set(parseColor(color), count * 3);
     const s = typeof size === 'number' && Number.isFinite(size) ? size : 0.08;
     sizes[count] = Math.round(Math.max(0.02, Math.min(0.4, s)) * 500);
+    frameOf[count] = fi;
     count++;
   }
   if (skipped) warnings.push(`${skipped} dots had non-numeric coordinates and were skipped`);
   if (clamped) warnings.push(`${clamped} coordinates were outside the plot and got clamped`);
   if (!count) throw new Error('build() returned no usable dots.');
-  return { count, positions: positions.subarray(0, count * 3), colors: colors.subarray(0, count * 3), sizes: sizes.subarray(0, count), warnings };
+  const out = { count, positions: positions.subarray(0, count * 3), colors: colors.subarray(0, count * 3), sizes: sizes.subarray(0, count), frames: 1, fps: null, warnings };
+  if (frames.length > 1) {
+    const fps = Number(result.fps);
+    Object.assign(out, { frame: frameOf.subarray(0, count), frames: frames.length, fps: Number.isFinite(fps) ? Math.max(1, Math.min(30, fps)) : 8 });
+  }
+  return out;
 }
 
-// Binary layout: u32 count, u32 version, f32 xyz * n, u8 rgb * n, u8 size * n.
-export function encodePoints({ count, positions, colors, sizes }) {
-  const buf = Buffer.alloc(8 + count * 12 + count * 4);
+// Binary layout: u32 count, u32 version, f32 xyz * n, u8 rgb * n, u8 size * n,
+// and in version 2 (builds that move) u8 frame * n.
+export function encodePoints({ count, positions, colors, sizes, frame }) {
+  const buf = Buffer.alloc(8 + count * 12 + count * 4 + (frame ? count : 0));
   buf.writeUInt32LE(count, 0);
-  buf.writeUInt32LE(1, 4);
+  buf.writeUInt32LE(frame ? 2 : 1, 4);
   Buffer.from(positions.buffer, positions.byteOffset, count * 12).copy(buf, 8);
   Buffer.from(colors.buffer, colors.byteOffset, count * 3).copy(buf, 8 + count * 12);
   Buffer.from(sizes.buffer, sizes.byteOffset, count).copy(buf, 8 + count * 15);
+  if (frame) Buffer.from(frame.buffer, frame.byteOffset, count).copy(buf, 8 + count * 16);
   return buf;
 }
 
@@ -117,16 +133,26 @@ export class World {
   }
 
   publicList() {
-    return this.list().map(({ name, builtin, plot, description, link, motion, count, status, error, builtAt, version, refreshMinutes, actions }) =>
-      ({ name, builtin: Boolean(builtin), plot, description, link: link || null, motion: motion || 'none', count: count || 0, status: status || 'ok', error: error ? clip(error, 300) : null, builtAt, version: version || 0, refreshMinutes: refreshMinutes || null, actions: actions || [] }));
+    return this.list().map(({ name, builtin, plot, description, link, motion, count, frames, fps, status, error, builtAt, version, refreshMinutes, actions }) =>
+      ({ name, builtin: Boolean(builtin), plot, description, link: link || null, motion: motion || 'none', count: count || 0, frames: frames || 1, fps: fps || null, status: status || 'ok', error: error ? clip(error, 300) : null, builtAt, version: version || 0, refreshMinutes: refreshMinutes || null, actions: actions || [] }));
   }
 
-  occupied() {
-    return new Set(this.list().map((o) => key(o.plot)));
+  at(plot) {
+    return this.list().find((o) => key(o.plot) === key(plot)) ?? null;
   }
 
-  buildable() {
-    const occ = this.occupied();
+  // How far she can wander: a couple of plots past the edge of her world.
+  reach() {
+    return 2 + Math.max(1, ...this.list().map((o) => Math.max(Math.abs(o.plot[0]), Math.abs(o.plot[1]))));
+  }
+
+  // `except` leaves one build out, for working out where it could go instead.
+  occupied(except) {
+    return new Set(this.list().filter((o) => o.name !== except).map((o) => key(o.plot)));
+  }
+
+  buildable(except) {
+    const occ = this.occupied(except);
     const out = new Map();
     for (const k of occ) {
       const [x, z] = k.split(',').map(Number);
@@ -143,7 +169,7 @@ export class World {
     return price('build', this.progress.data.buildsMade);
   }
 
-  async build({ name, description, code, plot, link, motion = 'none', refresh_minutes, actions }) {
+  async build({ name, description, code, plot, link, motion = 'none', refresh_minutes, actions, replaces }) {
     if (typeof name !== 'string' || !NAME_RE.test(name) || name === 'house') throw new Error('name must be 2–40 chars of lowercase letters, digits and underscores (and not "house").');
     if (typeof description !== 'string' || !description.trim()) throw new Error('description is required — visitors see it when they hover your build.');
     if (typeof code !== 'string' || !/export\s+default/.test(code)) throw new Error('code must `export default function build(ctx) { return [...dots] }`.');
@@ -167,19 +193,27 @@ export class World {
     }
 
     const existing = this.get(name);
-    let target = existing?.plot;
+    // A replacement takes the old build's plot, and the old one is demolished.
+    let old = null;
+    if (replaces != null && replaces !== name) {
+      old = this.get(String(replaces));
+      if (!old || old.builtin) throw new Error(`You don't have a build called "${replaces}" to replace.`);
+      if (existing) throw new Error(`You already have a build called "${name}". Pick a new name, or leave out replaces to rebuild it.`);
+    }
+    let target = existing?.plot ?? old?.plot;
     if (plot != null) {
       if (!Array.isArray(plot) || plot.length !== 2 || !plot.every(Number.isInteger)) throw new Error('plot must be [x, z] integers.');
-      if (!existing || key(plot) !== key(existing.plot)) {
-        if (!this.buildable().some((p) => key(p) === key(plot))) {
-          throw new Error(`Plot [${plot}] isn't free next to your world. Free plots: ${this.buildable().map((p) => `[${p}]`).join(' ')}`);
+      if (old && key(plot) !== key(old.plot)) throw new Error(`A replacement goes on the plot of the build it replaces, [${old.plot}]. Leave out plot, or move it afterwards with move_build.`);
+      if (!old && (!existing || key(plot) !== key(existing.plot))) {
+        if (!this.buildable(name).some((p) => key(p) === key(plot))) {
+          throw new Error(`Plot [${plot}] isn't free next to your world. Free plots: ${this.buildable(name).map((p) => `[${p}]`).join(' ')}`);
         }
       }
       target = plot;
     }
     target ??= this.buildable()[0];
 
-    const cost = existing ? price('rebuild') : this.nextPrice();
+    const cost = existing || old ? price('rebuild') : this.nextPrice();
     if (!this.ledger.canAfford(cost)) throw new Error(`${existing ? 'Rebuilding' : 'Building'} costs ${cost} tokens and you have ${this.ledger.balance}. Nothing was charged.`);
 
     const dir = ensureDir(this.dir(name));
@@ -192,7 +226,8 @@ export class World {
       throw new Error(`Syntax error — nothing was charged:\n${syntaxError}`);
     }
 
-    this.ledger.spend(cost, existing ? `rebuilt "${name}"` : `built "${name}" on plot [${target}]`);
+    this.ledger.spend(cost, existing ? `rebuilt "${name}"` : old ? `replaced "${old.name}" with "${name}"` : `built "${name}" on plot [${target}]`);
+    if (old) this.demolish(old.name);
     fs.renameSync(tmp, path.join(dir, 'build.mjs'));
     const meta = {
       ...(existing ?? {}),
@@ -207,32 +242,32 @@ export class World {
     };
     delete meta.name;
     writeJSON(path.join(dir, 'meta.json'), meta);
-    if (!existing) {
+    if (!existing && !old) {
       this.progress.data.buildsMade += 1;
       this.progress.save();
     }
     const r = await this.generate(name);
-    return { cost, plot: target, rebuilt: Boolean(existing), ...r };
+    return { cost, plot: target, rebuilt: Boolean(existing), replaced: old?.name ?? null, ...r };
   }
 
   // Runs the build code and stores the dots. Keeps the previous dots on failure.
   async generate(name) {
     const dir = this.dir(name);
     const meta = readJSON(path.join(dir, 'meta.json'), {});
-    const { plotSize, maxPointsPerBuild, maxHeight, buildTimeoutSeconds } = config.world;
+    const { plotSize, maxPointsPerBuild, maxHeight, maxFrames, buildTimeoutSeconds } = config.world;
     const r = await runModule({
       file: path.join(dir, 'build.mjs'),
       mode: 'build',
-      ctx: { name, seed: Math.floor(Math.random() * 2 ** 31), plotSize, maxPoints: maxPointsPerBuild, maxHeight, now: new Date().toISOString(), home: paths.home },
+      ctx: { name, seed: Math.floor(Math.random() * 2 ** 31), plotSize, maxPoints: maxPointsPerBuild, maxHeight, maxFrames, now: new Date().toISOString(), home: paths.home },
       timeoutMs: buildTimeoutSeconds * 1000,
     });
     let outcome;
     try {
       if (!r.ok) throw new Error(r.error);
-      const pts = normalizePoints(r.result, { half: plotSize / 2 - 0.25, maxHeight, maxPoints: maxPointsPerBuild });
+      const pts = normalizePoints(r.result, { half: plotSize / 2 - 0.25, maxHeight, maxPoints: maxPointsPerBuild, maxFrames });
       fs.writeFileSync(path.join(dir, 'points.bin'), encodePoints(pts));
-      Object.assign(meta, { count: pts.count, status: 'ok', error: null, version: (meta.version ?? 0) + 1, generatedAt: new Date().toISOString() });
-      outcome = { ok: true, count: pts.count, warnings: pts.warnings, logs: r.logs };
+      Object.assign(meta, { count: pts.count, frames: pts.frames, fps: pts.fps, status: 'ok', error: null, version: (meta.version ?? 0) + 1, generatedAt: new Date().toISOString() });
+      outcome = { ok: true, count: pts.count, frames: pts.frames, warnings: pts.warnings, logs: r.logs };
     } catch (err) {
       const error = scrubSecrets(String(err.message || err));
       Object.assign(meta, { status: meta.count ? 'ok' : 'broken', error });
@@ -247,6 +282,29 @@ export class World {
   pointsFile(name) {
     const f = path.join(this.dir(name), 'points.bin');
     return NAME_RE.test(name) && fs.existsSync(f) ? f : null;
+  }
+
+  // Moving is free, so she can rearrange her world whenever she likes. Onto
+  // another build's plot, the two swap places.
+  move(name, plot) {
+    if (name === 'house') throw new Error('Your house stays where it is.');
+    const obj = this.get(name);
+    if (!obj) throw new Error(`There's nothing called "${name}" in your world.`);
+    if (!Array.isArray(plot) || plot.length !== 2 || !plot.every(Number.isInteger)) throw new Error('plot must be [x, z] integers.');
+    if (key(plot) === key(obj.plot)) throw new Error(`"${name}" is already on plot [${plot}].`);
+    const other = this.at(plot);
+    if (other?.builtin) throw new Error(`Plot [${plot}] is your house.`);
+    if (!other && !this.buildable(name).some((p) => key(p) === key(plot))) {
+      throw new Error(`Plot [${plot}] isn't next to the rest of your world. Plots it could go to: ${this.buildable(name).map((p) => `[${p}]`).join(' ')}, or any other build's plot to swap.`);
+    }
+    const setPlot = (n, p) => {
+      const file = path.join(this.dir(n), 'meta.json');
+      writeJSON(file, { ...readJSON(file, {}), plot: p });
+    };
+    setPlot(name, plot);
+    if (other) setPlot(other.name, obj.plot);
+    bus.emit('world', { objects: this.publicList(), changed: name, buildable: this.buildable() });
+    return { from: obj.plot, to: plot, swapped: other?.name ?? null };
   }
 
   demolish(name) {

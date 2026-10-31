@@ -50,6 +50,17 @@ test('build output is normalized, clamped and encoded', () => {
   assert.equal(buf.readUInt32LE(0), 3);
   assert.equal(buf.length, 8 + 3 * 16);
   assert.throws(() => normalizePoints({ nope: true }, { half: 5, maxHeight: 10, maxPoints: 10 }), /array of dots/);
+
+  // Something that moves: frames go out together, each dot tagged with its frame.
+  const moving = normalizePoints({ frames: [[[0, 1, 0]], [[1, 1, 0], [2, 1, 0]], [[3, 1, 0]]], fps: 99 }, { half: 5, maxHeight: 10, maxPoints: 2, maxFrames: 2 });
+  assert.equal(moving.count, 2);
+  assert.equal(moving.frames, 2);
+  assert.equal(moving.fps, 30);
+  assert.deepEqual([...moving.frame], [0, 1]);
+  assert.equal(moving.warnings.length, 2, 'too many frames, and too many dots');
+  const mbuf = encodePoints(moving);
+  assert.equal(mbuf.readUInt32LE(4), 2);
+  assert.deepEqual([...mbuf.subarray(8 + 2 * 16)], [0, 1]);
 });
 
 test('code streams out of partial tool JSON', () => {

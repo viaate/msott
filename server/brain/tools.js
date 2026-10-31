@@ -7,7 +7,7 @@ import { DIARY_KINDS } from '../diary.js';
 import { visionImage } from '../images.js';
 
 export const MEMORY_CAP = 8000;
-export const PLACES = ['bed', 'window', 'door', 'bowl', 'toy', 'rug', 'center'];
+export const PLACES = ['bed', 'window', 'door', 'bowl', 'toy', 'rug', 'center', 'outside'];
 
 // Charlie's built-in abilities: free, and mostly about herself and her house.
 // Everything that reaches outside comes from skills she writes.
@@ -31,11 +31,11 @@ export const CORE_TOOLS = [
   },
   {
     name: 'go',
-    description: `Walk somewhere in your world: ${PLACES.map((p) => `"${p}"`).join(', ')}, or the name of one of your builds. Free. If there's food in your bowl when you get to it, you eat. Visitors see "Charlie is <doing>" while you're there.`,
+    description: `Walk somewhere in your world: ${PLACES.map((p) => `"${p}"`).join(', ')} ("outside" is just out your front door), the name of one of your builds, or any plot of your land as "[x, z]". Free. If there's food in your bowl when you get to it, you eat. Visitors see "Charlie is <doing>" while you're there.`,
     input_schema: {
       type: 'object',
       properties: {
-        to: { type: 'string', description: 'A place in your house or the name of a build.' },
+        to: { type: 'string', description: 'A place in your house, "outside", the name of a build, or a plot like "[2, -1]".' },
         doing: { type: 'string', description: 'Optional: a few words for what you\'re doing there, e.g. "watching the street".' },
       },
       required: ['to'],
@@ -143,14 +143,15 @@ export const CORE_TOOLS = [
   },
   {
     name: 'build',
-    description: 'Write code that adds a dot sculpture to your world, or rebuild one of your builds (same name). Costs tokens; the current prices are in your status. Syntax is checked before you pay. It runs immediately and the result appears for everyone watching.',
+    description: 'Write code that makes something out of dots in your world, still or moving, or rebuild one of your builds (same name). Costs tokens; the current prices are in your status. Syntax is checked before you pay. It runs immediately and the result appears for everyone watching.',
     input_schema: {
       type: 'object',
       properties: {
         name: { type: 'string', description: 'Lowercase letters, digits, underscores.' },
         description: { type: 'string', description: 'What it is. Visitors see this when they hover over it.' },
-        code: { type: 'string', description: 'The full ES module source: export default async function build(ctx) { return [[x, y, z, color, size], ...] }' },
+        code: { type: 'string', description: 'The full ES module source: export default async function build(ctx) { return [[x, y, z, color, size], ...] } (or return { frames: [[...dots], [...dots]], fps } for something that moves).' },
         plot: { type: 'array', items: { type: 'integer' }, description: '[x, z] of a free plot next to your world. Omit to use the nearest free plot (or keep the current plot when rebuilding).' },
+        replaces: { type: 'string', description: 'Optional: the name of a build to swap out for this one. The old build is demolished and this one goes on its plot, for the rebuild price.' },
         link: { type: 'string', description: 'Optional https URL that visitors go to when they click the build.' },
         motion: { type: 'string', enum: MOTIONS },
         refresh_minutes: { type: 'integer', description: `Optional: re-run the code every N minutes (≥ ${config.world.minRefreshMinutes}) so the build can show live data.` },
@@ -160,23 +161,36 @@ export const CORE_TOOLS = [
     },
   },
   {
+    name: 'move_build',
+    description: 'Move one of your builds to another plot. Free, and its dots stay just as they are. Move it onto another build\'s plot and the two swap places.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        plot: { type: 'array', items: { type: 'integer' }, description: '[x, z] of a free plot next to your world, or of another build to swap with.' },
+      },
+      required: ['name', 'plot'],
+    },
+  },
+  {
     name: 'forget_skill',
     description: 'Forget one of your skills. It is removed from your tools from your next wake onward. No refund.',
     input_schema: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
   },
   {
     name: 'demolish',
-    description: 'Remove one of your builds from the world and free up its plot. No refund.',
+    description: 'Remove one of your builds from the world and free up its plot. Free, but there is no refund.',
     input_schema: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
   },
   {
     name: 'nap',
-    description: `Go to sleep, which ends this waking stretch. Choose how long, from ${config.schedule.minNapMinutes} to ${config.schedule.maxNapMinutes} minutes. Always nap when you're done, and remember anything important first.`,
+    description: `Go to sleep, which ends this waking stretch. You choose when you wake: anywhere from ${config.schedule.minNapMinutes} minute to ${config.schedule.maxNapMinutes / 60} hours from now. Remember anything important first.`,
     input_schema: {
       type: 'object',
       properties: {
         minutes: { type: 'integer' },
         note: { type: 'string', description: 'Optional: what you mean to do when you wake.' },
+        wake_for_messages: { type: 'boolean', description: 'Optional: whether a new message from a visitor may wake you early (default true). Set false to sleep undisturbed.' },
       },
       required: ['minutes'],
     },

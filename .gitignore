@@ -1,8 +1,9 @@
 node_modules/
-data/
-home/
+# Leading slashes keep these to the repo root, so they never match her life in life/home.
+/data/
+/home/
 .env
 charlie.config.local.json
 *.tmp
 .DS_Store
-_site/
+/_site/

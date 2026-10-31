@@ -151,6 +151,12 @@ function route(to) {
 
 function placeFor(name) {
   if (PLACES[name]) return PLACES[name];
+  // Anywhere on her land, as "[x,z]".
+  const plot = /^\[(-?\d+),(-?\d+)\]$/.exec(name ?? '');
+  if (plot && world) {
+    const c = world.plotCenter([Number(plot[1]), Number(plot[2])]);
+    return { x: c.x, z: c.z };
+  }
   const obj = world?.objects.get(name);
   if (!obj) return null;
   const c = world.plotCenter(obj.meta.plot);
@@ -477,6 +483,52 @@ canvas.addEventListener('wheel', () => {
 ui.onAction = act;
 ui.onView = (v) => setView(v);
 
+// ---------------------------------------------------------------- follow mode
+// Nothing on screen but her world, with the ground-level camera staying with
+// her. Moving the mouse or tapping shows a way out for a moment.
+let following = false;
+let viewBefore = view;
+let stirTimer = 0;
+
+function stir() {
+  if (!following) return;
+  document.body.classList.add('stirred');
+  clearTimeout(stirTimer);
+  stirTimer = setTimeout(() => document.body.classList.remove('stirred'), 2500);
+}
+
+function setFollowing(on) {
+  if (on === following) return;
+  following = on;
+  document.body.classList.toggle('following', on);
+  if (on) {
+    viewBefore = view;
+    setView('3d', { save: false });
+    lastInteract = -Infinity;
+    ui.showTip(0, 0, null);
+    document.documentElement.requestFullscreen?.().catch(() => {});
+  } else {
+    clearTimeout(stirTimer);
+    document.body.classList.remove('stirred');
+    setView(viewBefore, { save: false });
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  }
+}
+
+document.getElementById('follow-btn').addEventListener('click', () => setFollowing(true));
+document.getElementById('follow-exit').addEventListener('click', () => setFollowing(false));
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest?.('input, textarea, [contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'f' || e.key === 'F') setFollowing(!following);
+  else if (e.key === 'Escape') setFollowing(false);
+});
+// Leaving fullscreen (the browser's own Esc) leaves follow mode too.
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && following) setFollowing(false);
+});
+addEventListener('pointermove', stir);
+addEventListener('pointerdown', stir);
+
 // Owner controls: open the site with ?admin
 if (net.kind === 'live' && new URLSearchParams(location.search).has('admin')) {
   let token = '';
@@ -567,7 +619,7 @@ function frame(time) {
   renderer.render(scene, camera);
   const hs = headScreen();
   ui.placeBubble(hs.x, hs.y, hs.visible);
-  if (view === '3d') minimap.draw(now, { charlie, world, camera: persp });
+  if (view === '3d' && !following) minimap.draw(now, { charlie, world, camera: persp });
   requestAnimationFrame(frame);
 }
 

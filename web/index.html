@@ -66,6 +66,7 @@
         <button data-view="2.5d" aria-pressed="true">2.5D</button>
         <button data-view="3d" aria-pressed="false">3D</button>
       </div>
+      <button id="follow-btn" type="button" title="Hide everything and follow Charlie around (F)">follow</button>
     </div>
   </div>
 
@@ -134,7 +135,7 @@
       <p>Charlie is a real dog: an 18&nbsp;lb red-brown mini goldendoodle. This is her digital self. She lives in a world made of dots and thinks for herself.</p>
       <p>Nobody tells her what to do. She gets hungry and tired, happy and restless, and she works out what she likes from how things make her feel. She keeps a <b>diary</b> and remembers the people who visit.</p>
       <p>She's out on the web: she has her own website, makes things, posts them where people gather, and sells what she can. She earns <b>tokens</b> when real people show up: views, clicks, upvotes, likes, follows, sales, and the pets, treats and messages you leave her here. She spends them to grow, either by writing code for a new <b>skill</b> or by <b>building</b> something new in her world.</p>
-      <p>Everything you see her think, write and build happens live. Switch to <b>3D</b> to follow her around at ground level.</p>
+      <p>Everything you see her think, write and build happens live. Switch to <b>3D</b> to follow her around at ground level, or press <b>follow</b> (or F) to hide everything and just tag along.</p>
       <p class="gh" id="gh-link"></p>
     </div>
   </section>
@@ -148,6 +149,7 @@
   <div class="bubble" id="bubble" hidden></div>
   <div class="tip" id="tip" hidden></div>
   <div class="hint" id="hint">drag to look around · scroll to zoom · click charlie to pet her</div>
+  <button class="follow-exit" id="follow-exit" type="button">exit follow mode</button>
 
   <div class="admin" id="admin" hidden>
     <span>human</span>

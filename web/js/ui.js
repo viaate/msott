@@ -53,6 +53,7 @@ const PLACE_NAMES = {
   toy: 'with her lemon tart toy',
   rug: 'on the rug',
   center: 'in the middle of the room',
+  outside: 'just outside her front door',
 };
 
 const MOOD_WORDS = ['awful', 'low', 'okay', 'good', 'wonderful'];
@@ -264,7 +265,7 @@ export class UI {
   }
 
   doing(c) {
-    const where = PLACE_NAMES[c.location] ?? (c.location ? `at "${c.location}"` : '');
+    const where = PLACE_NAMES[c.location] ?? (c.location?.startsWith('[') ? `out on plot ${c.location}` : c.location ? `at "${c.location}"` : '');
     if (c.paused) return 'taking a break';
     if (c.status !== 'awake') return c.energy <= 0.001 ? 'fast asleep for the night' : 'napping on her bed';
     if (c.activity === 'waking') return 'waking up and stretching';

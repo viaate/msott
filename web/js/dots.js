@@ -26,6 +26,10 @@ const vertex = /* glsl */ `
     attribute vec3 start;
     uniform float uAssemble;
   #endif
+  #ifdef FRAMES
+    attribute float frame;
+    uniform float uFrame;
+  #endif
   uniform float uScale;
   uniform float uMinPx;
   uniform float uPersp;
@@ -44,6 +48,14 @@ const vertex = /* glsl */ `
       gl_PointSize = 0.0;
       return;
     }
+    #ifdef FRAMES
+      // A build that moves: only the dots of the current frame show.
+      if (abs(frame - uFrame) > 0.5) {
+        gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+        gl_PointSize = 0.0;
+        return;
+      }
+    #endif
     vec3 pos = position;
     float grow = 1.0;
     #ifdef ASSEMBLE
@@ -95,13 +107,14 @@ const fragment = /* glsl */ `
   }
 `;
 
-export function dotMaterial({ assemble = false } = {}) {
+export function dotMaterial({ assemble = false, frames = false } = {}) {
   return new THREE.ShaderMaterial({
     vertexShader: vertex,
     fragmentShader: fragment,
-    defines: assemble ? { ASSEMBLE: '' } : {},
+    defines: { ...(assemble ? { ASSEMBLE: '' } : {}), ...(frames ? { FRAMES: '' } : {}) },
     uniforms: {
       ...globals,
+      uFrame: { value: 0 },
       uDensity: { value: 1 },
       uTwinkle: { value: 0 },
       uBright: { value: 1 },
@@ -184,6 +197,7 @@ export class Dots {
 export function decodePoints(buffer) {
   const view = new DataView(buffer);
   const count = view.getUint32(0, true);
+  const version = view.getUint32(4, true);
   const positions = new Float32Array(buffer, 8, count * 3);
   const colorsU8 = new Uint8Array(buffer, 8 + count * 12, count * 3);
   const sizesU8 = new Uint8Array(buffer, 8 + count * 15, count);
@@ -200,6 +214,7 @@ export function decodePoints(buffer) {
   g.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
   g.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
   g.setAttribute('seed', new THREE.BufferAttribute(seeds, 1));
+  if (version >= 2) g.setAttribute('frame', new THREE.BufferAttribute(Float32Array.from(new Uint8Array(buffer, 8 + count * 16, count)), 1));
   g.computeBoundingBox();
   return g;
 }

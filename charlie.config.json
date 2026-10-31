@@ -9,7 +9,8 @@
     "model": "claude-opus-5-5",
     "effort": "medium",
     "maxTokens": 32000,
-    "maxStepsPerWake": 24,
+    "maxStepsPerWake": 60,
+    "githubWakeMinutes": 30,
     "serverSideFallbacks": true,
     "dailyBudgetUSD": 5,
     "pricingPerMTok": {
@@ -23,8 +24,8 @@
   "schedule": {
     "firstWakeDelaySeconds": 10,
     "defaultNapMinutes": 30,
-    "minNapMinutes": 2,
-    "maxNapMinutes": 480,
+    "minNapMinutes": 1,
+    "maxNapMinutes": 1440,
     "wakeOnMessage": true,
     "minMinutesBetweenWakes": 4
   },
@@ -107,6 +108,7 @@
     "plotSize": 12,
     "maxPointsPerBuild": 30000,
     "maxHeight": 20,
+    "maxFrames": 48,
     "buildTimeoutSeconds": 30,
     "minRefreshMinutes": 30
   },

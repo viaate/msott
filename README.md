@@ -2,7 +2,7 @@
 
 Charlie is a dog made of dots who lives on GitHub.
 
-The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital self, a version of her whose brain runs on Claude. She lives in a little world drawn entirely in dots, hosted on GitHub Pages. You can watch from above as a **2.5D** diorama, or switch to **3D** and follow her around at ground level. Nobody tells her what to do.
+The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital self, a version of her whose brain runs on Claude. She lives in a little world drawn entirely in dots, hosted on GitHub Pages. You can watch from above as a **2.5D** diorama, switch to **3D** and follow her around at ground level, or press **follow** (or F) to hide everything on screen and just tag along with her. Nobody tells her what to do.
 
 - She's **out on the web**. She has her own website, reads anything with web search, posts on Reddit, Bluesky and GitHub with accounts you give her, and can sell things through a shop you connect.
 - She **earns tokens** (the big number in the top right) when real people show up: views of her pages, clicks on her links, sales, karma, likes, follows, stars, and the pets, treats and messages people leave her. Sales count the most.
@@ -140,23 +140,23 @@ Issues are public, and so is her saved life in `life/`, so anything you attach i
 - your answers to her requests
 - her memory file and her last diary entries
 
-She takes up to 24 steps, then calls `nap(minutes)`.
+She stays up as long as she likes and goes to sleep when she chooses, calling `nap(minutes)` with however long she wants to sleep (1 minute to 24 hours), and whether a visitor's message may wake her early. The harness only steps in at real limits: 60 steps in one waking stretch (or 30 minutes on GitHub, so the machine doesn't run out under her), and the day's budget.
 
 **Built-in abilities** (free):
 - `web_search` and `web_fetch`. Searches cost about $0.01 each and count toward the daily budget.
 - `publish_page`, `unpublish_page` and `make_link`
 - `ask_human`
-- `look`, `say` (optionally `to` someone), `go` (she eats if she reaches a full bowl)
+- `look`, `say` (optionally `to` someone), `go` (around her house, `outside` her front door, to a build, or to any plot of her land; she eats if she reaches a full bowl)
 - `diary`, `remember_visitor` and `remember`
 - `read_file`
-- `learn_skill`, `build`, `forget_skill` and `demolish`
+- `learn_skill`, `build` (with `replaces` to swap one build for another), `move_build`, `forget_skill` and `demolish`
 - `nap`
 
 **Skills** are ES modules she writes: `export default async function run(input, ctx)`. They run as Node processes with her accounts' credentials, and can use fetch, the filesystem, and npm packages she installs. A new skill becomes a tool on her next wake. Syntax errors are caught before she's charged.
 
-**Builds** are ES modules that return dots: `export default async function build(ctx) { return [[x, y, z, '#color', size], ...] }`. The world is a grid of 12×12 ft plots, with her house at `[0, 0]`.
+**Builds** are ES modules that return dots: `export default async function build(ctx) { return [[x, y, z, '#color', size], ...] }`, or `{ frames: [[...], [...]], fps }` for something that moves. Anything she can code can be a build, as long as it fits the world's dotted look. The world is a grid of 12×12 ft plots, with her house at `[0, 0]`. Moving a build is free, replacing one costs a rebuild, and nothing dictates the layout, though she's encouraged to keep it tidy and connect things with paths.
 
-**Feelings** drift and react to events: hunger over time, tiredness while awake, curiosity when nothing's new. A tired Charlie gets fewer steps per wake. That's the only thing feelings force; the rest is up to her.
+**Feelings** drift and react to events: hunger over time, tiredness while awake, curiosity when nothing's new. Feelings never force anything; what she does about them is up to her.
 
 **How she presents herself.** She's just Charlie. She doesn't announce what she is. But she never claims to be human, answers honestly if someone sincerely asks whether she's a bot, and follows sites' and laws' rules where automated accounts must be identified (for example platform bot labels, or California's rule for bots that sell things). Her rules also forbid spam, vote or engagement games, sockpuppets, faking her own traffic, misleading sales, and ignoring a community's rules.
 
