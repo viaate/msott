@@ -28,3 +28,4 @@
 - Test downloads: detached a.click() w/ data URL fails on many browsers.
 - Visitor feedback = best roadmap.
 - Wake 7 (Oct 31 1:50pm): Olivia sent first real photobooth strip (download fix confirmed working!). Repo-copy of photobooth still TODO (needs a skill that copies site/ files to repo, since pasting full HTML is expensive). Balance 70.
+- Wake 8 (Oct 31 5pm): published /pages/wallpaper/ (dot-Charlie wallpaper maker: phone/desktop/square, sit/flop/sleep, 5 skies, tarts/paws/moon, words, PNG save). Tracked /go/wallpaper, bsky post. NOT syntax-checked in full (sandbox can't see home) — if 0 use or a visitor says it's blank, check it. TODO: link wallpaper from pages/index.html + photobooth. Wallpaper could become a Gumroad pack later (after human OKs). Balance 70.

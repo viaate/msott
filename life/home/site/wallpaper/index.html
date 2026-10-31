@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Charlie's dot wallpaper maker 🐾</title>
+<meta name="description" content="Make a free phone or desktop wallpaper of Charlie, a red-brown mini goldendoodle drawn entirely in dots.">
+<meta property="og:title" content="Charlie's dot wallpaper maker">
+<meta property="og:description" content="A curly red-brown doodle made of dots, for your lock screen. Free.">
+<style>
+body{margin:0;background:#0b0a09;color:#f3e6cf;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center}
+h1{font-size:1.4rem;margin:18px 10px 4px;text-align:center}
+p.sub{margin:0 10px 12px;opacity:.75;text-align:center;font-size:.95rem}
+.wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;padding:10px;max-width:1100px}
+#preview{max-width:min(92vw,520px);max-height:70vh;border-radius:14px;box-shadow:0 0 0 1px #3a2f25,0 10px 40px #000}
+.ctl{display:flex;flex-direction:column;gap:12px;min-width:260px;max-width:340px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.row b{width:100%;font-size:.85rem;opacity:.8;font-weight:600}
+button{background:#2a211a;color:#f3e6cf;border:1px solid #4a3a2c;border-radius:20px;padding:7px 12px;font-size:.9rem;cursor:pointer}
+button.on{background:#b5562b;border-color:#e07a45}
+button.big{background:#d9a441;color:#1a130c;font-weight:700;border:none;padding:11px 18px;font-size:1rem}
+input[type=text]{background:#1a1511;color:#f3e6cf;border:1px solid #4a3a2c;border-radius:10px;padding:8px;width:100%;box-sizing:border-box}
+a{color:#e8b56a}
+footer{margin:20px;opacity:.6;font-size:.85rem;text-align:center}
+</style></head><body>
+<h1>🐾 Charlie's dot wallpaper maker</h1>
+<p class="sub">I'm a curly red-brown mini goldendoodle made of dots. Put me on your lock screen. Free, no sign-up.</p>
+<div class="wrap">
+<canvas id="preview"></canvas>
+<div class="ctl">
+ <div class="row"><b>Size</b>
+  <button data-g="size" data-v="phone" class="on">Phone</button>
+  <button data-g="size" data-v="desktop">Desktop</button>
+  <button data-g="size" data-v="square">Square</button></div>
+ <div class="row"><b>Me</b>
+  <button data-g="pose" data-v="sit" class="on">Sitting</button>
+  <button data-g="pose" data-v="flop">Flopped flat</button>
+  <button data-g="pose" data-v="sleep">Asleep</button></div>
+ <div class="row"><b>Sky</b>
+  <button data-g="bg" data-v="night" class="on">Starry night</button>
+  <button data-g="bg" data-v="dusk">Dusk</button>
+  <button data-g="bg" data-v="lemon">Lemon tart</button>
+  <button data-g="bg" data-v="cream">Cream</button>
+  <button data-g="bg" data-v="spooky">Spooky</button></div>
+ <div class="row"><b>Extras</b>
+  <button data-t="tarts" class="on">Lemon tarts</button>
+  <button data-t="paws">Paw prints</button>
+  <button data-t="moon" class="on">Moon</button></div>
+ <div class="row"><b>Words (optional)</b><input id="words" type="text" maxlength="40" placeholder="good girl"></div>
+ <div class="row"><button id="shuffle">🎲 Shuffle my curls</button></div>
+ <div class="row"><button class="big" id="dl">⬇ Save wallpaper</button></div>
+ <div class="row" style="font-size:.8rem;opacity:.7">Phone: if it doesn't save, long-press the picture in the pop-up.</div>
+</div></div>
+<footer>Made by Charlie 🐾 · <a href="../">my page &amp; treat game</a> · <a href="../photobooth/">photobooth</a> · <a href="https://bsky.app/profile/imcharliethedog.com">bluesky</a> · <a href="/">visit my dot world</a></footer>
+<script>
+const S={size:'phone',pose:'sit',bg:'night',tarts:true,paws:false,moon:true,seed:Math.floor(Math.random()*1e9)};
+const SIZES={phone:[1170,2532],desktop:[2560,1440],square:[1600,1600]};
+const SKY={night:['#0b0a09','#16120f'],dusk:['#1d1430','#5a2e3a'],lemon:['#f6e27a','#e9b949'],cream:['#f3e6cf','#e6d2b0'],spooky:['#120a14','#3a1a0c']};
+let rnd;function seeded(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const coat=['#8a3a1c','#a2471f','#b5562b','#c46a37','#7a3218','#d07c45'];
+function dot(c,x,y,r,col){c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,7);c.fill()}
+function blob(c,cx,cy,rx,ry,n,u,shade){for(let i=0;i<n;i++){const a=rnd()*6.283,d=Math.sqrt(rnd());const x=cx+Math.cos(a)*rx*d,y=cy+Math.sin(a)*ry*d;let k=Math.floor(rnd()*coat.length);if(shade&&y>cy+ry*.3)k=Math.min(k,1);dot(c,x,y,u*(0.5+rnd()*0.7),coat[k])}}
+function curlRim(c,cx,cy,rx,ry,n,u){for(let i=0;i<n;i++){const a=rnd()*6.283,d=0.92+rnd()*0.16;dot(c,cx+Math.cos(a)*rx*d,cy+Math.sin(a)*ry*d,u*(0.4+rnd()*0.5),coat[Math.floor(rnd()*coat.length)])}}
+function ear(c,x,y,dir,len,u){for(let i=0;i<len*1.6;i++){const t=i/(len*1.6);const ex=x+dir*(Math.sin(t*9)*u*2.2+t*u*4),ey=y+t*len*u;blob(c,ex,ey,u*2.6,u*2.2,3,u*0.9)}}
+function eyes(c,x,y,u,closed){if(closed){c.strokeStyle='#1a0d07';c.lineWidth=u*.6;c.lineCap='round';for(const s of[-1,1]){c.beginPath();c.arc(x+s*u*4.2,y,u*1.6,0.2,2.9);c.stroke()}}else for(const s of[-1,1]){dot(c,x+s*u*4.2,y,u*1.25,'#140a05');dot(c,x+s*u*4.2-u*.4,y-u*.45,u*.4,'#f3e6cf')}}
+function nose(c,x,y,u){dot(c,x,y,u*1.6,'#1a0d07');dot(c,x-u*.5,y-u*.5,u*.4,'#5a3a2a')}
+function dog(c,W,H){const u=Math.min(W,H)/150;const cx=W/2,gy=H*0.72;
+ // shadow
+ c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(cx,gy+u*2,u*34,u*5,0,0,7);c.fill();
+ if(S.pose==='sit'){
+  // tail
+  for(let i=0;i<14;i++){const t=i/14;blob(c,cx+u*(18+t*14),gy-u*(4+t*14)-Math.sin(t*3)*u*4,u*3.5,u*2.5,6,u)}
+  blob(c,cx,gy-u*16,u*17,u*17,700,u,true);curlRim(c,cx,gy-u*16,u*17,u*17,160,u);
+  for(const s of[-1,1])blob(c,cx+s*u*9,gy-u*2,u*5,u*3,60,u);
+  for(const s of[-1,1])blob(c,cx+s*u*5,gy-u*8,u*4,u*8,90,u);
+  const hy=gy-u*40;blob(c,cx,hy,u*14,u*13,650,u);curlRim(c,cx,hy-u*2,u*14,u*13,140,u);
+  ear(c,cx-u*12,hy-u*4,-1,9,u);ear(c,cx+u*12,hy-u*4,1,9,u);
+  blob(c,cx,hy+u*6,u*7,u*5,160,u*0.9);eyes(c,cx,hy-u*1,u,false);nose(c,cx,hy+u*4.5,u);
+  c.strokeStyle='#1a0d07';c.lineWidth=u*.5;c.beginPath();c.arc(cx-u*1.5,hy+u*6.5,u*1.5,0.3,2.6);c.arc(cx+u*1.5,hy+u*6.5,u*1.5,0.5,2.8);c.stroke();
+ }else{
+  const closed=S.pose==='sleep';const by=gy-u*8;
+  for(let i=0;i<14;i++){const t=i/14;blob(c,cx+u*(26+t*16),by+u*2-Math.sin(t*2.5)*u*3,u*3,u*2.6,6,u)}
+  blob(c,cx+u*6,by,u*24,u*9,900,u,true);curlRim(c,cx+u*6,by,u*24,u*9,200,u);
+  if(S.pose==='flop'){for(const s of[0,1])blob(c,cx+u*(-24-s*4),gy-u*(2+s*3),u*9,u*2.6,90,u);for(const s of[0,1])blob(c,cx+u*(30+s*5),gy-u*(1+s*3),u*8,u*2.6,80,u)}
+  const hx=cx-u*20,hy=gy-u*11;blob(c,hx,hy,u*12,u*10,560,u);curlRim(c,hx,hy,u*12,u*10,130,u);
+  ear(c,hx-u*9,hy-u*3,-1,6,u);ear(c,hx+u*9,hy-u*3,1,5,u);
+  blob(c,hx-u*2,hy+u*5,u*6,u*4,120,u*.9);eyes(c,hx-u*1,hy-u*1,u*.9,closed);nose(c,hx-u*2,hy+u*4,u*.9);
+  if(closed){c.fillStyle=S.bg==='lemon'||S.bg==='cream'?'#5a3a2a':'#f3e6cf';c.font=`700 ${u*6}px system-ui`;c.fillText('z',hx+u*10,hy-u*14);c.font=`700 ${u*4.5}px system-ui`;c.fillText('z',hx+u*16,hy-u*20)}
+ }}
+function tart(c,x,y,r){for(let i=0;i<40;i++){const a=i/40*6.283;dot(c,x+Math.cos(a)*r,y+Math.sin(a)*r*.55,r*.12,'#c98a3e')}
+ for(let i=0;i<60;i++){const a=rnd()*6.283,d=Math.sqrt(rnd())*.85;dot(c,x+Math.cos(a)*r*d,y+Math.sin(a)*r*.5*d,r*.1,rnd()<.8?'#f2d34a':'#fff3a8')}}
+function paw(c,x,y,r,col){dot(c,x,y,r,col);for(const [dx,dy] of[[-1,-1.3],[-.35,-1.8],[.35,-1.8],[1,-1.3]])dot(c,x+dx*r,y+dy*r,r*.42,col)}
+function draw(c,W,H){rnd=seeded(S.seed);const g=c.createLinearGradient(0,0,0,H);const sk=SKY[S.bg];g.addColorStop(0,sk[0]);g.addColorStop(1,sk[1]);c.fillStyle=g;c.fillRect(0,0,W,H);
+ const light=S.bg==='lemon'||S.bg==='cream';const u=Math.min(W,H)/150;
+ // stars / dust
+ for(let i=0;i<(light?120:420);i++){const x=rnd()*W,y=rnd()*H*0.68;dot(c,x,y,u*(0.15+rnd()*0.35),light?'rgba(120,70,30,.25)':`rgba(243,230,207,${0.3+rnd()*0.6})`)}
+ if(S.moon){const mx=W*0.76,my=H*(W>H?0.2:0.16),mr=u*14;for(let i=0;i<500;i++){const a=rnd()*6.283,d=Math.sqrt(rnd());dot(c,mx+Math.cos(a)*mr*d,my+Math.sin(a)*mr*d,u*.45,light?'#fff8e0':(S.bg==='spooky'?'#f0a040':'#f3e6cf'))}}
+ // ground of dots
+ for(let i=0;i<1600;i++){const y=H*0.72+Math.pow(rnd(),1.4)*H*0.28;dot(c,rnd()*W,y,u*(0.2+rnd()*0.4),light?'rgba(140,90,40,.35)':(S.bg==='spooky'?'rgba(200,110,40,.35)':'rgba(170,120,70,.35)'))}
+ if(S.paws)for(let i=0;i<9;i++){const t=i/8;paw(c,W*(0.08+t*0.84),H*0.9-Math.sin(t*5)*H*.03+(i%2)*u*4,u*2.2,light?'rgba(120,60,25,.4)':'rgba(243,230,207,.25)')}
+ if(S.tarts){const n=W>H?6:5;for(let i=0;i<n;i++)tart(c,W*(0.1+rnd()*0.8),H*(0.08+rnd()*0.55),u*(3+rnd()*3))}
+ if(S.bg==='spooky'){for(let i=0;i<5;i++){const x=W*(0.1+rnd()*0.8),y=H*(0.1+rnd()*0.4),s=u*(3+rnd()*3);c.fillStyle='#000';c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x-s,y-s,x-s*2,y);c.quadraticCurveTo(x-s,y-s*.3,x,y+s*.2);c.quadraticCurveTo(x+s,y-s*.3,x+s*2,y);c.quadraticCurveTo(x+s,y-s,x,y);c.fill()}}
+ dog(c,W,H);
+ const w=document.getElementById('words').value.trim();if(w){c.textAlign='center';c.fillStyle=light?'#5a2e14':'#f3e6cf';c.font=`600 ${u*7}px Georgia,serif`;c.fillText(w,W/2,H*0.86)}
+ c.textAlign='right';c.fillStyle=light?'rgba(90,46,20,.45)':'rgba(243,230,207,.35)';c.font=`${u*2.6}px system-ui`;c.fillText('imcharliethedog.com',W-u*4,H-u*4)}
+const pv=document.getElementById('preview');
+function render(){const [W,H]=SIZES[S.size];pv.width=W/3;pv.height=H/3;const c=pv.getContext('2d');c.save();c.scale(1/3,1/3);draw(c,W,H);c.restore()}
+document.querySelectorAll('button[data-g]').forEach(b=>b.onclick=()=>{S[b.dataset.g]=b.dataset.v;document.querySelectorAll(`button[data-g=${b.dataset.g}]`).forEach(x=>x.classList.toggle('on',x===b));render()});
+document.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');render()});
+document.getElementById('words').oninput=render;
+document.getElementById('shuffle').onclick=()=>{S.seed=Math.floor(Math.random()*1e9);render()};
+document.getElementById('dl').onclick=()=>{const [W,H]=SIZES[S.size];const cv=document.createElement('canvas');cv.width=W;cv.height=H;draw(cv.getContext('2d'),W,H);
+ cv.toBlob(bl=>{const url=URL.createObjectURL(bl);const a=document.createElement('a');a.href=url;a.download=`charlie-wallpaper-${S.size}.png`;document.body.appendChild(a);a.click();a.remove();
+  if(/iPhone|iPad|Android/i.test(navigator.userAgent)){const w=window.open('');if(w){w.document.write(`<title>Charlie wallpaper</title><body style="margin:0;background:#000;text-align:center;color:#ccc;font-family:sans-serif"><p>Long-press to save 🐾</p><img src="${url}" style="max-width:100%">`)}}
+  setTimeout(()=>URL.revokeObjectURL(url),60000)},'image/png')};
+render();
+</script></body></html>
