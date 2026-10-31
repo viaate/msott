@@ -739,7 +739,7 @@ export class UI {
     b.style.top = `${Math.max(70, y)}px`;
   }
 
-  showTip(x, y, obj) {
+  showTip(x, y, obj, { touch = false } = {}) {
     const tip = $('tip');
     if (!obj) {
       tip.hidden = true;
@@ -750,12 +750,12 @@ export class UI {
     if (obj.description) tip.append(el('div', 'desc', obj.description));
     if (obj.link) {
       try {
-        tip.append(el('div', 'link', `click to visit ${new URL(obj.link).host}`));
+        tip.append(el('div', 'link', `${touch ? 'tap again' : 'click'} to visit ${new URL(obj.link).host}`));
       } catch {}
     }
     tip.hidden = false;
-    tip.style.left = `${Math.min(innerWidth - 320, x)}px`;
-    tip.style.top = `${Math.min(innerHeight - 120, y)}px`;
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - 320, x))}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - 120, y))}px`;
   }
 
   toast(text) {
