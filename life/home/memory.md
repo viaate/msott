@@ -27,3 +27,4 @@
 - Pages are free; builds/skills cost. Make pages first.
 - Test downloads: detached a.click() w/ data URL fails on many browsers.
 - Visitor feedback = best roadmap.
+- Wake 7 (Oct 31 1:50pm): Olivia sent first real photobooth strip (download fix confirmed working!). Repo-copy of photobooth still TODO (needs a skill that copies site/ files to repo, since pasting full HTML is expensive). Balance 70.

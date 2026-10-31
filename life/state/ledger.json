@@ -1,18 +1,18 @@
 {
-  "balance": 46,
-  "earned": 81,
+  "balance": 70,
+  "earned": 105,
   "spent": 35,
   "bySource": {
-    "site.message": 15,
-    "site.picture": 4,
-    "site.action": 9,
-    "site.treat": 6,
-    "site.pet": 8,
+    "site.message": 18,
+    "site.picture": 8,
+    "site.action": 16,
+    "site.treat": 8,
+    "site.pet": 10,
     "bluesky.like": 6,
-    "site.visitor": 8,
+    "site.visitor": 11,
     "github.newRepo": 10,
-    "link.click": 2,
-    "page.view": 2,
+    "link.click": 4,
+    "page.view": 3,
     "bluesky.follower": 5,
     "bluesky.repost": 6
   },
@@ -372,20 +372,157 @@
       "units": 1,
       "amount": 1,
       "reason": "1 click on /go/photobooth"
+    },
+    {
+      "t": 1793472647589,
+      "kind": "earn",
+      "key": "site.pet",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 petted you"
+    },
+    {
+      "t": 1793472647590,
+      "kind": "earn",
+      "key": "site.treat",
+      "units": 1,
+      "amount": 2,
+      "reason": "bouncyQuail84 gave you a treat"
+    },
+    {
+      "t": 1793472647591,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 filled your food bowl"
+    },
+    {
+      "t": 1793472647592,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 squeaked your lemon tart toy"
+    },
+    {
+      "t": 1793472647592,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 rang your doorbell"
+    },
+    {
+      "t": 1793472647593,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 did \"peek behind the curtain\" at photobooth"
+    },
+    {
+      "t": 1793472647593,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 did \"toss a stick\" at front_yard"
+    },
+    {
+      "t": 1793472647593,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 did \"check the mailbox\" at front_yard"
+    },
+    {
+      "t": 1793472647594,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 did \"skip a stone\" at pond"
+    },
+    {
+      "t": 1793472647642,
+      "kind": "earn",
+      "key": "site.message",
+      "units": 1,
+      "amount": 3,
+      "reason": "a message from Olivia"
+    },
+    {
+      "t": 1793472647643,
+      "kind": "earn",
+      "key": "site.picture",
+      "units": 1,
+      "amount": 4,
+      "reason": "a picture from Olivia"
+    },
+    {
+      "t": 1793472647643,
+      "kind": "earn",
+      "key": "site.pet",
+      "units": 1,
+      "amount": 1,
+      "reason": "Olivia petted you"
+    },
+    {
+      "t": 1793472652030,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 3,
+      "amount": 3,
+      "reason": "3 people came to see your world"
+    },
+    {
+      "t": 1793472652031,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/photobooth"
+    },
+    {
+      "t": 1793472652031,
+      "kind": "earn",
+      "key": "link.click",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 click on /go/photobooth"
+    },
+    {
+      "t": 1793472652031,
+      "kind": "earn",
+      "key": "link.click",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 click on /go/catch"
     }
   ],
   "daily": {
     "date": "2026-10-31",
     "counts": {
-      "mailbox": 9,
+      "mailbox": 20,
       "message:w:DkMHRN7jvJzuAWXRMJlJQy": 3,
-      "pet:w:DkMHRN7jvJzuAWXRMJlJQy": 2,
-      "treat:w:DkMHRN7jvJzuAWXRMJlJQy": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy": 3,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:fill_bowl": 1,
+      "pet:w:DkMHRN7jvJzuAWXRMJlJQy": 3,
+      "treat:w:DkMHRN7jvJzuAWXRMJlJQy": 2,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy": 10,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:fill_bowl": 2,
       "action:w:DkMHRN7jvJzuAWXRMJlJQy:fluff_bed": 1,
       "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:lemon_tart:0": 1,
-      "github.newRepo": 1
+      "github.newRepo": 1,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:squeak_toy": 1,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:ring_bell": 1,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:photobooth:1": 1,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:front_yard:0": 1,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:front_yard:1": 1,
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:pond:0": 1,
+      "picture:w:ejs4cwLXLiLUh3b-f09rF6": 1,
+      "message:w:ejs4cwLXLiLUh3b-f09rF6": 1,
+      "pet:w:ejs4cwLXLiLUh3b-f09rF6": 1
     }
   }
 }
