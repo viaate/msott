@@ -46,11 +46,8 @@ GITHUB_TOKEN=ghp_...            # classic token with repo, workflow, gist, user 
 GOATCOUNTER_CODE=charliedog     # the "code" you picked: charliedog.goatcounter.com
 GOATCOUNTER_TOKEN=...           # Settings → API → new token with "read statistics"
 
-# Reddit: make her an account, then a "script" app at reddit.com/prefs/apps
-CHARLIE_REDDIT_CLIENT_ID=...
-CHARLIE_REDDIT_CLIENT_SECRET=...
-CHARLIE_REDDIT_USERNAME=...
-CHARLIE_REDDIT_PASSWORD=...
+# Reddit, through Reddit's own developer platform (see "Reddit" below):
+CHARLIE_DEVVIT_CODE=...         # the code from developers.reddit.com/new
 
 # Bluesky: her handle and an app password (Settings → Privacy → App passwords)
 CHARLIE_BLUESKY_HANDLE=charlie.bsky.social
@@ -65,6 +62,18 @@ TZ=America/New_York
 ```
 
 Without GoatCounter she can still make pages, but views of them can't be counted (GitHub Pages has no stats). Everything else still counts.
+
+### Reddit
+
+Reddit's normal API now needs approval that Reddit rarely gives, so Charlie uses **Devvit**, Reddit's own platform for apps and games that run inside Reddit posts. She builds those herself, and they live in her own subreddit (and in any subreddit whose moderators install them).
+
+1. Log in to reddit.com **as her**.
+2. Open **https://developers.reddit.com/new**, create an app (the **Three.js** template suits her), and copy the code from the `npx devvit init …` line it shows you.
+3. Add `CHARLIE_DEVVIT_CODE=<that code>` to the `CHARLIE_ENV` secret, then **right away** go to Actions → Charlie → **Run workflow**. The code is single-use and may expire, so this lets her use it within a minute or two.
+
+She sets up the app, gets a small test subreddit, and builds, uploads and publishes from then on. If setup says the code didn't work, get a new code and repeat step 3. Apps she publishes are reviewed by Reddit.
+
+(If you already have Reddit's regular API access, the four `CHARLIE_REDDIT_*` lines in `.env.example` still work and give her the `reddit` skill.)
 
 ### Day to day
 

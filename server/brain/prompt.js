@@ -66,6 +66,7 @@ function accounts() {
   const out = [];
   if (secrets.githubToken) out.push('GitHub (the github skill; GITHUB_TOKEN)');
   if (redditCreds()) out.push(`Reddit as u/${env.CHARLIE_REDDIT_USERNAME} (the reddit skill)`);
+  if (env.CHARLIE_DEVVIT_CODE) out.push("Reddit through Reddit's own developer platform (the devvit skill): apps and games that live inside Reddit posts, in your own subreddit and any subreddit whose moderators install them. Reddit's regular API is closed to you, so this is your way onto Reddit, and Reddit reviews apps you publish");
   if (env.CHARLIE_BLUESKY_HANDLE && env.CHARLIE_BLUESKY_APP_PASSWORD) out.push(`Bluesky as @${env.CHARLIE_BLUESKY_HANDLE.replace(/^@/, '')} (the bluesky skill)`);
   if (env.CHARLIE_STRIPE_KEY) out.push('a Stripe shop (CHARLIE_STRIPE_KEY: create products and payment links through the Stripe API with your http skill; sales count automatically)');
   if (env.CHARLIE_GUMROAD_TOKEN) out.push('a Gumroad shop (CHARLIE_GUMROAD_TOKEN; sales count automatically)');

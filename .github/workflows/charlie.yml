@@ -60,7 +60,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci --no-audit --no-fund
@@ -77,8 +77,10 @@ jobs:
       - name: Restore her npm packages
         uses: actions/cache@v6
         with:
-          path: life/home/node_modules
-          key: charlie-home-${{ hashFiles('life/home/package-lock.json') }}
+          path: |
+            life/home/node_modules
+            life/home/workspace/**/node_modules
+          key: charlie-home-${{ hashFiles('life/home/**/package-lock.json') }}
           restore-keys: charlie-home-
 
       - name: Charlie
@@ -106,8 +108,9 @@ jobs:
           path: |
             life
             !life/.git
-            !life/home/node_modules
-            !life/home/.cache
+            !life/**/node_modules/**
+            !life/home/.*
+            !life/home/.*/**
 
       - if: steps.charlie.outputs.deploy == 'true'
         uses: actions/upload-pages-artifact@v5

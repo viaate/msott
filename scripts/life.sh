@@ -20,13 +20,15 @@ case "${1:-}" in
       mkdir -p life
       git -C life init --quiet -b "$BRANCH"
     fi
-    printf 'home/node_modules/\nhome/.cache/\nhome/.staging/\n' > life/.gitignore
+    # Never save installed packages, or anything hidden in her home (caches, logins).
+    printf 'node_modules/\nhome/.*\n' > life/.gitignore
     ;;
   replace)
     # Swap in the life that the run handed over, keeping git history.
     find life -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
     cp -a "${2:?}"/. life/
-    printf 'home/node_modules/\nhome/.cache/\nhome/.staging/\n' > life/.gitignore
+    # Never save installed packages, or anything hidden in her home (caches, logins).
+    printf 'node_modules/\nhome/.*\n' > life/.gitignore
     ;;
   push)
     cd life
