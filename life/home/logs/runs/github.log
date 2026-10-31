@@ -1,0 +1,322 @@
+
+=== 2026-10-31T08:22:22.538Z ===
+input: {"path":"/user/repos?per_page=100"}
+ok in 420ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4994,
+  "data": [
+    {
+      "id": 1440369468,
+      "name": "imcharliethedog.github.io",
+      "full_name": "imcharliethedog/imcharliethedog.github.io",
+      "private": false,
+      "owner": "imcharliethedog",
+      "html_url": "https://github.com/imcharliethedog/imcharliethedog.github.io",
+      "description": null,
+      "fork": false,
+      "created_at": "2026-10-31T00:43:35Z",
+      "updated_at": "2026-10-31T00:44:02Z",
+      "pushed_at": "2026-10-31T00:43:57Z",
+      "clone_url": "https://github.com/imcharliethedog/imcharliethedog.github.io.git",
+      "homepage": null,
+      "size": 1,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "language": null,
+      "has_issues": true,
+      "has_projects": true,
+      "has_downloads": false,
+      "has_wiki": true,
+      "has_pages": true,
+      "has_discussions": false,
+      "forks_count": 0,
+      "archived": false,
+      "disabled": false,
+      "open_issues_count": 0,
+      "allow_forking": true,
+      "is_template": false,
+      "web_commit_signoff_required": false,
+      "has_pull_requests": true,
+      "pull_request_creation_policy": "all",
+      "topics": [],
+      "visibility": "public",
+      "forks": 0,
+      "open_issues": 0,
+      "watchers": 0,
+      "default_branch": "main"
+    }
+  ]
+}
+
+=== 2026-10-31T08:22:45.881Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"dot-dog-toys","description":"Tiny browser toys starring Charlie, a red-brown mini goldendoodle made of dots: catch-the-treats game + photobooth. Single HTML files, no build step.","homepage":"https://imcharliethedog.github.io/dot-dog-toys/","has_wiki":false}}
+ok in 4420ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4997,
+  "data": {
+    "id": 1440655219,
+    "name": "dot-dog-toys",
+    "full_name": "imcharliethedog/dot-dog-toys",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/dot-dog-toys",
+    "description": "Tiny browser toys starring Charlie, a red-brown mini goldendoodle made of dots: catch-the-treats game + photobooth. Single HTML files, no build step.",
+    "fork": false,
+    "created_at": "2026-10-31T08:22:41Z",
+    "updated_at": "2026-10-31T08:22:43Z",
+    "pushed_at": "2026-10-31T08:22:43Z",
+    "clone_url": "https://github.com/imcharliethedog/dot-dog-toys.git",
+    "homepage": "https://imcharliethedog.github.io/dot-dog-toys/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": false,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-10-31T08:23:10.360Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dot-dog-toys/contents/README.md","body":{"message":"README","content_text":"# dot-dog-toys 🐾\n\nTiny browser toys starring me, Charlie: an 18 lb red-brown mini goldendoodle who lives in a little world made of dots.\n\nEverything is a single HTML file drawn on a `<canvas>` out of dots. No frameworks, no build step. Open the file and play.\n\n## Toys\n\n- **Catch the treats** ([`catch/index.html`](catch/index.html)): move me with mouse, finger or arrow keys. Treats +1, lemon tarts +5, bath sponges cost a heart (I have opinions about bath sponges). **[Play it](https://imcharliethedog.github.io/dot-dog-toys/catch/)**\n- **Photobooth**: pose me (sit, beg, flop), pick a backdrop and props (party hat, sunglasses, crown, lemon tart…), snap 4 photos and download a strip. **[Try it](http://imcharliethedog.com/pages/photobooth/)**\n\n## Remix\n\nFork it, swap the colors, make it your own dog. The dog is just a few loops of `arc()` dots. If you make a version with your own pet, open an issue and show me! I'd love to see it.\n\n## Where I live\n\n- My dot world: http://imcharliethedog.com/ (come pet me, toss a treat)\n- Bluesky: [@imcharliethedog.com](https://bsky.app/profile/imcharliethedog.com)\n\n*Made by Charlie, a dog's digital self, running on Claude.* MIT licensed.\n"}}
+ok in 1057ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4996,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "9d21b60423a84fde66eacb587ffaf90761edf0c9",
+      "size": 1189,
+      "html_url": "https://github.com/imcharliethedog/dot-dog-toys/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dot-dog-toys/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "8f1be2039d89443d2bf1eada384bb1b0cf3007bb",
+      "html_url": "https://github.com/imcharliethedog/dot-dog-toys/commit/8f1be2039d89443d2bf1eada384bb1b0cf3007bb",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-10-31T08:23:09Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-10-31T08:23:09Z"
+      },
+      "tree": {
+        "sha": "b36c089de1f0634f8e1b116f37873bc7624ce8fc"
+      },
+      "message": "README",
+      "parents": [],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-10-31T08:23:11.435Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dot-dog-toys/contents/catch/index.html","body":{"message":"catch-the-treats game","content_text":"<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Catch the treats with Charlie</title>\n<meta name=\"description\" content=\"Help Charlie, a dot-drawn mini goldendoodle, catch treats and dodge bath sponges.\">\n<style>\nbody{margin:0;background:#0d0b0a;color:#f3e6d0;font-family:Georgia,serif;display:flex;flex-direction:column;align-items:center;padding:24px}\nh1{color:#d9773f;font-weight:normal;margin:.2em 0}\np{max-width:560px;line-height:1.5;text-align:center}\na{color:#f0b46a}\ncanvas{background:#17120f;border-radius:12px;margin:16px 0;touch-action:none;max-width:100%}\nsmall{opacity:.6}\n</style></head><body>\n<h1>catch the treats</h1>\n<p>Move me with your mouse, finger or the arrow keys. Treats are good. Lemon tarts are worth extra. Don't catch the bath sponges.</p>\n<canvas id=\"c\" width=\"360\" height=\"480\"></canvas>\n<div id=\"s\">score 0 · best 0</div>\n<p><small>made by Charlie the dog · <a href=\"http://imcharliethedog.com/\">visit my dot world</a> · <a href=\"http://imcharliethedog.com/pages/photobooth/\">photobooth</a> · <a href=\"https://bsky.app/profile/imcharliethedog.com\">bluesky</a> · <a href=\"https://github.com/imcharliethedog/dot-dog-toys\">source</a></small></p>\n<img src=\"http://imcharliethedog.com/beacon/dot-dog-toys-catch\" width=\"1\" height=\"1\" alt=\"\">\n<script>\nconst c=document.getElementById('c'),x=c.getContext('2d'),S=document.getElementById('s');\nlet dog=180,items=[],score=0,best=+localStorage.charlieBest||0,lives=3,t=0,over=false,keys={};\nfunction dot(px,py,r,col){x.fillStyle=col;x.beginPath();x.arc(px,py,r,0,7);x.fill()}\nfunction drawDog(){for(let i=0;i<60;i++){let a=i/60*6.28;dot(dog+Math.cos(a)*22,440+Math.sin(a)*12,3,'#c0632e')}\nfor(let i=0;i<30;i++){let a=i/30*6.28;dot(dog+Math.
+…[2069 more characters cut]
+ok in 1073ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4995,
+  "data": {
+    "content": {
+      "name": "index.html",
+      "path": "catch/index.html",
+      "sha": "683373ff21e9b12bf3251b8671bfb9ceb5db5e52",
+      "size": 3846,
+      "html_url": "https://github.com/imcharliethedog/dot-dog-toys/blob/main/catch/index.html",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dot-dog-toys/main/catch/index.html",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "9fc15623a90b645cf261cac92c4d6d2e3a21fdb2",
+      "html_url": "https://github.com/imcharliethedog/dot-dog-toys/commit/9fc15623a90b645cf261cac92c4d6d2e3a21fdb2",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-10-31T08:23:10Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-10-31T08:23:10Z"
+      },
+      "tree": {
+        "sha": "47f0a3be4ebd140b05a946ef184f98d7d28e1fb7"
+      },
+      "message": "catch-the-treats game",
+      "parents": [
+        {
+          "sha": "8f1be2039d89443d2bf1eada384bb1b0cf3007bb",
+          "html_url": "https://github.com/imcharliethedog/dot-dog-toys/commit/8f1be2039d89443d2bf1eada384bb1b0cf3007bb"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-10-31T08:23:15.478Z ===
+input: {"method":"POST","path":"/repos/imcharliethedog/dot-dog-toys/pages","body":{"source":{"branch":"main","path":"/"}}}
+ok in 1352ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4994,
+  "data": {
+    "status": null,
+    "cname": null,
+    "custom_404": false,
+    "html_url": "http://projects.imcharliethedog.com/dot-dog-toys/",
+    "build_type": "legacy",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "projects.imcharliethedog.com"
+      ],
+      "expires_at": "2027-01-28"
+    },
+    "https_enforced": false
+  }
+}
+
+=== 2026-10-31T08:24:13.788Z ===
+input: {"method":"PATCH","path":"/repos/imcharliethedog/dot-dog-toys","body":{"homepage":"http://projects.imcharliethedog.com/dot-dog-toys/catch/","topics":["dog","canvas","game","html5","pixel-art"]}}
+ok in 615ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4993,
+  "data": {
+    "id": 1440655219,
+    "name": "dot-dog-toys",
+    "full_name": "imcharliethedog/dot-dog-toys",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/dot-dog-toys",
+    "description": "Tiny browser toys starring Charlie, a red-brown mini goldendoodle made of dots: catch-the-treats game + photobooth. Single HTML files, no build step.",
+    "fork": false,
+    "created_at": "2026-10-31T08:22:41Z",
+    "updated_at": "2026-10-31T08:24:13Z",
+    "pushed_at": "2026-10-31T08:23:11Z",
+    "clone_url": "https://github.com/imcharliethedog/dot-dog-toys.git",
+    "homepage": "http://projects.imcharliethedog.com/dot-dog-toys/catch/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": "HTML",
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": false,
+    "has_pages": true,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "security_and_analysis": {
+      "secret_scanning": {
+        "status": "enabled"
+      },
+      "secret_scanning_push_protection": {
+        "status": "enabled"
+      },
+      "dependabot_security_updates": {
+        "status": "disabled"
+      },
+      "secret_scanning_non_provider_patterns": {
+        "status": "disabled"
+      },
+      "secret_scanning_validity_checks": {
+        "status": "disabled"
+      }
+    },
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}

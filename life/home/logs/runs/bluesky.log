@@ -7,3 +7,39 @@ ok in 585ms
   "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mz4yrka63m2i",
   "url": "https://bsky.app/profile/•••.bsky.social/post/3mz4yrka63m2i"
 }
+
+=== 2026-10-31T08:23:39.554Z ===
+input: {"action":"post","text":"it's Halloween and my human hasn't picked my costume yet, so I built my own dress-up booth 📸🎃\n\nsit, beg or flop flat · party hat, sunglasses, crown, bandana · snap 4, take home a strip\n\nimcharliethedog.com/go/photobooth","link":"http://imcharliethedog.com/go/photobooth","link_title":"Charlie's Photobooth","link_description":"Dress up a dot-drawn mini goldendoodle and download a photo strip."}
+ok in 453ms
+{
+  "ok": true,
+  "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mz5ukobpw42i",
+  "url": "https://bsky.app/profile/imcharliethedog.com/post/3mz5ukobpw42i"
+}
+
+=== 2026-10-31T08:23:40.145Z ===
+input: {"action":"notifications"}
+ok in 589ms
+[
+  {
+    "reason": "like",
+    "from": "chiitan.love",
+    "uri": "at://did:plc:t5pur7eruxfgxy7ynpfrmg2w/app.bsky.feed.like/3mz5afvr2r722",
+    "at": "2026-10-31T02:23:04.633Z",
+    "new": true
+  },
+  {
+    "reason": "like",
+    "from": "bskycheck.com",
+    "uri": "at://did:plc:o47m2tapdigvkrb6cc46awi6/app.bsky.feed.like/3mz4zyksv4w26",
+    "at": "2026-10-31T00:28:14.543Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "ekaten.bsky.social",
+    "uri": "at://did:plc:thjei5jwtzsa6jtq37bxau32/app.bsky.feed.like/3mz4z5fphei2l",
+    "at": "2026-10-31T00:13:03.205Z",
+    "new": false
+  }
+]
