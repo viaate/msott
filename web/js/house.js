@@ -15,6 +15,7 @@ export const PLACES = {
   toy: { x: -1.2, z: -1.4, face: Math.PI * 0.75 },
   rug: { x: 1.2, z: 1.8, face: Math.PI * 0.25 },
   center: { x: 0, z: 0, face: Math.PI * 0.25 },
+  outside: { x: -8.6, z: 2.6, face: Math.PI },
 };
 export const DOOR_IN = { x: -5.0, z: 2.6 };
 export const DOOR_OUT = { x: -7.2, z: 2.6 };

@@ -123,7 +123,7 @@ export class WorldView {
       start[i * 3 + 2] = src.z + (Math.random() - 0.5) * 2;
     }
     geometry.setAttribute('start', new THREE.BufferAttribute(start, 3));
-    const material = dotMaterial({ assemble: true });
+    const material = dotMaterial({ assemble: true, frames: !broken && meta.frames > 1 });
     material.uniforms.uAssemble.value = from ? 0 : 1;
     material.uniforms.uTwinkle.value = meta.motion === 'twinkle' ? 1 : 0;
     const pts = new THREE.Points(geometry, material);
@@ -192,6 +192,7 @@ export class WorldView {
       if (m === 'spin') h.rotation.y += dt * 0.35;
       if (m === 'bob') h.position.y = Math.sin(t * 1.2 + name.length) * 0.35 + 0.35;
       if (m === 'pulse') h.scale.setScalar(1 + Math.sin(t * 2) * 0.04);
+      if (obj.meta.frames > 1) u.uFrame.value = Math.floor(t * (obj.meta.fps || 8)) % obj.meta.frames;
       if (obj.broken) u.uBright.value = 0.75 + 0.25 * Math.sin(t * 3);
     }
   }

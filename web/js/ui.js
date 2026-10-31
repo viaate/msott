@@ -53,6 +53,7 @@ const PLACE_NAMES = {
   toy: 'with her lemon tart toy',
   rug: 'on the rug',
   center: 'in the middle of the room',
+  outside: 'just outside her front door',
 };
 
 const MOOD_WORDS = ['awful', 'low', 'okay', 'good', 'wonderful'];
@@ -264,7 +265,7 @@ export class UI {
   }
 
   doing(c) {
-    const where = PLACE_NAMES[c.location] ?? (c.location ? `at "${c.location}"` : '');
+    const where = PLACE_NAMES[c.location] ?? (c.location?.startsWith('[') ? `out on plot ${c.location}` : c.location ? `at "${c.location}"` : '');
     if (c.paused) return 'taking a break';
     if (c.status !== 'awake') return c.energy <= 0.001 ? 'fast asleep for the night' : 'napping on her bed';
     if (c.activity === 'waking') return 'waking up and stretching';
@@ -738,7 +739,7 @@ export class UI {
     b.style.top = `${Math.max(70, y)}px`;
   }
 
-  showTip(x, y, obj) {
+  showTip(x, y, obj, { touch = false } = {}) {
     const tip = $('tip');
     if (!obj) {
       tip.hidden = true;
@@ -749,12 +750,12 @@ export class UI {
     if (obj.description) tip.append(el('div', 'desc', obj.description));
     if (obj.link) {
       try {
-        tip.append(el('div', 'link', `click to visit ${new URL(obj.link).host}`));
+        tip.append(el('div', 'link', `${touch ? 'tap again' : 'click'} to visit ${new URL(obj.link).host}`));
       } catch {}
     }
     tip.hidden = false;
-    tip.style.left = `${Math.min(innerWidth - 320, x)}px`;
-    tip.style.top = `${Math.min(innerHeight - 120, y)}px`;
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - 320, x))}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - 120, y))}px`;
   }
 
   toast(text) {

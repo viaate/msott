@@ -54,12 +54,17 @@ jobs:
     outputs:
       deploy: ${{ steps.charlie.outputs.deploy }}
       summary: ${{ steps.charlie.outputs.summary }}
+      base: ${{ steps.base.outputs.sha }}
     steps:
       # The newest main, with her life in life/ (a queued run's own commit could be older).
       - uses: actions/checkout@v7
         with:
           ref: main
           persist-credentials: false
+
+      # The commit her life was read from, so her save can build on it.
+      - id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v7
         with:
@@ -123,9 +128,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      # Her save starts from the commit her run read, and is then replayed onto
+      # the newest main, so whatever changed in life/ during her run is kept.
       - uses: actions/checkout@v7
         with:
-          ref: main
+          ref: ${{ needs.live.outputs.base || 'main' }}
           persist-credentials: false
           sparse-checkout: |
             life

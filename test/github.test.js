@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'charlie-gh-'));
 Object.assign(process.env, {
@@ -95,6 +96,22 @@ test('a scheduled run wakes her, records the wake, and builds a static site', as
   const again = await tick({ client, out });
   assert.equal(again.woke, false);
   assert.equal(again.changed, false);
+});
+
+// Everything she makes is saved by `git add -A life`, so the repo's own ignore
+// rules must never catch any of it (they once caught every new build).
+test("the repo's ignore rules never keep what she makes out of her saved life", (t) => {
+  const root = path.resolve(import.meta.dirname, '..');
+  const ignored = (...files) => {
+    const r = spawnSync('git', ['check-ignore', '--no-index', ...files], { cwd: root, encoding: 'utf8' });
+    return r.status === 128 ? null : r.stdout.split('\n').filter(Boolean);
+  };
+  const made = ['home/world/tart/points.bin', 'home/skills/clock/index.mjs', 'home/site/zine/index.html', 'home/logs/runs/build-tart.log', 'home/from-your-human/face.jpg', 'home/workspace/app/main.js', 'state/ledger.json'];
+  const caught = ignored(...made.map((f) => `life/${f}`));
+  if (!caught) return t.skip('not a git checkout');
+  assert.deepEqual(caught, []);
+  assert.equal(ignored('life/home/node_modules/three/index.js', 'life/home/.npm/cache').length, 2, 'packages and hidden files still stay out');
+  assert.equal(ignored('home/memory.md', 'data/state.json', '_site/index.html').length, 3, 'local runs at the repo root still stay out');
 });
 
 // Letters are signed exactly the way the page signs them, with WebCrypto.

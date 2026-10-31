@@ -34,7 +34,8 @@ function nextMidnight() {
 function summarizeInput(name, input) {
   if (!input || typeof input !== 'object') return name;
   if (name === 'learn_skill') return `writing a skill: "${input.name}"`;
-  if (name === 'build') return `building "${input.name}"${input.plot ? ` on plot [${input.plot}]` : ''}`;
+  if (name === 'build') return `building "${input.name}"${input.replaces ? ` in place of "${input.replaces}"` : input.plot ? ` on plot [${input.plot}]` : ''}`;
+  if (name === 'move_build') return `moving "${input.name}" to plot [${input.plot}]`;
   if (name === 'read_file') return `reading ${input.path}`;
   if (name === 'remember') return input.mode === 'rewrite' ? 'tidying up memory' : 'making a note in memory';
   if (name === 'go') return `walking to ${input.to}`;
@@ -105,7 +106,7 @@ export class Agent {
 
   onMessage() {
     const s = this.s;
-    if (!config.schedule.wakeOnMessage || s.paused || this.running || s.status !== 'sleeping') return;
+    if (!config.schedule.wakeOnMessage || s.wakeForMessages === false || s.paused || this.running || s.status !== 'sleeping') return;
     if (!this.client || this.usage.exhausted) return;
     const earliest = s.lastWakeAt + config.schedule.minMinutesBetweenWakes * MIN;
     const t = Math.max(Date.now() + 5000, earliest);
@@ -123,7 +124,7 @@ export class Agent {
     const s = this.s;
     if (s.paused || !this.client || this.running) return false;
     if (!s.nextWakeAt || Date.now() >= s.nextWakeAt) return true;
-    return Boolean(newMessage && config.schedule.wakeOnMessage && Date.now() - s.lastWakeAt >= config.schedule.minMinutesBetweenWakes * MIN);
+    return Boolean(newMessage && config.schedule.wakeOnMessage && s.wakeForMessages !== false && Date.now() - s.lastWakeAt >= config.schedule.minMinutesBetweenWakes * MIN);
   }
 
   // What the world looked like just before a wake, so it can be replayed.
@@ -451,6 +452,19 @@ export class Agent {
     return message;
   }
 
+  // Where go can take her: a spot in her house, out the door, one of her
+  // builds, or any plot of her land.
+  placeFor(to) {
+    if (PLACES.includes(to) || (to !== 'house' && this.world.get(to))) return to;
+    const m = to.match(/^(?:plot\s*)?\[?\s*(-?\d+)\s*,\s*(-?\d+)\s*\]?$/i);
+    if (!m) throw new Error(`Unknown place "${to}". Try one of: ${[...PLACES, ...this.world.list().filter((o) => !o.builtin).map((o) => o.name)].join(', ')}, or a plot like "[2, -1]".`);
+    const plot = [Number(m[1]), Number(m[2])];
+    const reach = this.world.reach();
+    if (Math.max(Math.abs(plot[0]), Math.abs(plot[1])) > reach) throw new Error(`Plot [${plot}] is past the edge of your land. For now you can wander up to ${reach} plots out from your house in any direction.`);
+    const here = this.world.at(plot);
+    return here ? (here.builtin ? 'center' : here.name) : `[${plot}]`;
+  }
+
   moveTo(place, doing) {
     this.s.location = place;
     this.s.doing = doing;
@@ -492,6 +506,7 @@ export class Agent {
     this.running = true;
     this.session = [];
     this.napMinutes = null;
+    this.wakeForMessages = true;
     this.napNote = '';
     clearTimeout(this.timer);
     s.status = 'awake';
@@ -507,13 +522,15 @@ export class Agent {
     s.napNote = '';
     this.store.save();
 
-    // A tired dog has a shorter day.
-    const energy = this.feelings.values.energy;
-    const maxSteps = Math.max(6, Math.min(config.brain.maxStepsPerWake, Math.round(config.brain.maxStepsPerWake * (0.35 + 0.65 * energy / 100))));
+    // She's up for as long as she likes. The only limits are real ones: how much
+    // one waking stretch can hold, today's budget, and on GitHub, how long the
+    // machine she runs on lasts.
+    const maxSteps = config.brain.maxStepsPerWake;
+    const deadline = mode === 'github' ? Date.now() + config.brain.githubWakeMinutes * MIN : Infinity;
     let retryIn = null;
     let parseRetries = 0;
     let compatRetried = false;
-    let warnedSleepy = false;
+    let warnedLimit = false;
     let warnedEnergy = false;
     try {
       for (let step = 0; step < maxSteps; step++) {
@@ -559,10 +576,11 @@ export class Agent {
         }
         if (this.napMinutes != null) break;
 
+        if (Date.now() > deadline - 5 * MIN) step = Math.max(step, maxSteps - 4);
         const left = maxSteps - step - 1;
-        if (left <= 3 && !warnedSleepy) {
-          warnedSleepy = true;
-          results.push({ type: 'text', text: `(You're getting sleepy: ${left} steps left this wake. Save anything important to memory and nap.)` });
+        if (left <= 3 && !warnedLimit) {
+          warnedLimit = true;
+          results.push({ type: 'text', text: `(This waking stretch is nearly as long as one can be: ${left} steps left. Save anything important to memory and nap. A short nap is fine if you want to carry on soon.)` });
         }
         if (this.usage.exhausted && !warnedEnergy) {
           warnedEnergy = true;
@@ -589,6 +607,7 @@ export class Agent {
       s.status = 'sleeping';
       s.location = 'bed';
       s.doing = '';
+      s.wakeForMessages = this.wakeForMessages;
       const { minNapMinutes, maxNapMinutes, defaultNapMinutes } = config.schedule;
       const minutes = this.napMinutes ?? defaultNapMinutes;
       let t = Date.now() + (retryIn ?? Math.min(maxNapMinutes, Math.max(minNapMinutes, minutes)) * MIN);
@@ -654,11 +673,9 @@ export class Agent {
       }
 
       case 'go': {
-        const to = String(input.to).trim();
-        const known = PLACES.includes(to) || (this.world.get(to) && to !== 'house');
-        if (!known) throw new Error(`Unknown place "${to}". Try one of: ${[...PLACES, ...this.world.list().filter((o) => !o.builtin).map((o) => o.name)].join(', ')}.`);
+        const to = this.placeFor(String(input.to).trim());
         this.moveTo(to, input.doing ? String(input.doing).slice(0, 60) : '');
-        let out = `You trot over to ${to}.`;
+        let out = to === 'outside' ? 'You trot out your front door.' : to.startsWith('[') ? `You trot out to plot ${to}.` : `You trot over to ${to}.`;
         if (to === 'bowl') {
           const before = Math.round(this.feelings.values.fullness);
           const ate = this.feelings.eat();
@@ -724,7 +741,7 @@ export class Agent {
         this.feelings.bump(r.ok ? { curiosity: -12, joy: 6 } : { calm: -5, joy: -2 });
         const lines = [`Charged ${r.cost} tokens. Balance: ${this.ledger.balance}.`];
         if (r.ok) {
-          lines.unshift(`${r.rebuilt ? 'Rebuilt' : 'Built'} "${input.name}" on plot [${r.plot}] with ${r.count} dots.`);
+          lines.unshift(`${r.rebuilt ? 'Rebuilt' : r.replaced ? `Replaced "${r.replaced}" with` : 'Built'} "${input.name}" on plot [${r.plot}] with ${r.count} dots${r.frames > 1 ? ` across ${r.frames} frames` : ''}.`);
           if (r.warnings.length) lines.push(`Warnings: ${r.warnings.join('; ')}`);
           bus.feed('result', `✓ "${input.name}" is up: ${r.count} dots on plot [${r.plot}]`, { ok: true, tool: name });
         } else {
@@ -740,16 +757,27 @@ export class Agent {
         this.skills.forget(String(input.name));
         return `Forgot "${input.name}". It's gone from your tools after your next nap.`;
 
-      case 'demolish':
+      case 'move_build': {
+        const r = this.world.move(String(input.name), input.plot);
+        if (this.s.location === input.name) this.moveTo(`[${r.from}]`, this.s.doing);
+        bus.feed('result', `✓ moved "${input.name}" to plot [${r.to}]${r.swapped ? `, swapping with "${r.swapped}"` : ''}`, { ok: true, tool: name });
+        return `"${input.name}" is now on plot [${r.to}]${r.swapped ? `, and "${r.swapped}" moved to [${r.from}]` : ''}.`;
+      }
+
+      case 'demolish': {
+        const plot = this.world.get(String(input.name))?.plot;
         this.world.demolish(String(input.name));
+        if (this.s.location === input.name && plot) this.moveTo(`[${plot}]`, '');
         return `"${input.name}" is gone and its plot is free.`;
+      }
 
       case 'nap': {
         this.moveTo('bed', '');
         const minutes = Math.round(Number(input.minutes));
         this.napMinutes = Number.isFinite(minutes) ? minutes : config.schedule.defaultNapMinutes;
         this.napNote = input.note ? String(input.note).slice(0, 500) : '';
-        this.logSession(`napped for ${this.napMinutes} min${this.napNote ? ` — "${this.napNote}"` : ''}`);
+        this.wakeForMessages = input.wake_for_messages !== false;
+        this.logSession(`napped for ${this.napMinutes} min${this.wakeForMessages ? '' : ' (not to be woken)'}${this.napNote ? ` — "${this.napNote}"` : ''}`);
         return 'Zzz.';
       }
     }

@@ -94,6 +94,57 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
+// ---------------------------------------------------------------- framing
+// On a phone the controls cover a good part of the screen, so her world is
+// centered in what they leave free: between the ones along the top and the
+// bottom, and on a phone turned sideways, between the columns at either side.
+const free = { top: 0, bottom: 0, left: 0, right: 0, at: -Infinity };
+const EDGES = ['.brand h1', '.status', '#feelings', '#tokens', '#mind', '.center-dock', '.actions'];
+const sideways = matchMedia('(orientation: landscape) and (max-width: 1020px), (orientation: landscape) and (max-height: 500px)');
+window.addEventListener('resize', () => Object.assign(free, { top: NaN, at: -Infinity }));
+
+// However crowded it gets, her world keeps at least 40% of each direction.
+function squeeze(a, b, size) {
+  const over = a + b - size * 0.6;
+  return over > 0 ? [a - (over * a) / (a + b), b - (over * b) / (a + b)] : [a, b];
+}
+
+function measureFree(now) {
+  free.at = now;
+  const w = innerWidth;
+  const h = innerHeight;
+  let [top, bottom, left, right] = [0, 0, 0, 0];
+  const rect = (sel) => {
+    const r = document.querySelector(sel)?.getBoundingClientRect();
+    return r?.height ? r : null;
+  };
+  if (!following) {
+    for (const sel of EDGES) {
+      const r = rect(sel);
+      // Only what covers the middle of the screen is in the way.
+      if (!r || r.right < w * 0.45 || r.left > w * 0.55) continue;
+      if (r.top + r.height / 2 < h / 2) top = Math.max(top, r.bottom);
+      else bottom = Math.max(bottom, h - r.top);
+    }
+    if (sideways.matches) {
+      // Her thoughts run down the left, and the controls down the right.
+      left = rect('#mind')?.right ?? 0;
+      right = w - Math.min(rect('.center-dock')?.left ?? w, rect('.actions')?.left ?? w);
+    }
+    [top, bottom] = squeeze(top, bottom, h);
+    [left, right] = squeeze(left, right, w);
+  }
+  const same = (a, b) => Math.abs(a - b) < 1;
+  if (same(top, free.top) && same(bottom, free.bottom) && same(left, free.left) && same(right, free.right)) return;
+  Object.assign(free, { top, bottom, left, right });
+  const dx = (left - right) / 2;
+  const dy = (top - bottom) / 2;
+  for (const c of [ortho, persp]) {
+    if (Math.abs(dx) >= 1 || Math.abs(dy) >= 1) c.setViewOffset(w, h, -dx, -dy, w, h);
+    else c.clearViewOffset();
+  }
+}
+
 // ---------------------------------------------------------------- moving around
 function boxHit(a, b, m = HALF + 0.6) {
   let t0 = 0;
@@ -151,6 +202,12 @@ function route(to) {
 
 function placeFor(name) {
   if (PLACES[name]) return PLACES[name];
+  // Anywhere on her land, as "[x,z]".
+  const plot = /^\[(-?\d+),(-?\d+)\]$/.exec(name ?? '');
+  if (plot && world) {
+    const c = world.plotCenter([Number(plot[1]), Number(plot[2])]);
+    return { x: c.x, z: c.z };
+  }
   const obj = world?.objects.get(name);
   if (!obj) return null;
   const c = world.plotCenter(obj.meta.plot);
@@ -399,7 +456,9 @@ function autoFrame(dt, now) {
   const diag = (size.x + size.z) * Math.SQRT1_2;
   const aspect = innerWidth / innerHeight;
   const v = ortho.top - ortho.bottom;
-  const zoom = Math.min(1, (v * aspect * 0.8) / diag, (v * 0.85) / (diag * 0.62 + 5));
+  const roomX = 1 - (free.left + free.right) / innerWidth;
+  const roomY = 1 - (free.top + free.bottom) / innerHeight;
+  const zoom = Math.min(1, (v * aspect * 0.8 * roomX) / diag, (v * 0.85 * roomY) / (diag * 0.62 + 5));
   focusBox.getCenter(goalTarget).setY(1.2);
   const k = framed ? Math.min(1, dt * 0.8) : 1;
   framed = true;
@@ -446,29 +505,52 @@ function pickAt(x, y) {
 }
 
 canvas.addEventListener('pointermove', (e) => {
-  if (e.buttons) return;
+  if (e.buttons || e.pointerType !== 'mouse') return;
   const hover = pickAt(e.clientX, e.clientY);
   canvas.classList.toggle('hovering', Boolean(hover));
   if (hover?.obj) ui.showTip(e.clientX, e.clientY, hover.obj.meta);
   else if (hover?.charlie) ui.showTip(e.clientX, e.clientY, { name: 'Charlie', description: 'click to pet her' });
   else ui.showTip(0, 0, null);
 });
-canvas.addEventListener('pointerleave', () => ui.showTip(0, 0, null));
+canvas.addEventListener('pointerleave', (e) => {
+  // A finger "leaves" every time it lifts, so only a mouse leaving hides the tip.
+  if (e.pointerType === 'mouse') ui.showTip(0, 0, null);
+});
 canvas.addEventListener('pointerdown', (e) => {
   downAt = { x: e.clientX, y: e.clientY, t: performance.now() };
   lastInteract = performance.now();
   document.getElementById('hint').classList.add('gone');
 });
-canvas.addEventListener('pointerup', async (e) => {
+// On a touchscreen there's no hovering, so the first tap on a build shows what
+// it is and a second tap follows its link.
+let tapped = null;
+let tapTimer = 0;
+
+canvas.addEventListener('pointerup', (e) => {
   lastInteract = performance.now();
   if (!downAt || Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 6 || performance.now() - downAt.t > 600) return;
   const hit = pickAt(e.clientX, e.clientY);
+  const touch = e.pointerType !== 'mouse';
   if (hit?.charlie) pet();
   else if (hit?.obj) {
     const meta = hit.obj.meta;
-    const r = await net.touch(meta.name);
-    if (meta.link && r?.link) window.open(meta.link, '_blank', 'noopener');
+    if (touch && tapped !== meta.name) {
+      tapped = meta.name;
+      ui.showTip(e.clientX, e.clientY, meta, { touch });
+      net.touch(meta.name);
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => {
+        tapped = null;
+        ui.showTip(0, 0, null);
+      }, 4000);
+      return;
+    }
+    // Opened during the tap itself, so Safari doesn't block it as a popup.
+    if (meta.link) window.open(meta.link, '_blank', 'noopener');
+    if (!touch) net.touch(meta.name);
   }
+  tapped = null;
+  if (touch) ui.showTip(0, 0, null);
 });
 canvas.addEventListener('wheel', () => {
   lastInteract = performance.now();
@@ -476,6 +558,52 @@ canvas.addEventListener('wheel', () => {
 
 ui.onAction = act;
 ui.onView = (v) => setView(v);
+
+// ---------------------------------------------------------------- follow mode
+// Nothing on screen but her world, with the ground-level camera staying with
+// her. Moving the mouse or tapping shows a way out for a moment.
+let following = false;
+let viewBefore = view;
+let stirTimer = 0;
+
+function stir() {
+  if (!following) return;
+  document.body.classList.add('stirred');
+  clearTimeout(stirTimer);
+  stirTimer = setTimeout(() => document.body.classList.remove('stirred'), 2500);
+}
+
+function setFollowing(on) {
+  if (on === following) return;
+  following = on;
+  document.body.classList.toggle('following', on);
+  if (on) {
+    viewBefore = view;
+    setView('3d', { save: false });
+    lastInteract = -Infinity;
+    ui.showTip(0, 0, null);
+    document.documentElement.requestFullscreen?.().catch(() => {});
+  } else {
+    clearTimeout(stirTimer);
+    document.body.classList.remove('stirred');
+    setView(viewBefore, { save: false });
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  }
+}
+
+document.getElementById('follow-btn').addEventListener('click', () => setFollowing(true));
+document.getElementById('follow-exit').addEventListener('click', () => setFollowing(false));
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest?.('input, textarea, [contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'f' || e.key === 'F') setFollowing(!following);
+  else if (e.key === 'Escape') setFollowing(false);
+});
+// Leaving fullscreen (the browser's own Esc) leaves follow mode too.
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && following) setFollowing(false);
+});
+addEventListener('pointermove', stir);
+addEventListener('pointerdown', stir);
 
 // Owner controls: open the site with ?admin
 if (net.kind === 'live' && new URLSearchParams(location.search).has('admin')) {
@@ -559,6 +687,7 @@ function frame(time) {
   }
   fx.update(dt);
 
+  if (now - free.at > 500) measureFree(now);
   if (world) {
     if (view === '3d') followCam(dt, now);
     else if (now - lastInteract > 12000) autoFrame(dt, now);
@@ -567,13 +696,15 @@ function frame(time) {
   renderer.render(scene, camera);
   const hs = headScreen();
   ui.placeBubble(hs.x, hs.y, hs.visible);
-  if (view === '3d') minimap.draw(now, { charlie, world, camera: persp });
+  if (view === '3d' && !following) minimap.draw(now, { charlie, world, camera: persp });
   requestAnimationFrame(frame);
 }
 
 if (new URLSearchParams(location.search).has('debug')) {
   window.__charlie = { charlie, ortho, persp, orthoControls, perspControls, fx, ui, scene, goTo, setView, B, get world() { return world; } };
 }
+
+if (matchMedia('(pointer: coarse)').matches) document.getElementById('hint').textContent = 'drag to look around · pinch to zoom · tap charlie to pet her';
 
 connect();
 net.start();

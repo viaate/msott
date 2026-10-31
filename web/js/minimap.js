@@ -16,6 +16,7 @@ export class Minimap {
     this.last = now;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const size = this.canvas.clientWidth;
+    if (!size) return;
     if (this.canvas.width !== size * dpr) {
       this.canvas.width = size * dpr;
       this.canvas.height = size * dpr;
