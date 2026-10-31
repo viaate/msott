@@ -40,6 +40,8 @@ export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
   const notes = [];
 
   if (home.enabled) await step('labels', () => home.ensureLabels());
+  const fromHuman = home.enabled ? ((await step('notes', () => home.notes())) ?? 0) : 0;
+  if (fromHuman) notes.push(`${fromHuman} note${fromHuman > 1 ? 's' : ''} from you`);
   const intake = (await step('mailbox', () => mailbox.intake())) ?? { events: 0, messages: 0 };
   if (intake.events) notes.push(`${intake.events} letter${intake.events > 1 ? 's' : ''} from visitors`);
 
@@ -62,9 +64,10 @@ export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
   let session = readJSON(sessionFile, null);
   const force = cmd === 'wake';
   let woke = false;
-  if (force || app.agent.isDue(intake.messages > 0)) {
+  if (force || app.agent.isDue(intake.messages > 0 || app.requests.unseenNotes().length > 0)) {
     const before = app.agent.beforeSnapshot();
-    const reason = force ? 'your human woke you up' : intake.messages && app.agent.s.nextWakeAt > Date.now() ? 'a visitor left you a message' : 'your nap ended';
+    const early = app.agent.s.nextWakeAt > Date.now();
+    const reason = force ? 'your human woke you up' : early && fromHuman ? 'your human left you a note' : early && intake.messages ? 'a visitor left you a message' : 'your nap ended';
     bus.startRecording();
     await app.agent.wake(reason);
     session = { id: (session?.id ?? 0) + 1, startedAt: before.t, endedAt: Date.now(), before, events: bus.stopRecording() };
@@ -75,7 +78,10 @@ export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
     console.log('No ANTHROPIC_API_KEY: Charlie has no brain yet, so she stays asleep.');
   }
 
-  if (home.enabled) await step('requests', () => home.syncRequests());
+  if (home.enabled) {
+    await step('requests', () => home.syncRequests());
+    await step('notes', () => home.closeReadNotes());
+  }
   app.flush();
   home.flush();
   mailbox.flush();

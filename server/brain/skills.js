@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { config, paths } from '../config.js';
@@ -10,6 +11,15 @@ export const NAME_RE = /^[a-z][a-z0-9_]{1,39}$/;
 
 // A skill lives in home/skills/<name>/: tool.json (the tool definition the
 // model sees), index.mjs (code Charlie wrote), NOTES.md, meta.json.
+function starterVersion(dir) {
+  const h = crypto.createHash('sha256');
+  for (const f of fs.readdirSync(dir).sort()) {
+    const file = path.join(dir, f);
+    if (f !== 'starter.json' && fs.statSync(file).isFile()) h.update(f).update(fs.readFileSync(file));
+  }
+  return h.digest('hex').slice(0, 16);
+}
+
 export class Skills {
   constructor({ ledger, reserved = [] }) {
     this.ledger = ledger;
@@ -22,12 +32,23 @@ export class Skills {
     for (const name of config.starterSkills ?? []) {
       const from = path.join(paths.starter, 'skills', name);
       const to = path.join(paths.skills, name);
-      if (!fs.existsSync(from) || fs.existsSync(to)) continue;
+      if (!fs.existsSync(from)) continue;
+      const copy = () => fs.cpSync(from, to, { recursive: true, filter: (src) => path.basename(src) !== 'starter.json' });
+      const version = starterVersion(from);
+      if (fs.existsSync(to)) {
+        // A starter skill she has never revised keeps up with the starter's own improvements.
+        const meta = readJSON(path.join(to, 'meta.json'), {});
+        if (meta.origin === 'starter' && !meta.revisions && meta.starterVersion !== version) {
+          copy();
+          writeJSON(path.join(to, 'meta.json'), { ...meta, starterVersion: version });
+        }
+        continue;
+      }
       // Account skills (reddit, bluesky…) arrive once her human gives her the account.
       const needs = readJSON(path.join(from, 'starter.json'), {}).requires ?? [];
       if (!needs.every((k) => process.env[k])) continue;
-      fs.cpSync(from, to, { recursive: true, filter: (src) => path.basename(src) !== 'starter.json' });
-      writeJSON(path.join(to, 'meta.json'), { origin: 'starter', learnedAt: new Date().toISOString(), revisions: 0, spent: 0, uses: 0 });
+      copy();
+      writeJSON(path.join(to, 'meta.json'), { origin: 'starter', learnedAt: new Date().toISOString(), revisions: 0, spent: 0, uses: 0, starterVersion: version });
     }
   }
 

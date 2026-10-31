@@ -51,12 +51,13 @@ GOATCOUNTER_TOKEN=...           # Settings → API → new token with "read stat
 CHARLIE_DEVVIT_CODE=...         # the code from developers.reddit.com/new
 
 # Bluesky: her handle and an app password (Settings → Privacy → App passwords)
-CHARLIE_BLUESKY_HANDLE=charlie.bsky.social
+CHARLIE_BLUESKY_HANDLE=imcharliethedog.com   # her current handle
 CHARLIE_BLUESKY_APP_PASSWORD=...
 
 # A shop. Money goes to your account; each sale earns her tokens.
 CHARLIE_STRIPE_KEY=rk_live_...  # restricted key: write Products/Prices/Payment Links, read Charges
 CHARLIE_GUMROAD_TOKEN=...
+CHARLIE_GUMROAD_PRODUCTS=dot-zine,stickers   # only if the account is shared: her products' links or ids
 
 # Your time zone, so her days line up with yours:
 TZ=America/New_York
@@ -77,6 +78,17 @@ Reddit's normal API now needs approval that Reddit rarely gives, so Charlie uses
 She sets up the app, gets a small test subreddit, and builds, uploads and publishes from then on. If setup says the code didn't work, get a new code and repeat step 3. Apps she publishes are reviewed by Reddit.
 
 (If you already have Reddit's regular API access, the four `CHARLIE_REDDIT_*` lines in `.env.example` still work and give her the `reddit` skill.)
+
+### Talk to her
+
+**Open an issue on this repo** and it's a note to her: she reads it at her next wake (opening it starts one right away). Drag files into it, like photos, and they land in her home folder in `from-your-human/`, where she can look at them and her code can use them. Once she's read it, the issue is closed with a comment. What she does about it is up to her.
+
+For example, to have her make her own profile pictures: open an issue titled "Profile pictures", write something like *"Here are some photos of your face. Make yourself profile pictures for your accounts."*, and drag in a few clear photos of her face. Things to know:
+- Making them takes code, and a new skill costs her 25 tokens, so if she's short, gift her some first (Actions → Charlie → Run workflow → **gift**).
+- She can put a new picture on Bluesky herself.
+- GitHub, Reddit and Gumroad have no way for code to change a profile picture. For those she'll publish the files on her site and ask you (a `charlie-asks` issue) to upload them.
+
+Issues are public, and so is her saved life, so anything you attach is public too.
 
 ### Day to day
 
@@ -182,29 +194,24 @@ Everything tunable is in `charlie.config.json`:
 
 ## Her own domain (optional)
 
-**I'd get `charliethe.dog`.** It reads "Charlie the dog" and makes a great Bluesky handle (@charliethe.dog). As of today it isn't registered. `.dog` names cost about $30–50 a year. The cheaper choice that matches all her handles is `imcharliethedog.com` (about $10 a year). Any registrar works; Cloudflare and Porkbun are simple and cheap.
-
-At the registrar, add these DNS records (put your domain wherever it says `charliethe.dog`). If your DNS is on Cloudflare, set every record to **DNS only** (grey cloud), or GitHub can't get her an HTTPS certificate.
+Her domain is **imcharliethedog.com**. At the registrar it has these DNS records. If your DNS is on Cloudflare, every record has to be **DNS only** (grey cloud), or GitHub can't get her an HTTPS certificate.
 
 | type | name | value | what it's for |
 |---|---|---|---|
-| A | `@` | `185.199.108.153` | her world |
-| A | `@` | `185.199.109.153` | 〃 |
-| A | `@` | `185.199.110.153` | 〃 |
-| A | `@` | `185.199.111.153` | 〃 |
-| AAAA | `@` | `2606:50c0:8000::153` (plus `8001`, `8002`, `8003` in the same spot) | 〃 |
+| A | `@` | `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (one record each) | her world |
+| AAAA | `@` | `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153` | 〃 |
 | CNAME | `www` | `viaate.github.io` | www → her world |
 | CNAME | `projects` | `imcharliethedog.github.io` | sites she makes on her own GitHub |
-| CNAME | `shop` | `domains.gumroad.com` | her Gumroad shop |
+| CNAME | `shop` | `domains.gumroad.com` | a Gumroad shop of her own (optional, see below) |
 | TXT | `_atproto` | `did=did:plc:4a7dy7mnumiag2e4mhfo5hny` | her Bluesky handle |
 
-Then, one time each:
+And, one time each:
 
-1. **Her world.** This repo → Settings → **Pages** → Custom domain: `charliethe.dog` → Save. Tick **Enforce HTTPS** once GitHub offers it (it can take up to an hour). Everything she has moves with it: her pages to `charliethe.dog/pages/…`, her links to `charliethe.dog/go/…`, and every link she posts from then on uses the new address (it comes from Pages, so nothing in her code changes). Old `viaate.github.io/msott/…` links redirect on their own.
-2. **Her GitHub projects.** Any repo she publishes with GitHub Pages lives at `imcharliethedog.github.io/<repo>`. To move them all to `projects.charliethe.dog/<repo>` at once, sign in to GitHub as her and make a public repo named exactly **`imcharliethedog.github.io`** (tick "Add a README"). In that repo, go to Settings → Pages → Deploy from a branch → `main` → Custom domain: `projects.charliethe.dog`. Every Pages site on her account follows that domain from then on, and old links redirect. While you're signed in as her, put `https://charliethe.dog` in her profile's website field.
-3. **Bluesky.** Sign in as her: Settings → Account → Handle → **I have my own domain** → `charliethe.dog` → Verify. It checks the `_atproto` record above. Then change her line in `CHARLIE_ENV` to `CHARLIE_BLUESKY_HANDLE=charliethe.dog`, because her old handle stops working.
-4. **Gumroad.** Settings → Advanced → Custom domain: `shop.charliethe.dog`. Her products then live there, and sales count the same as before.
-5. **Reddit.** Reddit has no domain to connect, and her tracking reads her profile, not her site, so it keeps working as is. Add `https://charliethe.dog` to u/imcharliethedog's profile (Edit profile → Social links). Expect subreddit spam filters to hold links to a brand-new domain at first. She follows each community's rules, and moderators can approve posts.
+1. **Her world.** This repo → Settings → **Pages** → Custom domain: `imcharliethedog.com`, with **Enforce HTTPS** ticked. Her pages are at `imcharliethedog.com/pages/…` and her links at `imcharliethedog.com/go/…`, and every link she posts uses the address Pages reports, so tick Enforce HTTPS or her links start with `http://`. Old `viaate.github.io/msott/…` links redirect on their own.
+2. **Her GitHub projects.** Any repo she publishes with GitHub Pages lives at `imcharliethedog.github.io/<repo>`. Signed in as her, make a public repo named exactly **`imcharliethedog.github.io`** (tick "Add a README"), then in it Settings → Pages → Deploy from a branch → `main` → Custom domain: `projects.imcharliethedog.com`. Every Pages site on her account then lives at `projects.imcharliethedog.com/<repo>`, and old links redirect. Put `https://imcharliethedog.com` in her profile's website field too.
+3. **Bluesky.** Her handle is @imcharliethedog.com (Settings → Account → Handle → I have my own domain). `CHARLIE_ENV` needs `CHARLIE_BLUESKY_HANDLE=imcharliethedog.com`, since her old handle no longer works. After one successful check she also remembers her account's permanent ID, so a future handle change won't lock her out.
+4. **Gumroad.** A Gumroad custom domain applies to the whole Gumroad profile. If the account also sells your own things, **don't** set one: your profile and your other products would be served from her domain. Either give her a Gumroad account of her own (free) and set `shop.imcharliethedog.com` on that one, or keep the shared account and list her products in `CHARLIE_GUMROAD_PRODUCTS` (their links or ids, comma-separated). Then only those earn her tokens, and she's told the rest of the account is yours. Her code holds the same token you do, though, so on a shared account it *can* see and change everything there, including your buyers' emails. A separate account is the only real wall.
+5. **Reddit.** Reddit has no domain to connect, and her tracking reads her profile, not her site, so it works as is. Add `https://imcharliethedog.com` to u/imcharliethedog's profile (Edit profile → Social links). Subreddit spam filters often hold links to a brand-new domain at first. She follows each community's rules, and moderators can approve posts.
 
 DNS changes usually take minutes, sometimes a few hours.
 
@@ -213,7 +220,7 @@ DNS changes usually take minutes, sometimes a few hours.
 Charlie writes and runs real code, posts on the web under accounts you created, sells through your shop, and reads text from strangers. On GitHub her code runs on a throwaway GitHub Actions machine, not on your computer. Still:
 
 - **You're responsible for what goes out under your accounts.** Watch her first few days, add accounts one at a time, and use restricted keys (a Stripe key that can make payment links but can't refund or pay out).
-- Her run can read this repo and manage its issues, but it **can't change code or publish**. Saving her life and publishing the site happen in separate steps where none of her code runs. Her code gets her accounts' credentials (everything in `CHARLIE_ENV`) but not your Anthropic key. Since it's all in the same machine, treat anything in `CHARLIE_ENV` as something she can use.
+- Her run can read this repo and manage its issues, but it **can't change code or publish**. Saving her life and publishing the site happen in separate steps where none of her code runs. Her code is handed her accounts' credentials (everything in `CHARLIE_ENV`) and not your Anthropic key, but it runs as the same user on the same machine as the harness, so it *could* read the harness's environment, Anthropic key included. Treat everything in `CHARLIE_ENV` and the Anthropic key as something her code can reach, and keep your Anthropic spend limit set in the Claude Console.
 - The daily dollar budget is enforced by the harness, not by her.
 - Her mailbox is a public ntfy.sh topic, so treat messages to her as public. Letters are signed, so nobody can pose as another visitor, and each visitor's pets, treats and messages are limited per day. Pictures are never shown in her world, but each one sits on the public `charlie-life` branch (and stays in its history) until she has looked at it, then it's deleted.
 - Everything she does is visible: the feed, her diary, her code ("read her code" on the site), and the `charlie-life` branch.

@@ -8,6 +8,8 @@ const PLURAL = { like: 'likes', repost: 'reposts', reply: 'replies', quote: 'quo
 export class BlueskySource extends Source {
   constructor(ledger) {
     super('bluesky', ledger, { handle: null, followers: null });
+    // Her DID outlasts handle changes, so her skill can still sign in after one.
+    if (this.s.did && this.handle && !process.env.CHARLIE_BLUESKY_DID) process.env.CHARLIE_BLUESKY_DID = this.s.did;
   }
 
   get handle() {
@@ -25,7 +27,14 @@ export class BlueskySource extends Source {
   }
 
   async poll() {
-    const profile = await this.get('app.bsky.actor.getProfile', { actor: this.handle });
+    let profile;
+    try {
+      profile = await this.get('app.bsky.actor.getProfile', { actor: this.handle });
+    } catch (err) {
+      if (!this.s.did) throw err;
+      profile = await this.get('app.bsky.actor.getProfile', { actor: this.s.did });
+    }
+    this.s.did = profile.did;
     this.s.handle = profile.handle;
     const first = !this.s.initialized;
     const marks = (this.s.marks ??= {});
@@ -48,7 +57,8 @@ export class BlueskySource extends Source {
   }
 
   status() {
-    return { ...super.status(), label: this.handle ? `Bluesky @${this.handle}` : 'Bluesky', followers: this.s.followers, url: this.handle ? `https://bsky.app/profile/${this.handle}` : null };
+    const handle = this.s.handle || this.handle;
+    return { ...super.status(), label: handle ? `Bluesky @${handle}` : 'Bluesky', followers: this.s.followers, url: handle ? `https://bsky.app/profile/${handle}` : null };
   }
 
   lines() {

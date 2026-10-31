@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import { config, paths, secrets, mode } from '../config.js';
@@ -5,10 +6,11 @@ import { JSONStore, clip } from '../store.js';
 import { bus } from '../bus.js';
 import { label } from '../ledger.js';
 import { systemPrompt } from './prompt.js';
+import { visionImage } from '../images.js';
 import { FieldStreamer } from './partial.js';
 import {
   CORE_TOOLS, CORE_NAMES, PLACES, MEMORY_CAP,
-  readMemory, writeMemory, readHomeFile, validateInput,
+  readMemory, writeMemory, readHomeFile, homePath, validateInput,
 } from './tools.js';
 
 const MIN = 60_000;
@@ -297,15 +299,36 @@ export class Agent {
     return { lines, images };
   }
 
-  wakeMessage(reason) {
+  // Notes her human left her, with any pictures among their files attached.
+  async humanNotes() {
+    const notes = this.requests.unseenNotes();
+    if (!notes.length) return { lines: [], images: [] };
+    const lines = ['', 'FROM YOUR HUMAN (a note to you; what you do about it is up to you):'];
+    const images = [];
+    for (const n of notes) {
+      lines.push(`- ${ago(n.t)}: ${JSON.stringify(n.text)}`);
+      if (n.files.length) lines.push(`  Files they gave you (in your home folder): ${n.files.join(', ')}`);
+      for (const f of n.files) {
+        if (images.length >= 16) break;
+        const source = await visionImage(path.join(paths.home, f));
+        if (source) images.push({ type: 'text', text: `${f}:` }, { type: 'image', source });
+      }
+    }
+    this.requests.markNotesSeen(notes.map((n) => n.id));
+    return { lines, images };
+  }
+
+  async wakeMessage(reason) {
     const now = new Date();
     const when = now.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
     const s = this.s;
+    const notes = await this.humanNotes();
     const offerings = this.offerings();
     const parts = [
       `You wake up. It's ${when} (server time). You woke because ${reason}.${s.wakes === 0 ? ' This is the very first time you have ever woken up here.' : ''}`,
       '',
       this.status(),
+      ...notes.lines,
       ...offerings.lines,
       '',
       `YOUR MEMORY (memory.md, ${readMemory().length}/${MEMORY_CAP} chars):`,
@@ -318,7 +341,8 @@ export class Agent {
     if (recent.length) parts.push('', 'YOUR LAST DIARY ENTRIES:', ...recent.map((e) => `- ${ago(e.t)} [${e.kind}${e.place ? ` @ ${e.place}` : ''}, mood ${e.mood}]: ${clip(e.text, 300)}`));
     if (s.napNote) parts.push('', `BEFORE NAPPING YOU NOTED: ${s.napNote}`);
     const text = parts.join('\n');
-    return offerings.images.length ? [{ type: 'text', text }, ...offerings.images] : text;
+    const images = [...notes.images, ...offerings.images];
+    return images.length ? [{ type: 'text', text }, ...images] : text;
   }
 
   toolset() {
@@ -477,7 +501,7 @@ export class Agent {
     this.setActivity('waking');
 
     let tools = this.toolset();
-    const messages = [{ role: 'user', content: this.wakeMessage(reason) }];
+    const messages = [{ role: 'user', content: await this.wakeMessage(reason) }];
     s.lastWakeAt = Date.now();
     s.wakes += 1;
     s.napNote = '';
@@ -650,7 +674,7 @@ export class Agent {
       }
 
       case 'publish_page': {
-        const r = this.site.publish(input);
+        const r = this.site.publish(input.from_file ? { path: input.path, content: fs.readFileSync(homePath(input.from_file).target).toString('base64'), encoding: 'base64' } : input);
         bus.feed('result', `✓ ${r.updated ? 'updated' : 'published'} ${r.url}`, { ok: true, tool: name, url: r.url });
         return `${r.updated ? 'Updated' : 'Published'} ${r.file}. It's live at ${r.url}`;
       }

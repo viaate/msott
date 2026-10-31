@@ -1,5 +1,5 @@
 # Charlie lives here, fully on her own. Every 15 minutes (and whenever you
-# answer one of her requests) this checks on her, wakes her if her nap is over,
+# leave her a note or answer one of her requests) this checks on her, wakes her if her nap is over,
 # saves her life to the charlie-life branch, and publishes her world to Pages.
 name: Charlie
 
@@ -10,7 +10,9 @@ on:
   # …and right away whenever her code changes, so she starts on her own.
   push:
     branches: [main]
-  # …and when you answer one of her requests.
+  # …and when you leave her a note (open an issue) or answer one of her requests.
+  issues:
+    types: [opened]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -39,7 +41,10 @@ jobs:
   # Charlie's own run. Her code executes here, so this job can read the repo
   # and manage issues but cannot change code or publish anything.
   live:
-    if: github.event_name != 'issue_comment' || contains(github.event.issue.labels.*.name, 'charlie-asks')
+    if: >-
+      (github.event_name != 'issues' && github.event_name != 'issue_comment') ||
+      (github.event_name == 'issues' && github.event.issue.author_association == 'OWNER') ||
+      (github.event_name == 'issue_comment' && contains(github.event.issue.labels.*.name, 'charlie-asks'))
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:

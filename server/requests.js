@@ -3,8 +3,8 @@ import { paths } from './config.js';
 import { JSONStore, clip } from './store.js';
 import { bus } from './bus.js';
 
-// Things Charlie asks her human for (an account somewhere, a decision, help).
-// Her human answers from the admin bar; she reads the reply when she wakes.
+// Things Charlie asks her human for (an account somewhere, a decision, help),
+// and notes her human leaves her. She reads both when she wakes.
 export class Requests {
   constructor(file = path.join(paths.data, 'requests.json')) {
     this.store = new JSONStore(file, { seq: 0, items: [] });
@@ -12,6 +12,30 @@ export class Requests {
 
   get items() {
     return this.store.data.items;
+  }
+
+  get notes() {
+    return (this.store.data.notes ??= []);
+  }
+
+  // A note from her human, with any files they gave her (paths in her home).
+  note(text, { files = [], issue = null } = {}) {
+    const item = { id: (this.store.data.noteSeq = (this.store.data.noteSeq ?? 0) + 1), t: Date.now(), text: clip(String(text ?? '').trim(), 4000), files, issue, seenAt: null };
+    this.notes.push(item);
+    if (this.notes.length > 100) this.notes.splice(0, this.notes.length - 100);
+    this.store.save();
+    bus.feed('system', `Her human left Charlie a note${files.length ? ` with ${files.length} file${files.length > 1 ? 's' : ''}` : ''}.`);
+    return item;
+  }
+
+  unseenNotes() {
+    return this.notes.filter((n) => !n.seenAt);
+  }
+
+  markNotesSeen(ids) {
+    const set = new Set(ids);
+    for (const n of this.notes) if (set.has(n.id)) n.seenAt = Date.now();
+    this.store.save();
   }
 
   ask(text) {

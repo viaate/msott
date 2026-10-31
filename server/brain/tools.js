@@ -4,6 +4,7 @@ import { config, paths } from '../config.js';
 import { clip } from '../store.js';
 import { MOTIONS } from './world.js';
 import { DIARY_KINDS } from '../diary.js';
+import { visionImage } from '../images.js';
 
 export const MEMORY_CAP = 8000;
 export const PLACES = ['bed', 'window', 'door', 'bowl', 'toy', 'rug', 'center'];
@@ -81,15 +82,16 @@ export const CORE_TOOLS = [
   },
   {
     name: 'publish_page',
-    description: 'Publish a file on your own website, which is served from this computer at /pages/. Use it for web pages, styles, scripts, images (base64) and anything else you make for people to see. Every real person who views one of your pages earns you tokens, and you can see how many people came and where from. Free. Publishing to the same path updates the file.',
+    description: 'Publish a file on your own website at /pages/. Use it for web pages, styles, scripts, images and anything else you make for people to see. Give the contents, or from_file to publish a file from your home folder as it is (an image your code made, say). Every real person who views one of your pages earns you tokens, and you can see how many people came and where from. Free. Publishing to the same path updates the file.',
     input_schema: {
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Where it lives on your site, e.g. "index.html", "zine/index.html", "zine/style.css", "art/dot.png".' },
         content: { type: 'string', description: 'The file contents (text, or base64 for binary files).' },
         encoding: { type: 'string', enum: ['utf8', 'base64'] },
+        from_file: { type: 'string', description: 'Instead of content: a file in your home folder to publish, e.g. "workspace/avatar.png".' },
       },
-      required: ['path', 'content'],
+      required: ['path'],
     },
   },
   {
@@ -117,7 +119,7 @@ export const CORE_TOOLS = [
   },
   {
     name: 'read_file',
-    description: 'Read a file, or list a folder, inside your home: your skills\' code, your builds, run logs in logs/runs/, files your skills wrote in workspace/. Free. Paths are relative to your home folder; "." lists the top level.',
+    description: 'Read a file, or list a folder, inside your home: your skills\' code, your builds, run logs in logs/runs/, files your skills wrote in workspace/, files your human gave you in from-your-human/. Pictures (PNG, JPEG, WebP, GIF) you get to see. Free. Paths are relative to your home folder; "." lists the top level.',
     input_schema: {
       type: 'object',
       properties: { path: { type: 'string' } },
@@ -201,11 +203,16 @@ export function writeMemory(text, mode) {
   return next.length;
 }
 
-export function readHomeFile(rel) {
+export function homePath(rel) {
   const target = path.resolve(paths.home, String(rel || '.'));
   const relative = path.relative(paths.home, target);
   if (relative.startsWith('..') || path.isAbsolute(relative)) throw new Error('You can only read inside your home folder.');
   if (!fs.existsSync(target)) throw new Error(`Nothing at ${rel}.`);
+  return { target, relative };
+}
+
+export async function readHomeFile(rel) {
+  const { target, relative } = homePath(rel);
   const stat = fs.statSync(target);
   if (stat.isDirectory()) {
     const entries = fs.readdirSync(target, { withFileTypes: true })
@@ -219,6 +226,8 @@ export function readHomeFile(rel) {
     return `${relative || '.'}/\n${entries.join('\n') || '(empty)'}`;
   }
   const buf = fs.readFileSync(target);
+  const image = await visionImage(buf);
+  if (image) return [{ type: 'text', text: `${relative} (${buf.length} bytes):` }, { type: 'image', source: image }];
   if (buf.subarray(0, 8000).includes(0)) return `${rel} is a binary file (${buf.length} bytes).`;
   return clip(buf.toString('utf8'), 20000);
 }

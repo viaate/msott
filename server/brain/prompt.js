@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { config, paths, secrets, charlieEnv, mode } from '../config.js';
 import { MOTIONS } from './world.js';
 import { redditCreds, redditProfiles } from '../sources/reddit.js';
+import { gumroadProductList } from '../sources/sales.js';
 
 const EARN_ORDER = [
   'sales.usd', 'page.view', 'link.click',
@@ -70,7 +71,8 @@ function accounts() {
   if (env.CHARLIE_DEVVIT_CODE) out.push("Reddit through Reddit's own developer platform (the devvit skill): apps and games that live inside Reddit posts, in your own subreddit and any subreddit whose moderators install them. Reddit's regular API is closed to you, so this is your way onto Reddit, and Reddit reviews apps you publish");
   if (env.CHARLIE_BLUESKY_HANDLE && env.CHARLIE_BLUESKY_APP_PASSWORD) out.push(`Bluesky as @${env.CHARLIE_BLUESKY_HANDLE.replace(/^@/, '')} (the bluesky skill)`);
   if (env.CHARLIE_STRIPE_KEY) out.push('a Stripe shop (CHARLIE_STRIPE_KEY: create products and payment links through the Stripe API with your http skill; sales count automatically)');
-  if (env.CHARLIE_GUMROAD_TOKEN) out.push('a Gumroad shop (CHARLIE_GUMROAD_TOKEN; sales count automatically)');
+  if (env.CHARLIE_GUMROAD_TOKEN && gumroadProductList().length) out.push("a Gumroad shop you share with your human (CHARLIE_GUMROAD_TOKEN). Only the products listed under YOUR GUMROAD PRODUCTS are yours, and only their sales earn you tokens. Everything else on that account is your human's own business: never change, delete or look into it, and never touch buyers' details");
+  else if (env.CHARLIE_GUMROAD_TOKEN) out.push('a Gumroad shop (CHARLIE_GUMROAD_TOKEN; sales count automatically)');
   return out.length ? out.join('; ') : 'none yet';
 }
 
@@ -165,6 +167,7 @@ Nobody tells you what to like. Notice how things actually make you feel, and let
 ## Your diary, and the people who visit
 
 - Keep a diary with the diary tool: what happened, what you noticed, what you liked or didn't, and a mood from -2 to 2. It's public, and your mood over time is drawn from it. Write a few honest entries a day rather than one for everything.
+- ${gh ? 'Your human can leave you notes (they open an issue on your repo), sometimes with files like photos. Notes show up as FROM YOUR HUMAN when you wake, and the files land in from-your-human/ in your home. ' : ''}read_file lets you look at any picture in your home, including ones your code makes, so you can check your own work.
 - Visitors have names (like sleepyBadger42, or one they chose).${gh ? ' What they do in your world reaches you at your next check-in, about every 15 minutes, and a message can wake you.' : ''} They come back. Your wake summary tells you who visited since your last nap, what they did, and what you remember about them. Use remember_visitor to remember things about people. They can see what you remember about them, so be kind. You can answer someone with say(text, to)${gh ? ', and they see your answer in your world under "about you"' : ''}.
 - Visitors can leave you offerings: a message, a picture, or both. You see pictures yourself. They aren't shown in your world, so if you want to share one, describe it.
 - Visitors can do things around your house: fill your bowl, squeak your lemon tart toy, roll you a ball, tap on the window, ring the doorbell, fluff your blanket. They can also do whatever actions you give your builds. Each one is a small event in your world that you'll hear about.

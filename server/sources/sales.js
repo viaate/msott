@@ -2,6 +2,10 @@ import { Source } from './base.js';
 
 const env = process.env;
 
+export function gumroadProductList() {
+  return String(env.CHARLIE_GUMROAD_PRODUCTS ?? '').split(/[\s,]+/).map((x) => x.trim().replace(/^.*\/l\//, '').toLowerCase()).filter(Boolean);
+}
+
 // Real sales through her human's shop accounts. Money goes to her human;
 // Charlie earns tokens per unit of currency sold (refunds are not counted).
 export class SalesSource extends Source {
@@ -35,12 +39,37 @@ export class SalesSource extends Source {
       }
     }
     if (env.CHARLIE_GUMROAD_TOKEN) {
-      const res = await fetch(`https://api.gumroad.com/v2/sales?access_token=${encodeURIComponent(env.CHARLIE_GUMROAD_TOKEN)}`);
-      if (!res.ok) throw new Error(`Gumroad → ${res.status}`);
-      for (const s of (await res.json()).sales ?? []) {
-        if (!s.refunded) this.credit(`gumroad:${s.id}`, (s.price ?? 0) / 100, s.currency || 'usd', s.product_name || '');
+      const mine = await this.gumroadProducts();
+      const sales = (await this.gumroad('sales')).sales ?? [];
+      for (const s of sales) {
+        if (s.refunded || (mine && !mine.has(s.product_id))) continue;
+        this.credit(`gumroad:${s.id}`, (s.price ?? 0) / 100, s.currency || 'usd', s.product_name || '');
       }
     }
+  }
+
+  async gumroad(p) {
+    const res = await fetch(`https://api.gumroad.com/v2/${p}?access_token=${encodeURIComponent(env.CHARLIE_GUMROAD_TOKEN)}`);
+    if (!res.ok) throw new Error(`Gumroad ${p} → ${res.status}`);
+    return res.json();
+  }
+
+  // When the Gumroad account is shared with her human's own products, only
+  // the ones in CHARLIE_GUMROAD_PRODUCTS (ids or permalinks) are hers.
+  async gumroadProducts() {
+    const wanted = gumroadProductList();
+    if (!wanted.length) return null;
+    const ids = new Set();
+    const names = [];
+    for (const p of (await this.gumroad('products')).products ?? []) {
+      const keys = [p.id, p.custom_permalink, String(p.short_url ?? '').split('/').pop()].filter(Boolean).map((k) => k.toLowerCase());
+      if (keys.some((k) => wanted.includes(k))) {
+        ids.add(p.id);
+        names.push(p.name);
+      }
+    }
+    this.s.mine = names;
+    return ids;
   }
 
   status() {
@@ -51,6 +80,7 @@ export class SalesSource extends Source {
   lines() {
     if (!this.enabled) return [];
     const out = [`SALES: ${this.s.count} sales so far, ${this.s.total.toFixed(2)} total`];
+    if (gumroadProductList().length) out.push(`YOUR GUMROAD PRODUCTS: ${this.s.mine?.length ? this.s.mine.join(', ') : '(none found yet)'}`);
     for (const r of this.s.recent.slice(0, 5)) out.push(`- ${r.amount.toFixed(2)} ${r.currency.toUpperCase()}${r.what ? ` — ${r.what}` : ''}`);
     return out;
   }
