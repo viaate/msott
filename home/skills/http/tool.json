@@ -1,0 +1,18 @@
+{
+  "name": "http",
+  "description": "Make any HTTP request on the web: call APIs, submit forms, download things. Give a method, a url, optional headers, and a body (json for a JSON body, form for a form-encoded body, or body for raw text). Anywhere in the headers, url or body you can write {{CHARLIE_SOMETHING}} (or {{GITHUB_TOKEN}}), and it is replaced with that secret from your environment, so you never have to see or type it. Returns the status, the important headers, and the response body: JSON is parsed, and HTML is reduced to readable text unless raw is true. Use web_fetch to just read a page; use this to act.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"] },
+      "url": { "type": "string" },
+      "headers": { "type": "object" },
+      "json": { "description": "A JSON body (sets content-type: application/json)." },
+      "form": { "type": "object", "description": "A form-encoded body (sets content-type: application/x-www-form-urlencoded)." },
+      "body": { "type": "string", "description": "A raw text body." },
+      "raw": { "type": "boolean", "description": "Return HTML as-is instead of readable text." },
+      "max_chars": { "type": "integer", "description": "How much of the body to return (default 12000)." }
+    },
+    "required": ["url"]
+  }
+}
