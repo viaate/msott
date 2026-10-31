@@ -6,6 +6,7 @@ import { createApp } from './app.js';
 import { bus } from './bus.js';
 import { readJSON, writeJSON } from './store.js';
 import { GitHubHome } from './github-home.js';
+import { Mailbox } from './mailbox.js';
 import { exportSite } from './export.js';
 
 async function devvitSetup(app) {
@@ -28,21 +29,19 @@ async function step(name, fn) {
   }
 }
 
-// One scheduled run on GitHub: read visitors' issues, check her accounts,
-// wake her if her nap is over, then build the site for GitHub Pages.
+// One scheduled run on GitHub: collect her mailbox, check her accounts, wake
+// her if her nap is over, then build the site for GitHub Pages.
 export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
   const repo = process.env.GITHUB_REPOSITORY || '';
   out = path.resolve(out || process.env.CHARLIE_SITE_OUT || path.join(paths.root, '_site'));
   const app = createApp({ client });
-  const home = new GitHubHome({ repo, token: process.env.REPO_TOKEN, visitors: app.visitors, requests: app.requests, world: app.world });
+  const home = new GitHubHome({ repo, token: process.env.REPO_TOKEN, requests: app.requests });
+  const mailbox = new Mailbox({ visitors: app.visitors });
   const notes = [];
 
-  let intake = { events: 0, messages: 0 };
-  if (home.enabled) {
-    await step('labels', () => home.ensureLabels());
-    intake = (await step('intake', () => home.intake())) ?? intake;
-    if (intake.events) notes.push(`${intake.events} visitor issue${intake.events > 1 ? 's' : ''}`);
-  }
+  if (home.enabled) await step('labels', () => home.ensureLabels());
+  const intake = (await step('mailbox', () => mailbox.intake())) ?? { events: 0, messages: 0 };
+  if (intake.events) notes.push(`${intake.events} letter${intake.events > 1 ? 's' : ''} from visitors`);
 
   if (cmd === 'pause') app.agent.pause();
   if (cmd === 'resume') app.agent.resume();
@@ -76,14 +75,12 @@ export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
     console.log('No ANTHROPIC_API_KEY: Charlie has no brain yet, so she stays asleep.');
   }
 
-  if (home.enabled) {
-    await step('replies', () => home.outbox());
-    await step('requests', () => home.syncRequests());
-  }
+  if (home.enabled) await step('requests', () => home.syncRequests());
   app.flush();
   home.flush();
+  mailbox.flush();
 
-  const { changed, version } = exportSite(app, { out, session, issues: repo ? home.issueLinks() : null, repo });
+  const { changed, version } = exportSite(app, { out, session, mailbox: mailbox.url, repo });
   return { app, changed, version, woke, out, summary: notes.join(', ') || 'a quiet tick' };
 }
 

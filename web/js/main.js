@@ -212,7 +212,6 @@ function idlePoses(now) {
 // ---------------------------------------------------------------- server
 let selfPets = 0;
 let selfTreats = 0;
-let petHinted = false;
 
 function headScreen() {
   const v = charlie.headPosition(new THREE.Vector3()).project(cam());
@@ -251,17 +250,23 @@ function actionEffect(a) {
   }, 500);
 }
 
-// Clicking her is always a pet you can see. On GitHub Pages, a pet that she
-// actually feels goes through a GitHub issue (from the actions menu).
+// Clicking her is always a pet you can see. On GitHub Pages it also goes in
+// her mailbox, and she feels it at her next check-in.
+let mailHinted = false;
+
+function mailed(r) {
+  if (net.kind !== 'static' || !r) return;
+  if (r.error) ui.toast(r.error);
+  else if (r.sent && !mailHinted) {
+    ui.toast('She felt that. Charlie checks in every 15 minutes or so, and remembers who was nice to her.');
+    mailHinted = true;
+  }
+}
+
 async function pet() {
   petEffect();
-  if (net.kind === 'static') {
-    if (!petHinted) ui.toast('She liked that! To pet her so she really feels it, use actions → pet her (it opens GitHub).');
-    petHinted = true;
-    return;
-  }
   selfPets++;
-  await net.pet();
+  mailed(await net.pet());
 }
 
 async function treat() {
@@ -269,18 +274,19 @@ async function treat() {
   selfTreats++;
   const r = await net.treat();
   if (r && r.counted === false) ui.toast("Charlie loved it (that's enough treats from you for today, though)");
+  mailed(r);
 }
 
 async function act(id) {
-  if (net.kind === 'static') {
-    const r = net.act(id);
-    ui.toast(r.error ?? 'Finish on GitHub: press Submit and Charlie feels it within about 15 minutes.');
-    return;
-  }
   if (id === 'pet') return pet();
   if (id === 'treat') return treat();
   const r = await net.act(id);
-  if (r.error) ui.toast(r.error);
+  if (r.error) return ui.toast(r.error);
+  if (net.kind === 'static') {
+    const a = ui.state?.actions?.find((x) => x.id === id);
+    if (a) actionEffect(a);
+    mailed(r);
+  }
 }
 
 function connect() {

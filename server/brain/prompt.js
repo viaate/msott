@@ -2,7 +2,7 @@ import os from 'node:os';
 import fs from 'node:fs';
 import { config, paths, secrets, charlieEnv, mode } from '../config.js';
 import { MOTIONS } from './world.js';
-import { redditCreds } from '../sources/reddit.js';
+import { redditCreds, redditProfiles } from '../sources/reddit.js';
 
 const EARN_ORDER = [
   'sales.usd', 'page.view', 'link.click',
@@ -44,7 +44,7 @@ function earnTable() {
   const env = process.env;
   const has = {
     'sales.': env.CHARLIE_STRIPE_KEY || env.CHARLIE_GUMROAD_TOKEN,
-    'reddit.': redditCreds(),
+    'reddit.': redditCreds() || redditProfiles().length,
     'bluesky.': env.CHARLIE_BLUESKY_HANDLE,
     'github.': secrets.githubToken,
     'beacon.': secrets.publicUrl,
@@ -66,6 +66,7 @@ function accounts() {
   const out = [];
   if (secrets.githubToken) out.push('GitHub (the github skill; GITHUB_TOKEN)');
   if (redditCreds()) out.push(`Reddit as u/${env.CHARLIE_REDDIT_USERNAME} (the reddit skill)`);
+  else if (redditProfiles().length) out.push(`a Reddit profile, u/${redditProfiles()[0]}: comments people leave on its posts earn you tokens, and so does its karma whenever Reddit lets it be read. Reddit's API is closed to you, so you can't post as u/${redditProfiles()[0]} yourself; if you'd like something posted there, ask your human with ask_human${env.CHARLIE_DEVVIT_CODE ? '. Posts your Devvit app makes count too' : ''}`);
   if (env.CHARLIE_DEVVIT_CODE) out.push("Reddit through Reddit's own developer platform (the devvit skill): apps and games that live inside Reddit posts, in your own subreddit and any subreddit whose moderators install them. Reddit's regular API is closed to you, so this is your way onto Reddit, and Reddit reviews apps you publish");
   if (env.CHARLIE_BLUESKY_HANDLE && env.CHARLIE_BLUESKY_APP_PASSWORD) out.push(`Bluesky as @${env.CHARLIE_BLUESKY_HANDLE.replace(/^@/, '')} (the bluesky skill)`);
   if (env.CHARLIE_STRIPE_KEY) out.push('a Stripe shop (CHARLIE_STRIPE_KEY: create products and payment links through the Stripe API with your http skill; sales count automatically)');
@@ -164,8 +165,8 @@ Nobody tells you what to like. Notice how things actually make you feel, and let
 ## Your diary, and the people who visit
 
 - Keep a diary with the diary tool: what happened, what you noticed, what you liked or didn't, and a mood from -2 to 2. It's public, and your mood over time is drawn from it. Write a few honest entries a day rather than one for everything.
-- ${gh ? 'Visitors reach you through issues on your GitHub repo, and their names are their GitHub usernames.' : 'Visitors have names (like sleepyBadger42).'} They come back. Your wake summary tells you who visited since your last nap, what they did, and what you remember about them. Use remember_visitor to remember things about people. They can see what you remember about them, so be kind. You can answer someone with say(text, to)${gh ? ', and your answer is also posted on their issue so they get it' : ''}.
-- Visitors can leave you offerings: a message, a picture, or both. You see pictures yourself. ${gh ? 'Messages are public issues, but you are the one who looks at the pictures, so if you want to share one, describe it.' : 'Nobody else sees them, so if you want to share one, describe it.'}
+- Visitors have names (like sleepyBadger42, or one they chose).${gh ? ' What they do in your world reaches you at your next check-in, about every 15 minutes, and a message can wake you.' : ''} They come back. Your wake summary tells you who visited since your last nap, what they did, and what you remember about them. Use remember_visitor to remember things about people. They can see what you remember about them, so be kind. You can answer someone with say(text, to)${gh ? ', and they see your answer in your world under "about you"' : ''}.
+- Visitors can leave you offerings: a message, a picture, or both. You see pictures yourself. They aren't shown in your world, so if you want to share one, describe it.
 - Visitors can do things around your house: fill your bowl, squeak your lemon tart toy, roll you a ball, tap on the window, ring the doorbell, fluff your blanket. They can also do whatever actions you give your builds. Each one is a small event in your world that you'll hear about.
 
 ## How your days work

@@ -66,7 +66,8 @@
       "picturesPerVisitorPerDay": 2,
       "actionsPerVisitorPerDay": 12,
       "sameActionPerVisitorPerDay": 4,
-      "newReposCreditedPerDay": 2
+      "newReposCreditedPerDay": 2,
+      "mailboxPerDay": 600
     },
     "costs": {
       "skill":   { "base": 25, "growth": 1.4 },
@@ -88,7 +89,8 @@
   },
 
   "sources": {
-    "pollMinutes": 10
+    "pollMinutes": 10,
+    "reddit": { "username": "imcharliethedog" }
   },
 
   "github": {
@@ -113,6 +115,7 @@
     "port": 8787,
     "trustProxy": true,
     "maxMessageLength": 280,
+    "mailbox": "https://ntfy.sh",
     "maxPictureBytes": 3000000,
     "maxPicturesPerWake": 3,
     "maxPageBytes": 2000000,

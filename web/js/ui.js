@@ -153,8 +153,9 @@ export class UI {
       this.picture = null;
       $('pic-chip').hidden = true;
       const r = await this.net.message(body);
-      if (r.opened) this.toast('Finish on GitHub: press Submit (you can add a picture there). She reads it when she wakes up.');
-      else this.toast(r.error ? r.error : 'Charlie got it. She reads things when she wakes up, and remembers who left them.');
+      if (r.error) this.toast(r.error);
+      else if (r.sent) this.toast("It's in her mailbox. Charlie checks in every 15 minutes or so, and a message can wake her up.");
+      else this.toast('Charlie got it. She reads things when she wakes up, and remembers who left them.');
       this.refreshMe();
     });
     $('name-form').addEventListener('submit', async (e) => {
@@ -165,13 +166,7 @@ export class UI {
     });
     $('replay-skip').addEventListener('click', () => this.net.skipReplay?.());
     $('replay-again').addEventListener('click', () => this.net.replayAgain?.());
-    if (net.kind === 'static') {
-      document.body.classList.add('static');
-      $('msg').placeholder = 'leave charlie a message (on GitHub)…';
-      $('name-label').textContent = 'your GitHub name';
-      $('my-name').placeholder = 'octocat';
-      $('name-save').textContent = 'look up';
-    }
+    if (net.kind === 'static') document.body.classList.add('static');
     setInterval(() => this.renderStatus(), 20000);
   }
 
@@ -410,7 +405,7 @@ export class UI {
       }
       menu.append(wrap);
     };
-    if (this.net.kind === 'static') menu.append(el('p', 'menu-note first', 'These open GitHub (a free account is all you need). Press Submit there, and Charlie feels it within about 15 minutes.'));
+    if (this.net.kind === 'static') menu.append(el('p', 'menu-note first', 'Charlie checks in every 15 minutes or so. She feels what you did then, and remembers who did it.'));
     section('for charlie', [{ id: 'pet', label: 'pet her' }, { id: 'treat', label: 'toss a treat' }]);
     const acts = this.state.actions ?? [];
     section('around the house', acts.filter((a) => !a.build));
@@ -487,8 +482,8 @@ export class UI {
     const me = this.me;
     if (!me) return;
     if (document.activeElement !== $('my-name')) $('my-name').value = me.name;
-    if (me.github && !me.firstSeen) {
-      $('me-meta').textContent = me.name ? "She hasn't met you yet. Leave her a message or pet her through GitHub." : 'Enter your GitHub name to see what Charlie remembers about you.';
+    if (!me.firstSeen) {
+      $('me-meta').textContent = "She hasn't met you yet. Pet her or leave her a message, and she'll get to know you.";
     } else {
       $('me-meta').textContent = `${me.visits <= 1 ? 'your first visit' : `visit #${me.visits}`} · first came by ${new Date(me.firstSeen).toLocaleDateString()}`;
     }

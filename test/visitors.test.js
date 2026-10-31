@@ -55,6 +55,7 @@ test('visitors are remembered, leave offerings, do things, and Charlie sees it a
   assert.match(text, /filled your food bowl/);
   assert.match(text, /left you a picture and said "hi charlie"/);
   assert.ok(wake.some((b) => b.type === 'image' && b.source.media_type === 'image/png'));
+  assert.deepEqual(fs.readdirSync(path.join(tmp, 'data', 'offerings')), [], "pictures aren't kept once she's seen them");
   assert.ok(client.calls[0].tools.some((t) => t.name === 'diary'));
 
   assert.equal(app.diary.entries.at(-1).mood, 2);

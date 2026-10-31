@@ -5,10 +5,9 @@ import { config, paths } from './config.js';
 import { JSONStore, ensureDir, today } from './store.js';
 import { bus } from './bus.js';
 import { allActions } from './places.js';
+import { randomName, cleanName } from '../web/js/names.js';
 
 const limits = config.economy.limits;
-const ADJ = ['sleepy', 'brave', 'curious', 'gentle', 'zippy', 'cozy', 'sunny', 'fuzzy', 'quiet', 'bouncy', 'clever', 'lucky', 'mellow', 'wobbly', 'dapper', 'humble', 'tiny', 'nimble', 'jolly', 'misty'];
-const ANIMALS = ['Badger', 'Otter', 'Sparrow', 'Beagle', 'Hedgehog', 'Heron', 'Moth', 'Fox', 'Newt', 'Wren', 'Puffin', 'Vole', 'Ferret', 'Lark', 'Gecko', 'Marmot', 'Quail', 'Bison', 'Owl', 'Toad'];
 const IMAGE_TYPES = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' };
 const RETURN_GAP = 30 * 60_000;
 
@@ -29,11 +28,7 @@ function sniffImage(buf) {
   return null;
 }
 
-export { sniffImage };
-
-export function cleanName(raw) {
-  return String(raw ?? '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 20);
-}
+export { sniffImage, cleanName };
 
 // Visitors are remembered by a random cookie and a name, never by who they
 // really are. Rate limits use a salted, daily-rotating hash of IP + agent.
@@ -74,7 +69,7 @@ export class Visitors {
       const t = crypto.randomBytes(18).toString('base64url');
       p = this.people.data.byToken[t] = {
         id: `v${++this.people.data.seq}`,
-        name: `${ADJ[crypto.randomInt(ADJ.length)]}${ANIMALS[crypto.randomInt(ANIMALS.length)]}${crypto.randomInt(10, 100)}`,
+        name: randomName(),
         firstSeen: Date.now(),
         lastSeen: 0,
         visits: 0,
@@ -132,12 +127,17 @@ export class Visitors {
     this.people.save();
   }
 
-  // A visitor known by their GitHub username (when she lives on GitHub).
-  github(login) {
-    const key = `gh:${String(login).toLowerCase()}`;
+  // A visitor to her GitHub Pages site, known by their browser's own key
+  // (see mailbox.js). They choose their name in "about you".
+  web(id, rawName) {
+    const key = `w:${id}`;
+    const name = cleanName(rawName);
     let p = this.people.data.byToken[key];
     if (!p) {
-      p = this.people.data.byToken[key] = { id: key, name: String(login), github: true, firstSeen: Date.now(), lastSeen: 0, visits: 0, notes: '', replies: [] };
+      p = this.people.data.byToken[key] = { id: key, name: name.length >= 2 ? name : randomName(), web: true, firstSeen: Date.now(), lastSeen: 0, visits: 0, notes: '', replies: [] };
+    } else if (name.length >= 2 && name !== p.name) {
+      this.logEvent({ kind: 'rename', name, id: p.id, from: p.name });
+      p.name = name;
     }
     this.seen(p);
     return { p, h: key };
@@ -147,12 +147,13 @@ export class Visitors {
     return { p: this.identify(req, res), h: this.hash(req) };
   }
 
-  // Everyone Charlie knows, as shown on a static site's "about you".
+  // What Charlie knows about each site visitor, for a static site's "about
+  // you". Keyed by the visitor's public key id, which only their browser knows
+  // is theirs.
   publicPeople() {
     const out = {};
     for (const p of Object.values(this.people.data.byToken)) {
-      if (!p.github) continue;
-      out[p.name.toLowerCase()] = this.about(p);
+      if (p.web) out[p.id.slice(2)] = this.about(p);
     }
     return out;
   }
@@ -191,7 +192,6 @@ export class Visitors {
     if (!p) return null;
     p.replies.push({ t: Date.now(), text });
     if (p.replies.length > 30) p.replies.splice(0, p.replies.length - 30);
-    if (p.github) (this.people.data.outbox ??= []).push({ login: p.name, text, t: Date.now() });
     this.people.save();
     return p;
   }
@@ -346,9 +346,14 @@ export class Visitors {
     return this.inbox.data.messages.filter((m) => !m.read);
   }
 
+  // Once she's seen a picture it isn't kept, since her saved life is public.
   markRead(ids) {
     const set = new Set(ids);
-    for (const m of this.inbox.data.messages) if (set.has(m.id)) m.read = true;
+    for (const m of this.inbox.data.messages) {
+      if (!set.has(m.id)) continue;
+      m.read = true;
+      if (m.image) fs.rmSync(path.join(paths.data, 'offerings', m.image), { force: true });
+    }
     this.inbox.save();
   }
 
