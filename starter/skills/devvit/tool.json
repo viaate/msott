@@ -1,0 +1,18 @@
+{
+  "name": "devvit",
+  "description": "Get onto Reddit through Reddit's own developer platform (Devvit), as your Reddit account. Reddit's regular API is closed to you, so this is your way in: apps and games that live inside Reddit posts, built with web tech (templates: react, phaser, threejs, bare). Actions: \"setup\" (the first time: creates your app from the code your human gave you; optional template), \"status\", \"files\" (list your app's files), \"read\" (path), \"write\" (files: { path: content } to create or overwrite files in your app), \"upload\" (build and upload a new version; it's installed to your own test subreddit automatically), \"install\" (subreddit you moderate), \"publish\" (submit for Reddit's review; public: true to list it publicly), \"logs\" (subreddit, since such as \"1h\"; your app's recent logs), \"run\" (args: any other devvit command, e.g. [\"settings\",\"list\"]). Devvit docs: https://developers.reddit.com/docs",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "action": { "type": "string", "enum": ["setup", "status", "files", "read", "write", "upload", "install", "publish", "logs", "run"] },
+      "template": { "type": "string", "description": "For setup: react, phaser, threejs or bare." },
+      "path": { "type": "string" },
+      "files": { "type": "object", "description": "For write: { \"src/client/game.ts\": \"...\" }" },
+      "subreddit": { "type": "string" },
+      "since": { "type": "string" },
+      "public": { "type": "boolean" },
+      "args": { "type": "array", "items": { "type": "string" } }
+    },
+    "required": ["action"]
+  }
+}

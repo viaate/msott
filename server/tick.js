@@ -1,11 +1,24 @@
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { paths } from './config.js';
 import { createApp } from './app.js';
 import { bus } from './bus.js';
 import { readJSON, writeJSON } from './store.js';
 import { GitHubHome } from './github-home.js';
+import { Mailbox } from './mailbox.js';
 import { exportSite } from './export.js';
+
+async function devvitSetup(app) {
+  const file = path.join(paths.data, 'devvit.json');
+  const rec = readJSON(file, {});
+  const tag = crypto.createHash('sha256').update(process.env.CHARLIE_DEVVIT_CODE).digest('hex').slice(0, 16);
+  if (rec.tried === tag) return;
+  const r = await app.skills.run('devvit', { action: 'setup', template: process.env.CHARLIE_DEVVIT_TEMPLATE || 'threejs' });
+  const ready = r.ok && /Set up your app|already set up/.test(r.text);
+  writeJSON(file, { tried: tag, ready, at: new Date().toISOString() });
+  bus.feed('system', ready ? 'Charlie has a Reddit app of her own now.' : "Charlie's Reddit app couldn't be set up from that code (it may have expired). A new one from developers.reddit.com/new will do it.");
+}
 
 async function step(name, fn) {
   try {
@@ -16,21 +29,19 @@ async function step(name, fn) {
   }
 }
 
-// One scheduled run on GitHub: read visitors' issues, check her accounts,
-// wake her if her nap is over, then build the site for GitHub Pages.
+// One scheduled run on GitHub: collect her mailbox, check her accounts, wake
+// her if her nap is over, then build the site for GitHub Pages.
 export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
   const repo = process.env.GITHUB_REPOSITORY || '';
   out = path.resolve(out || process.env.CHARLIE_SITE_OUT || path.join(paths.root, '_site'));
   const app = createApp({ client });
-  const home = new GitHubHome({ repo, token: process.env.REPO_TOKEN, visitors: app.visitors, requests: app.requests, world: app.world });
+  const home = new GitHubHome({ repo, token: process.env.REPO_TOKEN, requests: app.requests });
+  const mailbox = new Mailbox({ visitors: app.visitors });
   const notes = [];
 
-  let intake = { events: 0, messages: 0 };
-  if (home.enabled) {
-    await step('labels', () => home.ensureLabels());
-    intake = (await step('intake', () => home.intake())) ?? intake;
-    if (intake.events) notes.push(`${intake.events} visitor issue${intake.events > 1 ? 's' : ''}`);
-  }
+  if (home.enabled) await step('labels', () => home.ensureLabels());
+  const intake = (await step('mailbox', () => mailbox.intake())) ?? { events: 0, messages: 0 };
+  if (intake.events) notes.push(`${intake.events} letter${intake.events > 1 ? 's' : ''} from visitors`);
 
   if (cmd === 'pause') app.agent.pause();
   if (cmd === 'resume') app.agent.resume();
@@ -39,6 +50,9 @@ export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
     app.ledger.earn('gift', amount, process.env.GIFT_REASON || args[1] || 'a gift from your human');
     notes.push(`gift of ${amount}`);
   }
+
+  // A Devvit code from Reddit is single-use and may expire, so use it as soon as it appears.
+  if (process.env.CHARLIE_DEVVIT_CODE && app.skills.get('devvit')) await step('devvit', () => devvitSetup(app));
 
   for (const src of app.sources) await src.pollOnce();
   await step('refresh', () => app.world.refreshDue());
@@ -61,14 +75,12 @@ export async function tick({ cmd = 'tick', args = [], client, out } = {}) {
     console.log('No ANTHROPIC_API_KEY: Charlie has no brain yet, so she stays asleep.');
   }
 
-  if (home.enabled) {
-    await step('replies', () => home.outbox());
-    await step('requests', () => home.syncRequests());
-  }
+  if (home.enabled) await step('requests', () => home.syncRequests());
   app.flush();
   home.flush();
+  mailbox.flush();
 
-  const { changed, version } = exportSite(app, { out, session, issues: repo ? home.issueLinks() : null, repo });
+  const { changed, version } = exportSite(app, { out, session, mailbox: mailbox.url, repo });
   return { app, changed, version, woke, out, summary: notes.join(', ') || 'a quiet tick' };
 }
 

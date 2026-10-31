@@ -280,14 +280,14 @@ export class Agent {
     for (const m of unread.slice(-15)) {
       const p = this.visitors.profileById(m.visitorId);
       const who = `${m.from}${p ? ` (${p.visits <= 1 ? 'first visit' : `visit #${p.visits}`}${p.notes ? `; you remember: "${clip(p.notes, 120)}"` : ''})` : ''}`;
-      if (m.image) {
-        const data = images.length < maxPics ? this.visitors.picture(m) : null;
-        if (!data) continue;
+      if (m.image && images.length >= maxPics) continue;
+      const data = m.image ? this.visitors.picture(m) : null;
+      if (data) {
         images.push({ type: 'text', text: `Picture #${m.id} from ${m.from}${m.text ? ` with the message ${JSON.stringify(m.text)}` : ''}:` });
         images.push({ type: 'image', source: { type: 'base64', media_type: m.mediaType, data } });
         lines.push(`- #${m.id} · ${who} · ${ago(m.t)}: left you a picture${m.text ? ` and said ${JSON.stringify(m.text)}` : ''} (attached below)`);
       } else {
-        lines.push(`- #${m.id} · ${who} · ${ago(m.t)}: ${JSON.stringify(m.text)}`);
+        lines.push(`- #${m.id} · ${who} · ${ago(m.t)}: ${m.text ? JSON.stringify(m.text) : 'left you a picture, but it got lost on the way'}`);
       }
       read.push(m.id);
     }

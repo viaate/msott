@@ -75,11 +75,11 @@
       <button id="info-btn" aria-expanded="false" aria-controls="info-panel">her stuff</button>
     </div>
     <form id="msg-form" autocomplete="off">
-      <label class="attach" title="Leave her a picture">
+      <label class="attach" title="Leave her a picture (what you leave her is public)">
         <input type="file" id="pic" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
         <span aria-hidden="true">+ pic</span>
       </label>
-      <input id="msg" maxlength="280" placeholder="leave charlie a message…" aria-label="Message for Charlie">
+      <input id="msg" maxlength="280" placeholder="leave charlie a message…" title="Messages are public" aria-label="Message for Charlie (public)">
       <button type="submit">send</button>
     </form>
     <div class="pic-chip" id="pic-chip" hidden><span id="pic-name">picture</span><button type="button" id="pic-clear" aria-label="Remove picture">×</button></div>

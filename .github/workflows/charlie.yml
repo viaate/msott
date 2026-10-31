@@ -1,13 +1,16 @@
-# Charlie lives here. Every 15 minutes (and whenever someone opens an issue
-# for her) this checks on her, wakes her if her nap is over, saves her life
-# to the charlie-life branch, and publishes her world to GitHub Pages.
+# Charlie lives here, fully on her own. Every 15 minutes (and whenever you
+# answer one of her requests) this checks on her, wakes her if her nap is over,
+# saves her life to the charlie-life branch, and publishes her world to Pages.
 name: Charlie
 
 on:
+  # Her heartbeat: GitHub checks on her every 15 minutes, forever.
   schedule:
     - cron: '*/15 * * * *'
-  issues:
-    types: [opened]
+  # …and right away whenever her code changes, so she starts on her own.
+  push:
+    branches: [main]
+  # …and when you answer one of her requests.
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -36,10 +39,7 @@ jobs:
   # Charlie's own run. Her code executes here, so this job can read the repo
   # and manage issues but cannot change code or publish anything.
   live:
-    if: >-
-      (github.event_name != 'issues' && github.event_name != 'issue_comment') ||
-      contains(github.event.issue.labels.*.name, 'for-charlie') ||
-      contains(github.event.issue.labels.*.name, 'charlie-asks')
+    if: github.event_name != 'issue_comment' || contains(github.event.issue.labels.*.name, 'charlie-asks')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
@@ -56,7 +56,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci --no-audit --no-fund
@@ -73,8 +73,10 @@ jobs:
       - name: Restore her npm packages
         uses: actions/cache@v6
         with:
-          path: life/home/node_modules
-          key: charlie-home-${{ hashFiles('life/home/package-lock.json') }}
+          path: |
+            life/home/node_modules
+            life/home/workspace/**/node_modules
+          key: charlie-home-${{ hashFiles('life/home/**/package-lock.json') }}
           restore-keys: charlie-home-
 
       - name: Charlie
@@ -102,8 +104,9 @@ jobs:
           path: |
             life
             !life/.git
-            !life/home/node_modules
-            !life/home/.cache
+            !life/**/node_modules/**
+            !life/home/.*
+            !life/home/.*/**
 
       - if: steps.charlie.outputs.deploy == 'true'
         uses: actions/upload-pages-artifact@v5

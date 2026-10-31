@@ -54,11 +54,11 @@ function redirectPage(slug, url) {
 // Builds the whole site for GitHub Pages: the dot world, her website under
 // pages/, her /go/ links, and state.json that the world reads. Returns
 // whether anything visitors would see has changed since the last deploy.
-export function exportSite(app, { out, session, issues, repo }) {
+export function exportSite(app, { out, session, mailbox, repo }) {
   fs.rmSync(out, { recursive: true, force: true });
   ensureDir(out);
 
-  const config = { static: true, repo, issues };
+  const config = { static: true, repo, mailbox };
   copyDir(paths.web, out, (html) => withCounter(html.replace('<script type="module" src="js/main.js"></script>', `<script>window.CHARLIE = ${JSON.stringify(config)};</script>\n  <script type="module" src="js/main.js"></script>`)));
 
   const three = paths.three;

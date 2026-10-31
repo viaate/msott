@@ -35,7 +35,9 @@ export function childEnv() {
 // Values that must never show up in anything published (code views, logs).
 export function scrubSecrets(text) {
   let out = String(text ?? '');
-  const values = [secrets.githubToken, secrets.anthropicKey, secrets.adminToken, ...Object.values(charlieEnv())]
+  // Handles and usernames are public; everything else from her human is treated as secret.
+  const hidden = Object.entries(charlieEnv()).filter(([k]) => !/(_HANDLE|_USERNAME|_USER|^TZ)$/.test(k)).map(([, v]) => v);
+  const values = [secrets.githubToken, secrets.anthropicKey, secrets.adminToken, ...hidden]
     .filter((v) => v && v.length >= 8);
   for (const v of values) out = out.split(v).join('•••');
   return out;

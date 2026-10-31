@@ -1,8 +1,13 @@
 // How the page talks to Charlie's home. Live: a server streams events as they
 // happen. Static (GitHub Pages): read state.json, replay her latest wake, and
-// send visitors to GitHub issues to pet her or leave a message.
+// drop pets, treats and messages in her mailbox for her next check-in.
+
+import { randomName, cleanName } from './names.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const b64url = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const sha256 = (bytes) => crypto.subtle.digest('SHA-256', bytes);
+const ECDSA = { name: 'ECDSA', namedCurve: 'P-256' };
 
 function store(key, value) {
   try {
@@ -104,6 +109,7 @@ class StaticNet extends Emitter {
     this.version = -1;
     this.seen = Number(store('charlie-session') || 0);
     this.replaying = null;
+    this.lastSent = {};
   }
 
   async fetchState() {
@@ -260,13 +266,6 @@ class StaticNet extends Emitter {
     this.replay(s.lastSession);
   }
 
-  // ---- visitors act through GitHub issues ----
-  open(url) {
-    if (!url) return { error: "Charlie's GitHub isn't set up yet." };
-    window.open(url, '_blank', 'noopener');
-    return { opened: true };
-  }
-
   hello() {
     return this.me();
   }
@@ -280,25 +279,76 @@ class StaticNet extends Emitter {
     return res.ok ? res.json() : null;
   }
 
-  actionUrl(params) {
-    const base = this.cfg.issues?.action;
-    return base ? `${base}&${new URLSearchParams(params)}` : null;
+  // ---- visitors reach her through her mailbox ----
+
+  // Each browser has its own signing key, kept in localStorage. It's who you
+  // are to Charlie: nobody else can pet her or write to her as you.
+  identity() {
+    this.idp ??= (async () => {
+      let jwk = null;
+      try {
+        jwk = JSON.parse(store('charlie-key'));
+      } catch {}
+      let key;
+      if (jwk?.d) key = await crypto.subtle.importKey('jwk', jwk, ECDSA, false, ['sign']);
+      else {
+        const pair = await crypto.subtle.generateKey(ECDSA, true, ['sign', 'verify']);
+        jwk = await crypto.subtle.exportKey('jwk', pair.privateKey);
+        store('charlie-key', JSON.stringify(jwk));
+        key = pair.privateKey;
+      }
+      const pub = { x: jwk.x, y: jwk.y };
+      const id = b64url(await sha256(new TextEncoder().encode(`${pub.x}.${pub.y}`))).slice(0, 22);
+      return { key, pub, id };
+    })();
+    return this.idp;
+  }
+
+  myName() {
+    let name = store('charlie-name');
+    if (!name) store('charlie-name', (name = randomName()));
+    return name;
+  }
+
+  async send(kind, fields = {}, picture = null) {
+    const box = this.cfg.mailbox;
+    if (!box) return { error: "Charlie's mailbox isn't set up yet." };
+    if (!globalThis.crypto?.subtle) return { error: "This browser can't reach Charlie from here." };
+    // A flurry of clicks is one pet as far as her mailbox is concerned.
+    const wait = { pet: 30_000, treat: 20_000, act: 5_000 }[kind] ?? 0;
+    if (Date.now() - (this.lastSent[kind] ?? 0) < wait) return { sent: true };
+    this.lastSent[kind] = Date.now();
+    try {
+      const me = await this.identity();
+      let f;
+      if (picture) f = [...new Uint8Array(await sha256(await picture.arrayBuffer()))].map((b) => b.toString(16).padStart(2, '0')).join('');
+      const d = JSON.stringify({ k: kind, ...fields, ...(f ? { f } : {}), n: this.myName(), ts: Date.now(), r: b64url(crypto.getRandomValues(new Uint8Array(12))) });
+      const s = b64url(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, me.key, new TextEncoder().encode(d)));
+      const letter = JSON.stringify({ d, k: me.pub, s });
+      const res = picture
+        ? await fetch(`${box}?${new URLSearchParams({ filename: 'picture.jpg', message: letter })}`, { method: 'PUT', body: picture })
+        : await fetch(box, { method: 'POST', body: letter });
+      if (res.status === 429) return { error: "Charlie's mailbox is full for the moment. Try again in a bit." };
+      if (!res.ok) return { error: "Couldn't reach Charlie's mailbox." };
+      return { sent: true };
+    } catch {
+      return { error: "Couldn't reach Charlie's mailbox." };
+    }
   }
 
   pet() {
-    return this.open(this.actionUrl({ action: 'pet her' }));
+    return this.send('pet');
   }
 
   treat() {
-    return this.open(this.actionUrl({ action: 'toss a treat' }));
+    return this.send('treat');
   }
 
   act(id) {
     if (id === 'pet') return this.pet();
     if (id === 'treat') return this.treat();
-    const a = this.state?.snapshot.actions.find((x) => x.id === id);
-    if (!a) return { error: 'Nothing like that to do.' };
-    return this.open(this.actionUrl(a.build ? { action: 'something else', custom: a.id } : { action: a.label }));
+    if (!this.state?.snapshot.actions.some((x) => x.id === id)) return { error: 'Nothing like that to do.' };
+    return this.send('act', { a: id });
   }
 
   async touch(name) {
@@ -306,23 +356,59 @@ class StaticNet extends Emitter {
     return { link: o?.link ?? null };
   }
 
-  message({ text }) {
-    const base = this.cfg.issues?.message;
-    return this.open(base ? `${base}&${new URLSearchParams({ message: text || '' })}` : null);
+  async message({ text, image }) {
+    const picture = image ? await shrink(image) : null;
+    if (image && !picture) return { error: "Couldn't read that picture." };
+    const r = await this.send('msg', { t: String(text || '').slice(0, 280) }, picture);
+    if (r.sent) {
+      const sent = this.sent();
+      sent.push({ t: Date.now(), text: text || '', picture: Boolean(picture) });
+      store('charlie-sent', JSON.stringify(sent.slice(-12)));
+    }
+    return r;
   }
 
+  sent() {
+    try {
+      return JSON.parse(store('charlie-sent')) ?? [];
+    } catch {
+      return [];
+    }
+  }
+
+  // What Charlie knows about you, as of her last check-in.
   async me() {
-    const login = store('charlie-gh');
-    if (!login) return { name: '', visits: 0, firstSeen: null, notes: '', replies: [], messages: [], github: true };
-    const p = this.state?.people?.[login.toLowerCase()];
-    return { ...(p ?? { name: login, visits: 0, firstSeen: null, notes: '', replies: [], messages: [] }), github: true };
+    const name = this.myName();
+    let known = null;
+    try {
+      known = this.state?.people?.[(await this.identity()).id] ?? null;
+    } catch {}
+    const messages = known?.messages?.length ? known.messages : this.sent();
+    return { visits: 0, firstSeen: null, notes: '', replies: [], ...known, messages, name };
   }
 
-  async rename(name) {
-    const login = String(name || '').trim().replace(/^@/, '');
-    if (!/^[A-Za-z0-9-]{1,39}$/.test(login)) return { error: "That doesn't look like a GitHub username." };
-    store('charlie-gh', login);
+  async rename(raw) {
+    const name = cleanName(raw);
+    if (name.length < 2) return { error: 'Names need 2–20 letters, numbers, - or _.' };
+    store('charlie-name', name);
     return this.me();
+  }
+}
+
+// Pictures travel small: at most 1024 px on a side, as JPEG.
+async function shrink(dataUrl) {
+  try {
+    const img = new Image();
+    img.src = dataUrl;
+    await img.decode();
+    const k = Math.min(1, 1024 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.width * k);
+    c.height = Math.round(img.height * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return await new Promise((resolve) => c.toBlob(resolve, 'image/jpeg', 0.85));
+  } catch {
+    return null;
   }
 }
 

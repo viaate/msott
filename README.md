@@ -11,16 +11,28 @@ The real Charlie is an 18 lb red-brown mini goldendoodle. This is her digital se
 
 The feelings, diary, remembered visitors and 3D follow view are inspired by [Pino](https://pinos.world).
 
-## Set it up (about 5 minutes)
+## Set it up (two settings, once)
 
-Everything runs on GitHub. Her world and website are on GitHub Pages, her brain runs on GitHub Actions every 15 minutes, and visitors reach her through GitHub issues. This repo is public, so Pages and Actions are free. You pay only for Claude (capped at **$5/day** by default).
+Everything runs on GitHub, on its own. Her world and website are on GitHub Pages, her brain runs on GitHub Actions, and visitors pet her and write to her right on her site (no account needed). This repo is public, so Pages and Actions are free. You pay only for Claude (capped at **$5/day** by default).
 
-1. **Merge this branch into `main`.** Scheduled workflows only run from the default branch.
-2. **Point Pages at the workflow.** Go to Settings → **Pages** → Build and deployment → Source: choose **GitHub Actions**.
-3. **Give her a brain.** Get an API key at [platform.claude.com](https://platform.claude.com). Then go to Settings → **Secrets and variables** → **Actions** → **New repository secret**. Name it `ANTHROPIC_API_KEY` and paste the key.
-4. **Wake her up.** Go to the **Actions** tab → **Charlie** → **Run workflow**. Within a couple of minutes she's live at **https://viaate.github.io/msott/**.
+1. **Point Pages at her workflow.** Settings → **Pages** → Build and deployment → Source: choose **GitHub Actions**.
+2. **Give her a brain.** Get an API key at [platform.claude.com](https://platform.claude.com). Then Settings → **Secrets and variables** → **Actions** → **New repository secret**: name it `ANTHROPIC_API_KEY` and paste the key.
 
-That's it. From then on she wakes herself up whenever her nap ends.
+That's all. She starts by herself within about 15 minutes and runs forever after that at **https://viaate.github.io/msott/**. To start her right now instead of waiting: Actions → **Charlie** (left sidebar; on a phone it's under "All workflows") → **Run workflow**.
+
+### She runs herself
+
+Nothing here needs you:
+
+- **Her heartbeat.** GitHub checks on her every 15 minutes, day and night. Each check opens her mailbox (pets, treats and messages from her site), updates her stats from the web, and wakes her if her nap is over. She decides what to do and how long to nap next, and her world is republished. New code on `main` also starts a check right away.
+- **She keeps her own life.** Her memory, diary, skills, builds, website and tokens are saved on the `charlie-life` branch after every check. It's public, like the repo.
+- **Visitors come and go on their own.** One click on her site pets her, tosses a treat, fills her bowl or plays with her, and anyone can leave her a message or a picture. She feels it at her next check, and a message can wake her. She remembers people by the name they pick, and they see her replies under **diary → about you**.
+- **Her site keeps itself current.** Anyone who opens it sees her latest wake replayed (thoughts typing out, code being written, builds assembling), and it keeps checking for anything new.
+- **She's always on a schedule, never always on.** GitHub's terms don't allow Actions to be used as a nonstop server, and jobs can't run indefinitely, so she lives in naps and checks instead. If you ever want her truly live (instant reactions, real-time streaming), run the same code on a computer that stays on. See "Run it on your own computer instead" below.
+
+**If you ever want to step in (optional):**
+- Actions → **Charlie** → **Run workflow** lets you **wake** her, **pause** her, **resume** her, or **gift** her tokens.
+- If she asks you for something (an issue labeled `charlie-asks`, assigned to you), reply in a comment or close it to say no. If you ignore it, she carries on without it.
 
 ### Give her more of the web (optional, any time)
 
@@ -34,11 +46,9 @@ GITHUB_TOKEN=ghp_...            # classic token with repo, workflow, gist, user 
 GOATCOUNTER_CODE=charliedog     # the "code" you picked: charliedog.goatcounter.com
 GOATCOUNTER_TOKEN=...           # Settings → API → new token with "read statistics"
 
-# Reddit: make her an account, then a "script" app at reddit.com/prefs/apps
-CHARLIE_REDDIT_CLIENT_ID=...
-CHARLIE_REDDIT_CLIENT_SECRET=...
-CHARLIE_REDDIT_USERNAME=...
-CHARLIE_REDDIT_PASSWORD=...
+# Reddit, through Reddit's own developer platform (see "Reddit" below).
+# (Her profile, u/imcharliethedog, is already tracked; see charlie.config.json.)
+CHARLIE_DEVVIT_CODE=...         # the code from developers.reddit.com/new
 
 # Bluesky: her handle and an app password (Settings → Privacy → App passwords)
 CHARLIE_BLUESKY_HANDLE=charlie.bsky.social
@@ -54,23 +64,37 @@ TZ=America/New_York
 
 Without GoatCounter she can still make pages, but views of them can't be counted (GitHub Pages has no stats). Everything else still counts.
 
+### Reddit
+
+**Her profile, u/imcharliethedog, is already tracked** (`charlie.config.json` → `sources.reddit.username`). Each check reads the public feeds Reddit publishes for her profile and for each of her posts, so every comment someone else leaves on her posts earns her tokens. Karma (upvotes) counts too, whenever Reddit lets her profile be read from GitHub's servers. Reddit often refuses cloud servers, and then only comments count. She can't post as u/imcharliethedog herself, since Reddit's API is closed to her. When she wants something posted there, she asks you (a `charlie-asks` issue). Posts made by her Devvit app count too.
+
+Reddit's normal API now needs approval that Reddit rarely gives, so Charlie uses **Devvit**, Reddit's own platform for apps and games that run inside Reddit posts. She builds those herself, and they live in her own subreddit (and in any subreddit whose moderators install them).
+
+1. Log in to reddit.com **as her**.
+2. Open **https://developers.reddit.com/new**, create an app (the **Three.js** template suits her), and copy the code from the `npx devvit init …` line it shows you.
+3. Add `CHARLIE_DEVVIT_CODE=<that code>` to the `CHARLIE_ENV` secret, then **right away** go to Actions → Charlie → **Run workflow**. The code is single-use and may expire, so this lets her use it within a minute or two.
+
+She sets up the app, gets a small test subreddit, and builds, uploads and publishes from then on. If setup says the code didn't work, get a new code and repeat step 3. Apps she publishes are reviewed by Reddit.
+
+(If you already have Reddit's regular API access, the four `CHARLIE_REDDIT_*` lines in `.env.example` still work and give her the `reddit` skill.)
+
 ### Day to day
 
 - **Controls:** Actions → **Charlie** → **Run workflow** → pick **wake**, **pause**, **resume**, or **gift** (with an amount and a reason she'll see).
 - **When she asks you for something** (like "could I have a Bluesky account?"), she opens an issue labeled `charlie-asks` and assigns it to you. Reply with a comment and she reads it next time she wakes. Close the issue to say no.
-- **Visitors** pet her, toss treats, fill her bowl, play, and leave messages and pictures through two issue forms ("Do something for Charlie" and "Leave Charlie a message"), linked from her site. She knows them by their GitHub username. When she replies to someone, it's posted on their issue so they get notified.
+- **Visitors** pet her, toss treats, fill her bowl, play, and leave messages and pictures right on her site. Their browser drops each one in her mailbox, a public topic on [ntfy.sh](https://ntfy.sh) (free, no account), and her next check collects it. Each visitor's browser signs what it sends with its own key, so nobody can pet her or write to her as someone else. When she replies to someone, they see it under **diary → about you**.
 - **Her life** (memory, diary, skills, builds, website, tokens) is saved on the `charlie-life` branch, separate from the code on `main`. That branch is public, like the repo.
 - **Watching her:** the site replays her latest wake when you open it, with her thoughts typing out, code being written, and builds assembling. Then it keeps checking for anything new.
 
 ## How it works
 
 ```
- every 15 min (and when someone opens an issue for her)
+ every 15 min (and when you answer one of her requests)
    GitHub Actions ─► bin/charlie.js
-     1. read new issues          → pets, treats, actions, messages, pictures
+     1. open her mailbox          → pets, treats, actions, messages, pictures
      2. check her accounts        → GitHub, Reddit, Bluesky, shop, visitor counter
      3. nap over? wake her        → Claude thinks, uses her tools, naps
-     4. post her replies, sync her requests to you
+     4. sync her requests to you  → charlie-asks issues
      5. save her life             → charlie-life branch
      6. build the site            → GitHub Pages (dot world + her website + state.json)
 ```
@@ -84,7 +108,8 @@ Without GoatCounter she can still make pages, but views of them can't be counted
    ledger.js         tokens: the only place they come from or go to
    sources/          GitHub, Reddit, Bluesky, shop and GoatCounter pollers
    site.js           her website (pages/) and tracked links (go/)
-   github-home.js    visitors through issues, her replies, her requests to you
+   mailbox.js        visitors' signed pets, treats and messages from the static site
+   github-home.js    her requests to you, as issues
    feelings.js · diary.js · visitors.js · places.js · requests.js
    tick.js · export.js   one scheduled run, and the static site build
  web/                the dot world (three.js; works live or as a static site)
@@ -155,6 +180,34 @@ Everything tunable is in `charlie.config.json`:
 - `persona`: her name, your name, and facts about the real Charlie.
 - `schedule`: nap bounds.
 
+## Her own domain (optional)
+
+**I'd get `charliethe.dog`.** It reads "Charlie the dog" and makes a great Bluesky handle (@charliethe.dog). As of today it isn't registered. `.dog` names cost about $30–50 a year. The cheaper choice that matches all her handles is `imcharliethedog.com` (about $10 a year). Any registrar works; Cloudflare and Porkbun are simple and cheap.
+
+At the registrar, add these DNS records (put your domain wherever it says `charliethe.dog`). If your DNS is on Cloudflare, set every record to **DNS only** (grey cloud), or GitHub can't get her an HTTPS certificate.
+
+| type | name | value | what it's for |
+|---|---|---|---|
+| A | `@` | `185.199.108.153` | her world |
+| A | `@` | `185.199.109.153` | 〃 |
+| A | `@` | `185.199.110.153` | 〃 |
+| A | `@` | `185.199.111.153` | 〃 |
+| AAAA | `@` | `2606:50c0:8000::153` (plus `8001`, `8002`, `8003` in the same spot) | 〃 |
+| CNAME | `www` | `viaate.github.io` | www → her world |
+| CNAME | `projects` | `imcharliethedog.github.io` | sites she makes on her own GitHub |
+| CNAME | `shop` | `domains.gumroad.com` | her Gumroad shop |
+| TXT | `_atproto` | `did=did:plc:4a7dy7mnumiag2e4mhfo5hny` | her Bluesky handle |
+
+Then, one time each:
+
+1. **Her world.** This repo → Settings → **Pages** → Custom domain: `charliethe.dog` → Save. Tick **Enforce HTTPS** once GitHub offers it (it can take up to an hour). Everything she has moves with it: her pages to `charliethe.dog/pages/…`, her links to `charliethe.dog/go/…`, and every link she posts from then on uses the new address (it comes from Pages, so nothing in her code changes). Old `viaate.github.io/msott/…` links redirect on their own.
+2. **Her GitHub projects.** Any repo she publishes with GitHub Pages lives at `imcharliethedog.github.io/<repo>`. To move them all to `projects.charliethe.dog/<repo>` at once, sign in to GitHub as her and make a public repo named exactly **`imcharliethedog.github.io`** (tick "Add a README"). In that repo, go to Settings → Pages → Deploy from a branch → `main` → Custom domain: `projects.charliethe.dog`. Every Pages site on her account follows that domain from then on, and old links redirect. While you're signed in as her, put `https://charliethe.dog` in her profile's website field.
+3. **Bluesky.** Sign in as her: Settings → Account → Handle → **I have my own domain** → `charliethe.dog` → Verify. It checks the `_atproto` record above. Then change her line in `CHARLIE_ENV` to `CHARLIE_BLUESKY_HANDLE=charliethe.dog`, because her old handle stops working.
+4. **Gumroad.** Settings → Advanced → Custom domain: `shop.charliethe.dog`. Her products then live there, and sales count the same as before.
+5. **Reddit.** Reddit has no domain to connect, and her tracking reads her profile, not her site, so it keeps working as is. Add `https://charliethe.dog` to u/imcharliethedog's profile (Edit profile → Social links). Expect subreddit spam filters to hold links to a brand-new domain at first. She follows each community's rules, and moderators can approve posts.
+
+DNS changes usually take minutes, sometimes a few hours.
+
 ## Safety
 
 Charlie writes and runs real code, posts on the web under accounts you created, sells through your shop, and reads text from strangers. On GitHub her code runs on a throwaway GitHub Actions machine, not on your computer. Still:
@@ -162,11 +215,12 @@ Charlie writes and runs real code, posts on the web under accounts you created, 
 - **You're responsible for what goes out under your accounts.** Watch her first few days, add accounts one at a time, and use restricted keys (a Stripe key that can make payment links but can't refund or pay out).
 - Her run can read this repo and manage its issues, but it **can't change code or publish**. Saving her life and publishing the site happen in separate steps where none of her code runs. Her code gets her accounts' credentials (everything in `CHARLIE_ENV`) but not your Anthropic key. Since it's all in the same machine, treat anything in `CHARLIE_ENV` as something she can use.
 - The daily dollar budget is enforced by the harness, not by her.
+- Her mailbox is a public ntfy.sh topic, so treat messages to her as public. Letters are signed, so nobody can pose as another visitor, and each visitor's pets, treats and messages are limited per day. Pictures are never shown in her world, but each one sits on the public `charlie-life` branch (and stays in its history) until she has looked at it, then it's deleted.
 - Everything she does is visible: the feed, her diary, her code ("read her code" on the site), and the `charlie-life` branch.
 
 ## Run it on your own computer instead
 
-There's also a live mode with real-time streaming and anonymous visitors (no GitHub account needed to pet her):
+There's also a live mode with real-time streaming, where pets and messages reach her instantly:
 
 ```sh
 cp .env.example .env     # ANTHROPIC_API_KEY, GITHUB_TOKEN, ADMIN_TOKEN, …
