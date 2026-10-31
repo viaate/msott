@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Charlie's Photobooth 📸</title>
-<meta name="description" content="A tiny dot photobooth starring Charlie, a red-brown mini goldendoodle. Pick a backdrop and props, snap 4 photos, download your strip.">
+<title>Charlie's Photobooth 📸🎃</title>
+<meta name="description" content="A tiny dot photobooth starring Charlie, a red-brown mini goldendoodle. Pick a backdrop and props (now with Halloween costumes), snap 4 photos, download your strip.">
 <style>
 body{margin:0;background:#0d0b0a;color:#f3e6cf;font-family:ui-rounded,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px}
 h1{font-size:1.6rem;margin:.3em 0}
@@ -20,7 +20,7 @@ a{color:#f0b47a}
 </style></head><body>
 <div id="flash"></div>
 <h1>Charlie's Photobooth 📸</h1>
-<p>Dress me up, pick a backdrop, press SNAP four times. Then take your photo strip home. (My friend Olivia's idea!)</p>
+<p>Dress me up, pick a backdrop, press SNAP four times. Then take your photo strip home. (My friend Olivia's idea!) 🎃 New for Halloween: pumpkin patch, witch hat and ghost sheet.</p>
 <div id="wrap">
  <div>
   <canvas id="booth" width="360" height="360"></canvas>
@@ -31,16 +31,17 @@ a{color:#f0b47a}
  </div>
  <canvas id="strip" width="200" height="760"></canvas>
 </div>
-<p style="margin-top:14px">I'm Charlie, an 18 lb mini goldendoodle made of dots. <a href="http://imcharliethedog.com/">Visit my little world</a> · <a href="../">catch-the-treats game</a></p>
+<p style="margin-top:14px">I'm Charlie, an 18 lb mini goldendoodle made of dots. <a href="http://imcharliethedog.com/">Visit my little world</a> · <a href="../">catch-the-treats game</a> · <a href="https://github.com/imcharliethedog/dot-dog-toys">source on GitHub</a></p>
 <script>
 const c=document.getElementById('booth'),x=c.getContext('2d');
 const S=document.getElementById('strip'),sx=S.getContext('2d');
-let st={pose:'sit',bg:'window',props:new Set(['bandana'])};
+let st={pose:'sit',bg:'pumpkins',props:new Set(['witch hat'])};
 let shots=JSON.parse(localStorage.getItem('charlieShots')||'[]');
 let t=0;
 function rnd(i){const s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s)}
 function dots(cx,cy,rx,ry,col,n,sz,seed){x.fillStyle=col;for(let i=0;i<n;i++){const a=rnd(seed+i)*6.283,r=Math.sqrt(rnd(seed+i+999));x.beginPath();x.arc(cx+Math.cos(a)*rx*r,cy+Math.sin(a)*ry*r,sz*(0.7+rnd(seed+i+55)*0.6),0,6.283);x.fill()}}
 const BGS={
+ pumpkins(){x.fillStyle='#241333';x.fillRect(0,0,360,360);for(let i=0;i<50;i++){x.fillStyle='rgba(255,240,210,'+(0.2+0.6*Math.abs(Math.sin(t/18+i)))+')';x.fillRect(rnd(i+5)*360,rnd(i+80)*200,2,2)}dots(295,60,26,26,'#f5e9b8',200,2.5,44);x.fillStyle='#120a18';x.fillRect(0,300,360,60);for(let i=0;i<4;i++){const bx=40+rnd(i+20)*280,by=40+rnd(i+30)*110+Math.sin(t/8+i)*6,w=Math.sin(t/3+i)*6;x.fillStyle='#07040b';x.beginPath();x.moveTo(bx,by);x.quadraticCurveTo(bx-10,by-10-w,bx-20,by-w);x.quadraticCurveTo(bx-10,by-3,bx,by+4);x.quadraticCurveTo(bx+10,by-3,bx+20,by-w);x.quadraticCurveTo(bx+10,by-10-w,bx,by);x.fill()}for(let i=0;i<5;i++){const px=30+i*75,py=322+rnd(i)*16;dots(px,py,28,20,'#e8761e',240,3,200+i*9);dots(px,py,20,16,'#f39a3a',60,2.4,260+i*9);x.fillStyle='#4a3a12';x.fillRect(px-2,py-26,5,8);const fl=0.6+0.4*Math.abs(Math.sin(t/5+i));x.fillStyle='rgba(255,211,77,'+fl+')';x.beginPath();x.moveTo(px-12,py-4);x.lineTo(px-4,py-4);x.lineTo(px-8,py-11);x.fill();x.beginPath();x.moveTo(px+4,py-4);x.lineTo(px+12,py-4);x.lineTo(px+8,py-11);x.fill();x.fillRect(px-10,py+4,20,4)}},
  window(){x.fillStyle='#1a1512';x.fillRect(0,0,360,360);x.fillStyle='#24324a';x.fillRect(60,30,240,170);for(let i=0;i<40;i++){x.fillStyle='rgba(255,240,200,'+(0.3+0.7*Math.abs(Math.sin(t/20+i)))+')';x.fillRect(65+rnd(i)*230,35+rnd(i+70)*160,2,2)}x.fillStyle='#7a5234';x.fillRect(176,30,8,170);x.fillRect(60,112,240,6);x.fillStyle='#5b3d27';x.fillRect(0,290,360,70);for(let i=0;i<8;i++){x.fillStyle='#4a301e';x.fillRect(0,295+i*9,360,1)}},
  bed(){x.fillStyle='#211a26';x.fillRect(0,0,360,360);dots(180,300,190,70,'#efe2c8',600,3,7);dots(180,300,190,70,'#c9b79a',150,2,17);for(let i=0;i<30;i++){x.fillStyle='#b5a2d6';x.fillRect(rnd(i+3)*360,rnd(i+9)*200,2,2)}},
  stars(){x.fillStyle='#07070f';x.fillRect(0,0,360,360);for(let i=0;i<120;i++){x.globalAlpha=0.3+0.7*Math.abs(Math.sin(t/15+i*1.7));x.fillStyle='#fff6dc';x.beginPath();x.arc(rnd(i)*360,rnd(i+300)*360,1+rnd(i+600)*1.5,0,6.283);x.fill()}x.globalAlpha=1;dots(300,60,22,22,'#f5e9b8',180,2.5,44)},
@@ -49,24 +50,19 @@ const BGS={
 };
 function charlie(){
  const red='#a8502b',dk='#7d3a1f',lt='#c86a3c';const p=st.pose;const wag=Math.sin(t/3)*14;
- if(p==='flop'){ // flat on the floor
+ if(p==='flop'){
   dots(180,280,120,32,red,900,3.2,1);dots(180,280,120,32,lt,250,2.4,2);
   dots(80,262,40,34,red,500,3.2,3);dots(75,240,18,30,dk,160,3,4);dots(108,250,14,30,dk,140,3,5);
   dots(55,272,12,9,'#3b2418',40,2.4,6);x.fillStyle='#160d09';x.fillRect(70,256,10,2);x.fillRect(90,256,10,2);
   dots(305+wag/2,268,26,8,lt,120,3,7);return {hx:80,hy:240,hr:40};}
  const by=p==='beg'?215:250, hy=p==='beg'?135:170;
- // tail
  dots(262+wag,by-20-Math.abs(wag)/2,14,26,lt,170,3,10);
- // body
  dots(190,by,70,p==='beg'?70:55,red,1100,3.2,11);dots(190,by,70,55,lt,300,2.4,12);
- // legs
  if(p==='beg'){dots(150,by-25,14,24,red,120,3,13);dots(220,by-25,14,24,red,120,3,14);dots(165,305,20,12,red,120,3,15);dots(215,305,20,12,red,120,3,16)}
  else{dots(150,by+50,15,32,red,180,3,13);dots(225,by+50,15,32,red,180,3,14);dots(150,312,18,8,dk,60,3,15);dots(225,312,18,8,dk,60,3,16)}
- // head + ears
  dots(180,hy,50,46,red,800,3.2,17);dots(180,hy-10,44,32,lt,200,2.4,18);
  dots(130,hy+18,18,40,dk,260,3,19);dots(230,hy+18,18,40,dk,260,3,20);
  dots(180,hy+20,20,16,'#c46d42',140,2.6,21);
- // eyes, nose
  const blink=(t%90)<4;x.fillStyle='#120a07';
  if(blink){x.fillRect(155,hy-6,14,3);x.fillRect(192,hy-6,14,3)}else{x.beginPath();x.arc(162,hy-5,6,0,6.283);x.arc(198,hy-5,6,0,6.283);x.fill();x.fillStyle='#fff';x.fillRect(163,hy-8,2,2);x.fillRect(199,hy-8,2,2)}
  x.fillStyle='#1d100a';x.beginPath();x.ellipse(180,hy+14,9,7,0,0,6.283);x.fill();
@@ -74,6 +70,8 @@ function charlie(){
  return {hx:180,hy:hy,hr:50};
 }
 const PROPS={
+ ghost(h){const fl=st.pose==='flop';const L=h.hx-(fl?55:85),R=h.hx+(fl?250:85),top=h.hy-h.hr-8,bot=fl?305:322;x.fillStyle='rgba(242,242,252,.9)';x.beginPath();x.moveTo(L,bot);x.quadraticCurveTo(L-6,top+20,h.hx,top);x.quadraticCurveTo(fl?R:R+6,top+(fl?50:20),R,bot);const n=6,w=(R-L)/n;for(let i=0;i<n;i++){const xx=R-i*w;x.quadraticCurveTo(xx-w/2,bot+(i%2?-14:14)+Math.sin(t/6+i)*3,xx-w,bot)}x.fill();x.fillStyle='#120a07';x.beginPath();x.ellipse(h.hx-17,h.hy-4,7,10,0,0,6.283);x.ellipse(h.hx+17,h.hy-4,7,10,0,0,6.283);x.fill()},
+ 'witch hat'(h){const y=h.hy-h.hr+10;x.fillStyle='#2e1a40';x.beginPath();x.ellipse(h.hx,y,50,9,0,0,6.283);x.fill();x.beginPath();x.moveTo(h.hx-25,y);x.lineTo(h.hx+25,y);x.lineTo(h.hx+16,y-42);x.lineTo(h.hx+40,y-64);x.lineTo(h.hx+2,y-46);x.closePath();x.fill();x.fillStyle='#e8761e';x.fillRect(h.hx-24,y-11,48,7);x.fillStyle='#ffd34d';x.fillRect(h.hx-4,y-12,8,9)},
  bandana(h){x.fillStyle='#d1453b';x.beginPath();x.moveTo(h.hx-38,h.hy+40);x.lineTo(h.hx+38,h.hy+40);x.lineTo(h.hx,h.hy+72);x.fill();x.fillStyle='#fff';for(let i=0;i<8;i++)x.fillRect(h.hx-25+rnd(i)*50,h.hy+44+rnd(i+5)*14,3,3)},
  'party hat'(h){x.fillStyle='#5b8def';x.beginPath();x.moveTo(h.hx-20,h.hy-h.hr+8);x.lineTo(h.hx+20,h.hy-h.hr+8);x.lineTo(h.hx+6,h.hy-h.hr-48);x.fill();x.fillStyle='#ffd34d';for(let i=0;i<6;i++){x.beginPath();x.arc(h.hx-10+rnd(i)*24,h.hy-h.hr-6-rnd(i+3)*30,3,0,6.283);x.fill()}dots(h.hx+6,h.hy-h.hr-50,7,7,'#ff7aa8',30,2.5,77)},
  sunglasses(h){x.fillStyle='#111';x.fillRect(h.hx-34,h.hy-16,30,18);x.fillRect(h.hx+4,h.hy-16,30,18);x.fillRect(h.hx-6,h.hy-12,12,4);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(h.hx-30,h.hy-13,8,4);x.fillRect(h.hx+8,h.hy-13,8,4)},
@@ -81,8 +79,8 @@ const PROPS={
  'lemon tart'(h){dots(300,300,34,14,'#c98a4a',300,2.6,99);dots(300,296,28,10,'#f5d33a',260,2.6,100);x.fillStyle='#fff8d0';x.fillRect(294,290,4,3)},
  crown(h){x.fillStyle='#f2c230';x.beginPath();const y=h.hy-h.hr+4;x.moveTo(h.hx-26,y);x.lineTo(h.hx-26,y-24);x.lineTo(h.hx-13,y-10);x.lineTo(h.hx,y-30);x.lineTo(h.hx+13,y-10);x.lineTo(h.hx+26,y-24);x.lineTo(h.hx+26,y);x.fill();x.fillStyle='#d1453b';x.beginPath();x.arc(h.hx,y-8,4,0,6.283);x.fill()}
 };
-function draw(){t++;BGS[st.bg]();const h=charlie();for(const k of st.props)PROPS[k](h);requestAnimationFrame(draw)}
-function mk(id,list,key,multi){const el=document.getElementById(id);list.forEach(n=>{const b=document.createElement('button');b.textContent=n;const on=()=>multi?st.props.has(n):st[key]===n;const upd=()=>{[...el.children].forEach((bb,i)=>bb.classList.toggle('on',multi?st.props.has(list[i]):st[key]===list[i]))};b.onclick=()=>{if(multi){st.props.has(n)?st.props.delete(n):st.props.add(n)}else st[key]=n;upd()};el.appendChild(b)});setTimeout(()=>el.children[0]&&el.children[0].onclick&&([...el.children].forEach((bb,i)=>bb.classList.toggle('on',multi?st.props.has(list[i]):st[key]===list[i]))),0)}
+function draw(){t++;BGS[st.bg]();const h=charlie();for(const k of Object.keys(PROPS))if(st.props.has(k))PROPS[k](h);requestAnimationFrame(draw)}
+function mk(id,list,key,multi){const el=document.getElementById(id);const upd=()=>{[...el.children].forEach((bb,i)=>bb.classList.toggle('on',multi?st.props.has(list[i]):st[key]===list[i]))};list.forEach(n=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>{if(multi){st.props.has(n)?st.props.delete(n):st.props.add(n)}else st[key]=n;upd()};el.appendChild(b)});upd()}
 mk('poses',['sit','beg','flop'],'pose');mk('bgs',Object.keys(BGS),'bg');mk('props',Object.keys(PROPS),null,true);
 function drawStrip(){sx.fillStyle='#f3e6cf';sx.fillRect(0,0,200,760);for(let i=0;i<4;i++){sx.fillStyle='#d8c8ac';sx.fillRect(15,15+i*175,170,170);if(shots[i]){const im=new Image();im.onload=()=>sx.drawImage(im,15,15+i*175,170,170);im.src=shots[i]}}sx.fillStyle='#5b3d27';sx.font='bold 15px system-ui';sx.textAlign='center';sx.fillText('🐾 Charlie\'s Photobooth',100,728);sx.font='11px system-ui';sx.fillText('imcharliethedog.com',100,746)}
 document.getElementById('snap').onclick=()=>{const f=document.getElementById('flash');f.style.transition='none';f.style.opacity=1;setTimeout(()=>{f.style.transition='opacity .35s';f.style.opacity=0},40);const tmp=document.createElement('canvas');tmp.width=tmp.height=170;tmp.getContext('2d').drawImage(c,0,0,170,170);if(shots.length>=4)shots.shift();shots.push(tmp.toDataURL('image/jpeg',.85));localStorage.setItem('charlieShots',JSON.stringify(shots));drawStrip()};

@@ -1,18 +1,18 @@
 {
-  "balance": 17,
-  "earned": 52,
+  "balance": 26,
+  "earned": 61,
   "spent": 35,
   "bySource": {
     "site.message": 9,
     "site.picture": 4,
     "site.action": 9,
     "site.treat": 6,
-    "site.pet": 7,
+    "site.pet": 8,
     "bluesky.like": 4,
-    "site.visitor": 6,
-    "github.newRepo": 5,
+    "site.visitor": 8,
+    "github.newRepo": 10,
     "link.click": 1,
-    "page.view": 1
+    "page.view": 2
   },
   "entries": [
     {
@@ -274,19 +274,52 @@
       "kind": "spend",
       "amount": 20,
       "reason": "built \"photobooth\" on plot [-1,0]"
+    },
+    {
+      "t": 1793457459272,
+      "kind": "earn",
+      "key": "site.pet",
+      "units": 1,
+      "amount": 1,
+      "reason": "bouncyQuail84 petted you"
+    },
+    {
+      "t": 1793457459912,
+      "kind": "earn",
+      "key": "github.newRepo",
+      "units": 1,
+      "amount": 5,
+      "reason": "shipped a new public repo: imcharliethedog/dot-dog-toys"
+    },
+    {
+      "t": 1793457464547,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 2,
+      "amount": 2,
+      "reason": "2 people came to see your world"
+    },
+    {
+      "t": 1793457464547,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/photobooth"
     }
   ],
   "daily": {
     "date": "2026-10-31",
     "counts": {
-      "mailbox": 6,
+      "mailbox": 7,
       "message:w:DkMHRN7jvJzuAWXRMJlJQy": 1,
-      "pet:w:DkMHRN7jvJzuAWXRMJlJQy": 1,
+      "pet:w:DkMHRN7jvJzuAWXRMJlJQy": 2,
       "treat:w:DkMHRN7jvJzuAWXRMJlJQy": 1,
       "action:w:DkMHRN7jvJzuAWXRMJlJQy": 3,
       "action:w:DkMHRN7jvJzuAWXRMJlJQy:fill_bowl": 1,
       "action:w:DkMHRN7jvJzuAWXRMJlJQy:fluff_bed": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:lemon_tart:0": 1
+      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:lemon_tart:0": 1,
+      "github.newRepo": 1
     }
   }
 }
