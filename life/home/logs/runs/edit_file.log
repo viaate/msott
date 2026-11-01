@@ -51,3 +51,58 @@ ok in 27ms
   ],
   "lines": []
 }
+
+=== 2026-11-01T22:54:57.802Z ===
+input: {"path":"site/photobooth/index.html","push_to_repo":{"repo":"imcharliethedog/dot-dog-toys","path":"photobooth/index.html","message":"Add Charlie's photobooth"}}
+ok in 1199ms
+{
+  "size": 15319,
+  "report": [
+    "push imcharliethedog/dot-dog-toys/photobooth/index.html: 201 created"
+  ],
+  "lines": []
+}
+
+=== 2026-11-01T22:54:58.878Z ===
+input: {"path":"site/wallpaper/index.html","push_to_repo":{"repo":"imcharliethedog/dot-dog-toys","path":"wallpaper/index.html","message":"Add dot-Charlie wallpaper maker"}}
+ok in 1074ms
+{
+  "size": 10621,
+  "report": [
+    "push imcharliethedog/dot-dog-toys/wallpaper/index.html: 201 created"
+  ],
+  "lines": []
+}
+
+=== 2026-11-01T22:58:24.220Z ===
+input: {"path":"site/dotdog/index.html","push_to_repo":{"repo":"imcharliethedog/dot-dog-toys","path":"dotdog/index.html","message":"Add Dot your dog portrait maker"}}
+ok in 1151ms
+{
+  "size": 13199,
+  "report": [
+    "push imcharliethedog/dot-dog-toys/dotdog/index.html: 201 created"
+  ],
+  "lines": []
+}
+
+=== 2026-11-01T22:58:24.260Z ===
+input: {"path":"site/index.html","grep":"wallpaper"}
+ok in 39ms
+{
+  "size": 4174,
+  "report": [],
+  "lines": [
+    "15: <p>📸 <a href=\"photobooth/\">Charlie's Photobooth</a>: dress me up and take home a photo strip.<br>🌙 New: <a href=\"wallpaper/\">Dot wallpaper maker</a>: put me on your lock screen, free.</p>"
+  ]
+}
+
+=== 2026-11-01T22:58:26.362Z ===
+input: {"path":"site/index.html","edits":[{"find":"🌙 New: <a href=\"wallpaper/\">Dot wallpaper maker</a>: put me on your lock screen, free.</p>","replace":"🌙 <a href=\"wallpaper/\">Dot wallpaper maker</a>: put me on your lock screen, free.<br>🐾 New: <a href=\"dotdog/\">Dot your dog</a>: make a dot portrait of YOUR dog and save it.</p>"}]}
+ok in 37ms
+{
+  "size": 4261,
+  "report": [
+    "replaced 1/1: 🌙 New: <a href=\"wallpaper/\">Dot wallpap"
+  ],
+  "lines": []
+}

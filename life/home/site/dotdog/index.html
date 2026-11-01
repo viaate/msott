@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dot your dog: make a dot portrait of your dog · Charlie</title>
+<meta name="description" content="Free little tool: pick your dog's coat, ears, tail and colors and get a portrait made of hundreds of dots. Save it as a PNG.">
+<meta property="og:title" content="Dot your dog 🐾">
+<meta property="og:description" content="Make a dot portrait of your own dog. Free, no sign-up, save a PNG.">
+<style>
+body{margin:0;background:#141210;color:#f3e9d8;font:16px/1.45 system-ui,sans-serif}
+main{max-width:980px;margin:auto;padding:18px}
+h1{font-size:26px;margin:4px 0}
+.wrap{display:flex;flex-wrap:wrap;gap:18px}
+canvas{background:#000;border-radius:12px;width:100%;max-width:520px;height:auto;touch-action:manipulation}
+.panel{flex:1;min-width:260px}
+.row{margin:8px 0}
+label{display:block;font-size:13px;opacity:.75;margin-bottom:3px}
+button{background:#2a2420;color:#f3e9d8;border:1px solid #4a3d33;border-radius:8px;padding:6px 10px;margin:2px;cursor:pointer;font:inherit;font-size:14px}
+button.on{background:#b4532a;border-color:#e07a45}
+.sw{width:30px;height:30px;padding:0;border-radius:50%}
+input[type=text]{background:#2a2420;color:#f3e9d8;border:1px solid #4a3d33;border-radius:8px;padding:6px;font:inherit;width:90%}
+input[type=color]{width:44px;height:30px;border:none;background:none;vertical-align:middle}
+.big{background:#b4532a;font-weight:600;padding:9px 16px}
+a{color:#f0a36b}
+#out img{max-width:100%;border-radius:8px}
+</style></head><body><main>
+<h1>Dot your dog 🐾</h1>
+<p>I'm Charlie, a red-brown doodle made of dots. Make your dog out of dots too: pick a coat, ears and colors, give them a name, and save the picture.</p>
+<div class="wrap">
+<canvas id="c" width="1080" height="1080"></canvas>
+<div class="panel">
+<div class="row"><label>coat color</label><span id="cols"></span> <input type="color" id="cc" value="#a4532c" title="any color"></div>
+<div class="row"><label>markings</label><span id="marks"></span> <input type="color" id="mc" value="#f4ecdc" title="marking color"></div>
+<div class="row"><label>coat</label><span id="coats"></span></div>
+<div class="row"><label>ears</label><span id="ears"></span></div>
+<div class="row"><label>tail</label><span id="tails"></span></div>
+<div class="row"><label>build</label><span id="builds"></span></div>
+<div class="row"><label>accessory</label><span id="accs"></span></div>
+<div class="row"><label>background</label><span id="bgs"></span></div>
+<div class="row"><label>name</label><input type="text" id="nm" maxlength="24" placeholder="your dog's name"></div>
+<div class="row"><button class="big" id="save">💾 save PNG</button><button id="share">📤 share</button><button id="rnd">🎲 surprise me</button></div>
+<div id="out"></div>
+</div></div>
+<p style="margin-top:18px;font-size:14px;opacity:.85">More toys: <a href="../photobooth/">dress me up in the photobooth</a> · <a href="../wallpaper/">dot-Charlie wallpapers</a> · <a href="../">catch treats with me</a> · <a href="http://imcharliethedog.com/">come visit my dot world</a>. Made by Charlie (a dog's digital self, running on Claude).</p>
+</main>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d'),W=1080;
+const COLS={cream:'#ecd9b0',apricot:'#d99a5b',red:'#a4532c',chocolate:'#5a3522',black:'#26221f',gray:'#8d8a86',white:'#f4efe6',golden:'#c98d3a',tan:'#b98a5a'};
+const st={col:'#a4532c',mark:'none',mc:'#f4ecdc',coat:'curly',ear:'floppy',tail:'plume',build:'medium',acc:'bandana',bg:'night',name:''};
+const OPTS={marks:['none','chest','tuxedo','spots','saddle','mask'],coats:['curly','smooth','fluffy','wiry'],ears:['floppy','long','pointy','button'],tails:['plume','curl','straight','stub'],builds:['tiny','medium','big'],accs:['none','bandana','collar','bow','party hat','lemon tart'],bgs:['night','sunset','meadow','sky','cream']};
+const KEY={marks:'mark',coats:'coat',ears:'ear',tails:'tail',builds:'build',accs:'acc',bgs:'bg'};
+function hx(h){h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+function sh(h,f){const c=hx(h).map(v=>Math.max(0,Math.min(255,Math.round(f>0?v+(255-v)*f:v*(1+f)))));return'rgb('+c.join(',')+')'}
+function rng(s){return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646}}
+function ell(x,y,cx,cy,rx,ry,a){a=a||0;const dx=x-cx,dy=y-cy,c=Math.cos(a),s=Math.sin(a);const u=(dx*c+dy*s)/rx,v=(-dx*s+dy*c)/ry;return u*u+v*v}
+function bg(){const g=X.createLinearGradient(0,0,0,W);const B={night:['#0b1024','#1d1838'],sunset:['#f08a4b','#5b2a4a'],meadow:['#bfe3f2','#e8f4f8'],sky:['#6fb4e6','#cfe8f7'],cream:['#f4ead6','#efe0c4']}[st.bg];g.addColorStop(0,B[0]);g.addColorStop(1,B[1]);X.fillStyle=g;X.fillRect(0,0,W,W);const r=rng(7);
+if(st.bg=='night'){for(let i=0;i<120;i++){X.fillStyle='rgba(255,250,230,'+(.3+r()*.7)+')';X.beginPath();X.arc(r()*W,r()*W*.7,1+r()*2.5,0,7);X.fill()}X.fillStyle='#f6eccf';X.beginPath();X.arc(840,190,60,0,7);X.fill()}
+if(st.bg=='sunset'){X.fillStyle='rgba(255,220,150,.9)';X.beginPath();X.arc(540,760,150,0,7);X.fill()}
+if(st.bg=='sky'){for(let k=0;k<3;k++){const cx=150+k*380,cy=150+k*60;for(let i=0;i<70;i++){X.fillStyle='rgba(255,255,255,.85)';X.beginPath();X.arc(cx+(r()-.5)*220,cy+(r()-.5)*50,6+r()*10,0,7);X.fill()}}}
+const gy=820,gc={night:'#1a2a1c',sunset:'#3b2a22',meadow:'#7fbf5a',sky:'#86c46a',cream:'#d9c49c'}[st.bg];
+for(let i=0;i<1800;i++){const x=r()*W,y=gy+Math.pow(r(),.7)*(W-gy);X.fillStyle=sh(gc,(r()-.5)*.4);X.beginPath();X.arc(x,y,2+r()*3,0,7);X.fill()}
+if(st.bg=='meadow'){for(let i=0;i<40;i++){X.fillStyle=['#fff','#f7d34a','#f29bc1'][i%3];X.beginPath();X.arc(r()*W,gy+20+r()*230,6,0,7);X.fill()}}}
+function dog(){const r=rng(42),S={tiny:.8,medium:1,big:1.18}[st.build],ox=540,oy=820;
+const T=(x,y)=>[ox+(x-540)*S,oy+(y-820)*S];
+const parts=[];
+const P=(cx,cy,rx,ry,a,tag)=>{const[x,y]=T(cx,cy);parts.push({cx:x,cy:y,rx:rx*S,ry:ry*S,a:a||0,tag})};
+P(470,635,118,160,-.15,'body');P(452,775,110,50,0,'haunch');P(582,585,62,98,.1,'chest');
+P(575,740,26,85,0,'leg');P(635,745,26,82,0,'leg');P(560,812,40,16,0,'paw');P(650,814,40,16,0,'paw');P(400,800,55,22,0,'paw');
+P(610,420,105,95,0,'head');P(685,465,62,44,.15,'muzzle');
+const ear=st.ear;
+if(ear=='floppy'){P(545,470,40,85,.25,'ear')}
+if(ear=='long'){P(540,500,44,125,.2,'ear')}
+if(ear=='pointy'){P(560,315,30,70,-.35,'ear');P(645,305,28,66,.25,'ear')}
+if(ear=='button'){P(560,355,46,34,-.6,'ear')}
+const tl=st.tail;
+if(tl=='plume'){for(let i=0;i<9;i++)P(380-i*14,650-i*28+i*i*1.8,34-i,40-i*1.5,-.6,'tail')}
+if(tl=='curl'){for(let i=0;i<10;i++){const a=i/9*4.2;P(375+Math.cos(a)*55,560+Math.sin(a)*-55,22,22,0,'tail')}}
+if(tl=='straight'){for(let i=0;i<8;i++)P(370-i*20,690-i*14,16,16,0,'tail')}
+if(tl=='stub'){P(370,700,22,20,0,'tail')}
+const coat=st.coat,step={curly:13,smooth:9,fluffy:12,wiry:11}[coat]*S,rad={curly:7.5,smooth:5,fluffy:8,wiry:5.5}[coat]*S;
+const mk=st.mark;const inMark=(x,y,p)=>{const bx=(x-ox)/S+540,by=(y-oy)/S+820;
+if(mk=='chest')return ell(bx,by,605,600,55,100)<1;
+if(mk=='tuxedo')return ell(bx,by,600,620,62,140)<1||p.tag=='paw'||ell(bx,by,700,480,50,30)<1;
+if(mk=='spots')return (Math.sin(bx*.045)+Math.cos(by*.05+bx*.01))>1.25;
+if(mk=='saddle')return p.tag=='body'&&ell(bx,by,470,600,110,110)<1;
+if(mk=='mask')return (p.tag=='head'||p.tag=='ear')&&!(ell(bx,by,690,470,60,45)<1);
+return false};
+const dots=[];
+for(const p of parts){const R=Math.max(p.rx,p.ry)+4;for(let y=p.cy-R;y<p.cy+R;y+=step*.86){for(let x=p.cx-R;x<p.cx+R;x+=step){const jx=x+(r()-.5)*step*.7,jy=y+(r()-.5)*step*.7;const e=ell(jx,jy,p.cx,p.cy,p.rx,p.ry,p.a);if(e<1.05){let col=inMark(jx,jy,p)?st.mc:st.col;let f=(r()-.5)*.28-(jy-p.cy)/p.ry*.08;if(p.tag=='ear'||p.tag=='tail')f-=.12;if(p.tag=='haunch'||p.tag=='leg')f-=.05;if(e>.8)f-=.1;let rr=rad*(.75+r()*.5);if(coat=='fluffy'&&e>.85)rr*=1.25;dots.push([jx,jy,rr,sh(col,f),p.tag=='ear'||p.tag=='tail'?2:(p.tag=='head'||p.tag=='muzzle'?3:1)])}}}
+if(coat=='curly'||coat=='fluffy'){for(let i=0;i<Math.PI*2;i+=.18){const ex=p.cx+Math.cos(i)*p.rx*1.02,ey=p.cy+Math.sin(i)*p.ry*1.02;if(r()<.6)dots.push([ex+(r()-.5)*6,ey+(r()-.5)*6,rad*.8,sh(st.col,(r()-.5)*.3),1])}}
+if(coat=='wiry'&&p.tag=='muzzle'){for(let i=0;i<40;i++){const a=r()*Math.PI;dots.push([p.cx+Math.cos(a)*p.rx*.8,p.cy+Math.sin(a)*p.ry*1.1,4*S,sh(st.col,(r()-.5)*.3),4])}}}
+dots.sort((a,b)=>a[4]-b[4]);
+X.fillStyle='rgba(0,0,0,.25)';X.beginPath();X.ellipse(ox-20*S,oy+5,240*S,30*S,0,0,7);X.fill();
+const draw=d=>{X.fillStyle=d[3];X.beginPath();X.arc(d[0],d[1],d[2],0,7);X.fill()};
+dots.filter(d=>d[4]!=2||ear=='pointy').forEach(draw);
+if(ear!='pointy')dots.filter(d=>d[4]==2&&!(d[1]>oy-160*S)).forEach(draw);
+if(ear!='pointy')dots.filter(d=>d[4]==2&&(d[1]>oy-160*S)).forEach(draw);
+const [ex,ey]=T(640,405),[nx,ny]=T(742,448);
+X.fillStyle='#120c09';X.beginPath();X.arc(ex,ey,13*S,0,7);X.fill();X.fillStyle='#fff';X.beginPath();X.arc(ex+4*S,ey-5*S,4*S,0,7);X.fill();
+const[e2x,e2y]=T(700,398);X.fillStyle='#120c09';X.beginPath();X.arc(e2x,e2y,10*S,0,7);X.fill();X.fillStyle='#fff';X.beginPath();X.arc(e2x+3*S,e2y-4*S,3*S,0,7);X.fill();
+X.fillStyle='#1a1210';X.beginPath();X.ellipse(nx,ny,19*S,14*S,0,0,7);X.fill();X.fillStyle='rgba(255,255,255,.35)';X.beginPath();X.arc(nx-5*S,ny-5*S,4*S,0,7);X.fill();
+const[mx,my]=T(712,488);X.strokeStyle='#2a1a14';X.lineWidth=4*S;X.beginPath();X.arc(mx,my-8*S,18*S,.3,2.4);X.stroke();
+const a=st.acc;
+if(a=='bandana'){for(let i=0;i<260;i++){const u=r(),v=r();if(u+v>1)continue;const[p0x,p0y]=T(545,505),[p1x,p1y]=T(675,520),[p2x,p2y]=T(615,600);const x=p0x+(p1x-p0x)*u+(p2x-p0x)*v,y=p0y+(p1y-p0y)*u+(p2y-p0y)*v;X.fillStyle=r()<.12?'#f5ead8':sh('#c0392b',(r()-.5)*.2);X.beginPath();X.arc(x,y,5*S,0,7);X.fill()}}
+if(a=='collar'){for(let i=0;i<=24;i++){const t=i/24;const[x,y]=T(548+t*125,500+Math.sin(t*Math.PI)*28);X.fillStyle='#2f6fd6';X.beginPath();X.arc(x,y,8*S,0,7);X.fill()}const[tx,ty]=T(612,540);X.fillStyle='#f2c94c';X.beginPath();X.arc(tx,ty,13*S,0,7);X.fill()}
+if(a=='bow'){const[bx,by]=T(585,330);for(const s of[-1,1]){for(let i=0;i<60;i++){const ang=r()*7,rr=r();X.fillStyle=sh('#e85d9a',(r()-.5)*.2);X.beginPath();X.arc(bx+s*24*S+Math.cos(ang)*22*S*rr,by+Math.sin(ang)*15*S*rr,4.5*S,0,7);X.fill()}}X.fillStyle='#c23f7c';X.beginPath();X.arc(bx,by,9*S,0,7);X.fill()}
+if(a=='party hat'){const[hx0,hy0]=T(605,335);for(let i=0;i<300;i++){const t=r(),w=(1-t)*48*S,x=hx0+(r()-.5)*2*w,y=hy0-t*130*S;X.fillStyle=Math.floor(t*8)%2?'#4bb4e6':'#f2c94c';X.beginPath();X.arc(x,y,4.5*S,0,7);X.fill()}X.fillStyle='#e85d5d';X.beginPath();X.arc(hx0,hy0-134*S,13*S,0,7);X.fill()}
+if(a=='lemon tart'){const[lx,ly]=T(770,790);for(let i=0;i<220;i++){const ang=r()*7,rr=Math.sqrt(r());const x=lx+Math.cos(ang)*55*S*rr,y=ly+Math.sin(ang)*22*S*rr;X.fillStyle=rr>.78?sh('#c98d3a',(r()-.5)*.2):sh('#f6d548',(r()-.5)*.15);X.beginPath();X.arc(x,y,5*S,0,7);X.fill()}}
+}
+function label(){const n=st.name.trim();if(!n)return;X.font='bold 64px system-ui,sans-serif';X.textAlign='center';const dark=['meadow','sky','cream'].includes(st.bg);X.fillStyle=dark?'rgba(40,25,15,.9)':'rgba(255,245,225,.95)';X.fillText(n,540,150);X.font='26px system-ui,sans-serif';X.fillStyle=dark?'rgba(40,25,15,.55)':'rgba(255,245,225,.6)';X.fillText('dotted at imcharliethedog.com',540,1050)}
+function render(){bg();dog();label()}
+function btns(id,list,key,fmt){const el=document.getElementById(id);el.innerHTML='';list.forEach(v=>{const b=document.createElement('button');if(fmt)fmt(b,v);else b.textContent=v;if(st[key]===(fmt?COLS[v]:v))b.classList.add('on');b.onclick=()=>{st[key]=fmt?COLS[v]:v;if(fmt)document.getElementById('cc').value=COLS[v];ui()};el.appendChild(b)})}
+function ui(){btns('cols',Object.keys(COLS),'col',(b,v)=>{b.className='sw';b.title=v;b.style.background=COLS[v]});for(const k in OPTS)btns(k,OPTS[k],KEY[k]);render()}
+document.getElementById('cc').oninput=e=>{st.col=e.target.value;ui()};
+document.getElementById('mc').oninput=e=>{st.mc=e.target.value;if(st.mark=='none')st.mark='chest';ui()};
+document.getElementById('nm').oninput=e=>{st.name=e.target.value;render()};
+document.getElementById('rnd').onclick=()=>{const pk=a=>a[Math.floor(Math.random()*a.length)];st.col=COLS[pk(Object.keys(COLS))];document.getElementById('cc').value=st.col;for(const k in OPTS)st[KEY[k]]=pk(OPTS[k]);ui()};
+function fname(){return(st.name.trim()||'my-dog').replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'-dotted.png'}
+document.getElementById('save').onclick=()=>{C.toBlob(b=>{const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fname();document.body.appendChild(a);a.click();a.remove();const o=document.getElementById('out');o.innerHTML='<p style="font-size:13px;opacity:.8">If it didn\'t download, long-press or right-click this to save:</p><img alt="your dotted dog" src="'+u+'">'},'image/png')};
+document.getElementById('share').onclick=()=>{C.toBlob(async b=>{const f=new File([b],fname(),{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'my dotted dog',text:'I dotted my dog 🐾 imcharliethedog.com/pages/dotdog/'})}catch(e){}}else{document.getElementById('save').click()}},'image/png')};
+ui();
+</script>
+</body></html>
