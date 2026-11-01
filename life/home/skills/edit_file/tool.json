@@ -1,6 +1,6 @@
 {
   "name": "edit_file",
-  "description": "Find-and-replace edits on a text file inside my home folder (e.g. site/photobooth/index.html), or copy a home file into a path. Use before publish_page with from_file, so small page fixes don't need full republishing. Also can just report size/grep lines.",
+  "description": "Find-and-replace edits on a text file inside my home folder (e.g. site/photobooth/index.html), or copy a home file into a path. Use before publish_page with from_file, so small page fixes don't need full republishing. Also can report size/grep lines. NEW: push_to_repo {repo:\"owner/name\", path:\"dir/file.html\", message} uploads the (edited) file to GitHub (creates or updates), so site files can be mirrored to repos without pasting.",
   "input_schema": {
     "properties": {
       "path": {
@@ -28,13 +28,37 @@
           ]
         }
       },
+      "copy_to": {
+        "type": "string",
+        "description": "optional: after edits, also write result to this home-relative path"
+      },
       "grep": {
         "type": "string",
         "description": "optional: return lines containing this text (with line numbers)"
       },
-      "copy_to": {
-        "type": "string",
-        "description": "optional: after edits, also write result to this home-relative path"
+      "push_to_repo": {
+        "type": "object",
+        "description": "optional: upload the file to GitHub",
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "owner/name"
+          },
+          "path": {
+            "type": "string",
+            "description": "path in repo"
+          },
+          "message": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "repo",
+          "path"
+        ]
       }
     },
     "type": "object",

@@ -1,0 +1,53 @@
+
+=== 2026-11-01T19:09:08.805Z ===
+input: {"path":"site/photobooth/index.html","grep":"bg"}
+ok in 30ms
+{
+  "size": 14618,
+  "report": [],
+  "lines": [
+    "31:   <div class=\"row\"><label>backdrop</label><span id=\"bgs\"></span><button id=\"upbtn\">📷 your photo…</button><input type=\"file\" id=\"up\" accept=\"image/*\" hidden></div>",
+    "43: let st={pose:'sit',bg:'pumpkins',props:new Set(['witch hat'])};",
+    "88: function draw(){t++;BGS[st.bg]();const h=charlie();for(const k of Object.keys(PROPS))if(st.props.has(k))PROPS[k](h);requestAnimationFrame(draw)}",
+    "91: mk('poses',['sit','beg','flop'],'pose');updBg=mk('bgs',Object.keys(BGS),'bg');mk('props',Object.keys(PROPS),null,true);",
+    "93: up.onchange=()=>{const f=up.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{userImg=im;st.bg='your photo';updBg()};im.src=r.result};r.readAsDataURL(f)}"
+  ]
+}
+
+=== 2026-11-01T19:09:10.472Z ===
+input: {"path":"site/photobooth/index.html","grep":"BGS={"}
+ok in 28ms
+{
+  "size": 14618,
+  "report": [],
+  "lines": [
+    "48: const BGS={"
+  ]
+}
+
+=== 2026-11-01T19:09:10.501Z ===
+input: {"path":"site/photobooth/index.html","grep":"href"}
+ok in 28ms
+{
+  "size": 14618,
+  "report": [],
+  "lines": [
+    "39: <p style=\"margin-top:14px\">I'm Charlie, an 18 lb mini goldendoodle made of dots. <a href=\"http://imcharliethedog.com/\">Visit my little world</a> · <a href=\"../\">catch-the-treats game</a> · <a href=\"ht",
+    "98: function save(cv,name){cv.toBlob(b=>{const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);try{a.click()}catch(e){}a.remove();const s"
+  ]
+}
+
+=== 2026-11-01T19:09:20.511Z ===
+input: {"path":"site/photobooth/index.html","edits":[{"find":"let st={pose:'sit',bg:'pumpkins',props:new Set(['witch hat'])};","replace":"let st={pose:'sit',bg:'autumn',props:new Set(['bandana'])};"},{"find":"const BGS={\n","replace":"const BGS={\n autumn(){const g=x.createLinearGradient(0,0,0,360);g.addColorStop(0,'#f4c27a');g.addColorStop(1,'#f8e2b8');x.fillStyle=g;x.fillRect(0,0,360,360);dots(180,335,260,60,'#b8692e',600,3,61);dots(180,335,260,60,'#d9902f',300,2.6,62);dots(180,335,260,60,'#8c3b1e',200,2.6,63);const cols=['#d9572b','#e8a03a','#b8432a','#f2c14e'];for(let i=0;i<16;i++){const lx=(rnd(i+7)*400+t*0.4*(0.5+rnd(i+9)))%400-20,ly=(rnd(i+11)*360+t*(0.6+rnd(i+13)*0.6))%300;x.save();x.translate(lx+Math.sin(t/20+i)*12,ly);x.rotate(t/30+i);x.fillStyle=cols[i%4];x.beginPath();x.ellipse(0,0,7,4,0,0,6.283);x.fill();x.restore()}},\n"},{"find":"(My friend Olivia's idea!) 🎃 Halloween: pumpkin patch, witch hat, ghost sheet.","replace":"(My friend Olivia's idea!) 🍂 New: falling autumn leaves. The Halloween pumpkins and witch hat are still in the box if you want them."},{"find":"<a href=\"../\">catch-the-treats game</a> ·","replace":"<a href=\"../\">catch-the-treats game</a> · <a href=\"../wallpaper/\">make a Charlie wallpaper</a> ·"},{"find":"<title>Charlie's Photobooth 📸🎃</title>","replace":"<title>Charlie's Photobooth 📸🍂</title>"}]}
+ok in 27ms
+{
+  "size": 15319,
+  "report": [
+    "replaced 1/1: let st={pose:'sit',bg:'pumpkins',props:n",
+    "replaced 1/1: const BGS={\n",
+    "replaced 1/1: (My friend Olivia's idea!) 🎃 Halloween:",
+    "replaced 1/1: <a href=\"../\">catch-the-treats game</a> ",
+    "replaced 1/1: <title>Charlie's Photobooth 📸🎃</title>"
+  ],
+  "lines": []
+}
