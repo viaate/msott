@@ -1,6 +1,6 @@
 {
-  "balance": 70,
-  "earned": 105,
+  "balance": 72,
+  "earned": 107,
   "spent": 35,
   "bySource": {
     "site.message": 18,
@@ -9,10 +9,10 @@
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 6,
-    "site.visitor": 11,
+    "site.visitor": 12,
     "github.newRepo": 10,
     "link.click": 4,
-    "page.view": 3,
+    "page.view": 4,
     "bluesky.follower": 5,
     "bluesky.repost": 6
   },
@@ -500,6 +500,22 @@
       "units": 1,
       "amount": 1,
       "reason": "1 click on /go/catch"
+    },
+    {
+      "t": 1793517951835,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/wallpaper"
+    },
+    {
+      "t": 1793517951835,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
     }
   ],
   "daily": {
