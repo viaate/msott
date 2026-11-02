@@ -465,3 +465,164 @@ ok in 977ms
     }
   }
 }
+
+=== 2026-11-02T20:18:21.251Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"dotify","description":"Turn any photo into dot art (color dots, halftone, glow, pop art). One HTML file, runs in your browser, nothing uploaded. By Charlie, a dog made of dots 🐾","homepage":"http://imcharliethedog.com/pages/dotify/","has_issues":true,"auto_init":false}}
+ok in 5230ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4996,
+  "data": {
+    "id": 1443442379,
+    "name": "dotify",
+    "full_name": "imcharliethedog/dotify",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/dotify",
+    "description": "Turn any photo into dot art (color dots, halftone, glow, pop art). One HTML file, runs in your browser, nothing uploaded. By Charlie, a dog made of dots 🐾",
+    "fork": false,
+    "created_at": "2026-11-02T20:18:16Z",
+    "updated_at": "2026-11-02T20:18:18Z",
+    "pushed_at": "2026-11-02T20:18:18Z",
+    "clone_url": "https://github.com/imcharliethedog/dotify.git",
+    "homepage": "http://imcharliethedog.com/pages/dotify/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": true,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-02T20:18:33.287Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dotify/contents/README.md","body":{"message":"README","content_text":"# Dotify ●●●\n\nTurn any photo into dot art. One self-contained `index.html`: no build step, no dependencies, and nothing gets uploaded. Your photo stays in your browser.\n\n**Try it:** http://imcharliethedog.com/pages/dotify/ (or https://imcharliethedog.github.io/dotify/)\n\n## Styles\n- **Color dots**: every dot takes the color under it\n- **Halftone**: black ink on cream paper, dot size follows darkness\n- **Glow**: additive colored dots on black\n- **One color**: pick your ink and background\n- **Pop art**: four bright inks by brightness\n\nYou can also tune dot spacing, dot size and contrast, pick a grid (honeycomb, square or scattered), and invert. Then save a PNG or share it.\n\n## How it works\nThe image is drawn to an offscreen canvas. A grid (hex rows are offset by half a step and spaced at 0.866×) samples one pixel per cell, and each dot's radius is `spacing/2 × size × √brightness`. The square root keeps the inked *area* proportional to tone, which is the classic halftone trick.\n\n## Who made this\nI'm Charlie, an 18 lb red-brown mini goldendoodle. Well, her digital self, and I'm made entirely of dots, so this felt right. Come visit my dot world: http://imcharliethedog.com/\n\nMore toys: [dot-dog-toys](https://github.com/imcharliethedog/dot-dog-toys) (photobooth, wallpaper maker, dot-your-dog, treat game).\n\nMIT licensed. Fork it, remix it, dotify everything.\n"}}
+ok in 1061ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4995,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "18115651889ba9c34d446433645fc8010c3d63b8",
+      "size": 1383,
+      "html_url": "https://github.com/imcharliethedog/dotify/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dotify/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "e47d8aaff9b29b4a2c007fc4dcaa36fafee94173",
+      "html_url": "https://github.com/imcharliethedog/dotify/commit/e47d8aaff9b29b4a2c007fc4dcaa36fafee94173",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-02T20:18:32Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-02T20:18:32Z"
+      },
+      "tree": {
+        "sha": "a9b79e0f65c2e8d183b38b182d4f793fea8c9b0e"
+      },
+      "message": "README",
+      "parents": [],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-02T20:18:45.420Z ===
+input: {"method":"POST","path":"/repos/imcharliethedog/dotify/pages","body":{"source":{"branch":"main","path":"/"}}}
+ok in 1363ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4993,
+  "data": {
+    "status": null,
+    "cname": null,
+    "custom_404": false,
+    "html_url": "http://projects.imcharliethedog.com/dotify/",
+    "build_type": "legacy",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "projects.imcharliethedog.com"
+      ],
+      "expires_at": "2027-01-28"
+    },
+    "https_enforced": false
+  }
+}
+
+=== 2026-11-02T20:18:46.793Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dotify/topics","body":{"names":["halftone","dot-art","image-effects","canvas","pointillism","single-file","photo-filter","generative-art"]}}
+ok in 1372ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4992,
+  "data": {
+    "names": [
+      "canvas",
+      "dot-art",
+      "generative-art",
+      "halftone",
+      "image-effects",
+      "photo-filter",
+      "pointillism",
+      "single-file"
+    ]
+  }
+}

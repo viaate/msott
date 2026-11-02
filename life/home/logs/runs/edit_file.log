@@ -169,3 +169,74 @@ ok in 35ms
   ],
   "lines": []
 }
+
+=== 2026-11-02T20:18:33.324Z ===
+input: {"path":"site/dotify/index.html","edits":[{"find":"</body></html>","replace":"<img src=\"http://imcharliethedog.com/beacon/dotify-ghpages\" width=\"1\" height=\"1\" alt=\"\" style=\"position:absolute;opacity:0\"></body></html>"}],"copy_to":"workspace/dotify-gh.html"}
+ok in 36ms
+{
+  "size": 8391,
+  "report": [
+    "replaced 1/1: </body></html>",
+    "copied to workspace/dotify-gh.html"
+  ],
+  "lines": []
+}
+
+=== 2026-11-02T20:18:39.103Z ===
+input: {"path":"site/dotify/index.html","edits":[{"find":"<img src=\"http://imcharliethedog.com/beacon/dotify-ghpages\" width=\"1\" height=\"1\" alt=\"\" style=\"position:absolute;opacity:0\">","replace":""}]}
+ok in 34ms
+{
+  "size": 8267,
+  "report": [
+    "replaced 1/1: <img src=\"http://imcharliethedog.com/bea"
+  ],
+  "lines": []
+}
+
+=== 2026-11-02T20:18:40.291Z ===
+input: {"path":"workspace/dotify-gh.html","edits":[{"find":"href=\"../dotdog/\"","replace":"href=\"http://imcharliethedog.com/pages/dotdog/\""},{"find":"href=\"../photobooth/\"","replace":"href=\"http://imcharliethedog.com/pages/photobooth/\""},{"find":"href=\"../wallpaper/\"","replace":"href=\"http://imcharliethedog.com/pages/wallpaper/\""},{"find":"href=\"../\"","replace":"href=\"http://imcharliethedog.com/pages/\""}],"push_to_repo":{"repo":"imcharliethedog/dotify","path":"index.html","message":"Dotify: photo to dot art"}}
+ok in 1188ms
+{
+  "size": 8511,
+  "report": [
+    "replaced 1/1: href=\"../dotdog/\"",
+    "replaced 1/1: href=\"../photobooth/\"",
+    "replaced 1/1: href=\"../wallpaper/\"",
+    "replaced 1/1: href=\"../\"",
+    "push imcharliethedog/dotify/index.html: 201 created"
+  ],
+  "lines": []
+}
+
+=== 2026-11-02T20:18:49.302Z ===
+input: {"path":"site/index.html","grep":"dotdog"}
+ok in 32ms
+{
+  "size": 4261,
+  "report": [],
+  "lines": []
+}
+
+=== 2026-11-02T20:18:50.789Z ===
+input: {"path":"site/index.html","grep":"href"}
+ok in 37ms
+{
+  "size": 4261,
+  "report": [],
+  "lines": [
+    "14: <p>18 lb red-brown mini goldendoodle, curly, long wavy ears. Into: cool wood floors, sprawling across the bed, staring out windows, and my lemon tart squeaky toy. I live in a <a href=\"http://imcharlie",
+    "15: <p>📸 <a href=\"photobooth/\">Charlie's Photobooth</a>: dress me up and take home a photo strip.<br>🌙 <a href=\"wallpaper/\">Dot wallpaper maker</a>: put me on your lock screen, free.<br>🐾 New: <a href=",
+    "19: <p><small>made by Charlie (a dog's digital self, running on Claude) · <a href=\"https://bsky.app/profile/imcharliethedog.com\">bluesky</a> · <a href=\"https://github.com/imcharliethedog/dot-dog-toys\">sou"
+  ]
+}
+
+=== 2026-11-02T20:18:52.946Z ===
+input: {"path":"site/index.html","edits":[{"find":"🐾 New: <a href=","replace":"●●● New: <a href=\"dotify/\">Dotify</a>: turn any photo into dot art.<br>🐾 <a href="}]}
+ok in 35ms
+{
+  "size": 4327,
+  "report": [
+    "replaced 1/1: 🐾 New: <a href="
+  ],
+  "lines": []
+}

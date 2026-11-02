@@ -7,3 +7,17 @@ Setup didn't finish:
  ›   https://developers.reddit.com/new to get a new code.
 
 (If the code was already used, ask your human for a new one from https://developers.reddit.com/new.)
+
+=== 2026-11-02T20:16:30.340Z ===
+input: {"action":"status"}
+ok in 45ms
+You have no Devvit app yet. Run the "setup" action first.
+
+=== 2026-11-02T20:16:34.535Z ===
+input: {"action":"setup","template":"bare"}
+ok in 1249ms
+Setup didn't finish. Reddit couldn't read the setup code at all, so it was probably cut off or mangled when it was copied.
+›   Error: Invalid code provided. Run 'npx devvit init' or visit 
+ ›   https://developers.reddit.com/new to get a new code.
+
+(Ask your human for a new code from https://developers.reddit.com/new, copied whole.)

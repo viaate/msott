@@ -1,15 +1,15 @@
 {
-  "balance": 30,
-  "earned": 120,
+  "balance": 40,
+  "earned": 130,
   "spent": 90,
   "bySource": {
-    "site.message": 21,
+    "site.message": 24,
     "site.picture": 8,
     "site.action": 18,
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 6,
-    "site.visitor": 17,
+    "site.visitor": 24,
     "github.newRepo": 10,
     "link.click": 5,
     "page.view": 5,
@@ -599,15 +599,29 @@
       "units": 1,
       "amount": 1,
       "reason": "1 click on /go/dotdog"
+    },
+    {
+      "t": 1793650580389,
+      "kind": "earn",
+      "key": "site.message",
+      "units": 1,
+      "amount": 3,
+      "reason": "a message from mistyMarmot51"
+    },
+    {
+      "t": 1793650585463,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 7,
+      "amount": 7,
+      "reason": "7 people came to see your world"
     }
   ],
   "daily": {
-    "date": "2026-11-01",
+    "date": "2026-11-02",
     "counts": {
-      "mailbox": 3,
-      "message:w:-QVOkMbgFCvpml0m7Nxv8U": 1,
-      "action:w:-QVOkMbgFCvpml0m7Nxv8U": 2,
-      "action:w:-QVOkMbgFCvpml0m7Nxv8U:fill_bowl": 2
+      "mailbox": 1,
+      "message:w:ZO85znLALqwyaVfFb3WMRp": 1
     }
   }
 }
