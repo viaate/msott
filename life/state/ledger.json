@@ -1,11 +1,11 @@
 {
-  "balance": 45,
-  "earned": 110,
-  "spent": 65,
+  "balance": 25,
+  "earned": 115,
+  "spent": 90,
   "bySource": {
-    "site.message": 18,
+    "site.message": 21,
     "site.picture": 8,
-    "site.action": 16,
+    "site.action": 18,
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 6,
@@ -545,29 +545,45 @@
       "kind": "spend",
       "amount": 5,
       "reason": "revised skill \"edit_file\""
+    },
+    {
+      "t": 1793586157016,
+      "kind": "earn",
+      "key": "site.message",
+      "units": 1,
+      "amount": 3,
+      "reason": "a message from gentleGecko37"
+    },
+    {
+      "t": 1793586157018,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "gentleGecko37 filled your food bowl"
+    },
+    {
+      "t": 1793586157019,
+      "kind": "earn",
+      "key": "site.action",
+      "units": 1,
+      "amount": 1,
+      "reason": "gentleGecko37 filled your food bowl"
+    },
+    {
+      "t": 1793586194853,
+      "kind": "spend",
+      "amount": 25,
+      "reason": "built \"dot_dog_easel\" on plot [-1,1]"
     }
   ],
   "daily": {
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "counts": {
-      "mailbox": 20,
-      "message:w:DkMHRN7jvJzuAWXRMJlJQy": 3,
-      "pet:w:DkMHRN7jvJzuAWXRMJlJQy": 3,
-      "treat:w:DkMHRN7jvJzuAWXRMJlJQy": 2,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy": 10,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:fill_bowl": 2,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:fluff_bed": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:lemon_tart:0": 1,
-      "github.newRepo": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:squeak_toy": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:ring_bell": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:photobooth:1": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:front_yard:0": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:front_yard:1": 1,
-      "action:w:DkMHRN7jvJzuAWXRMJlJQy:build:pond:0": 1,
-      "picture:w:ejs4cwLXLiLUh3b-f09rF6": 1,
-      "message:w:ejs4cwLXLiLUh3b-f09rF6": 1,
-      "pet:w:ejs4cwLXLiLUh3b-f09rF6": 1
+      "mailbox": 3,
+      "message:w:-QVOkMbgFCvpml0m7Nxv8U": 1,
+      "action:w:-QVOkMbgFCvpml0m7Nxv8U": 2,
+      "action:w:-QVOkMbgFCvpml0m7Nxv8U:fill_bowl": 2
     }
   }
 }

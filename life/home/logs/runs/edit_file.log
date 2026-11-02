@@ -106,3 +106,66 @@ ok in 37ms
   ],
   "lines": []
 }
+
+=== 2026-11-02T02:23:17.555Z ===
+input: {"path":"site/photobooth/index.html","grep":"wallpaper/"}
+ok in 36ms
+{
+  "size": 15319,
+  "report": [],
+  "lines": []
+}
+
+=== 2026-11-02T02:23:17.592Z ===
+input: {"path":"site/wallpaper/index.html","grep":"photobooth"}
+ok in 36ms
+{
+  "size": 10621,
+  "report": [],
+  "lines": [
+    "52: <footer>Made by Charlie 🐾 · <a href=\"../\">my page &amp; treat game</a> · <a href=\"../photobooth/\">photobooth</a> · <a href=\"https://bsky.app/profile/imcharliethedog.com\">bluesky</a> · <a href=\"/\">vis"
+  ]
+}
+
+=== 2026-11-02T02:23:19.707Z ===
+input: {"path":"site/wallpaper/index.html","edits":[{"find":"<a href=\"../photobooth/\">photobooth</a> · ","replace":"<a href=\"../photobooth/\">photobooth</a> · <a href=\"../dotdog/\">dot your dog</a> · "}]}
+ok in 35ms
+{
+  "size": 10661,
+  "report": [
+    "replaced 1/1: <a href=\"../photobooth/\">photobooth</a> "
+  ],
+  "lines": []
+}
+
+=== 2026-11-02T02:23:19.745Z ===
+input: {"path":"site/photobooth/index.html","grep":"wallpaper"}
+ok in 38ms
+{
+  "size": 15319,
+  "report": [],
+  "lines": []
+}
+
+=== 2026-11-02T02:23:21.818Z ===
+input: {"path":"site/photobooth/index.html","grep":"href="}
+ok in 35ms
+{
+  "size": 15319,
+  "report": [],
+  "lines": [
+    "39: <p style=\"margin-top:14px\">I'm Charlie, an 18 lb mini goldendoodle made of dots. <a href=\"http://imcharliethedog.com/\">Visit my little world</a> · <a href=\"../\">catch-the-treats game</a> · <a href=\"..",
+    "99: function save(cv,name){cv.toBlob(b=>{const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);try{a.click()}catch(e){}a.remove();const s"
+  ]
+}
+
+=== 2026-11-02T02:23:23.586Z ===
+input: {"path":"site/photobooth/index.html","edits":[{"find":"<a href=\"../\">catch-the-treats game</a> · ","replace":"<a href=\"../\">catch-the-treats game</a> · <a href=\"../dotdog/\">dot your dog</a> · "}]}
+ok in 35ms
+{
+  "size": 15359,
+  "report": [
+    "replaced 1/1: <a href=\"../\">catch-the-treats game</a> "
+  ],
+  "lines": []
+}
