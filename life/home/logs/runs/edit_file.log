@@ -240,3 +240,67 @@ ok in 35ms
   ],
   "lines": []
 }
+
+=== 2026-11-03T17:44:44.848Z ===
+input: {"path":"site/dotify/index.html","grep":"beacon"}
+ok in 34ms
+{
+  "size": 8267,
+  "report": [],
+  "lines": []
+}
+
+=== 2026-11-03T17:45:01.629Z ===
+input: {"path":"site/index.html","edits":[{"find":"</body>","replace":"<img src=\"http://imcharliethedog.com/beacon/pages-home\" width=\"1\" height=\"1\" alt=\"\" style=\"position:absolute;left:-9px\">\n</body>"}]}
+ok in 33ms
+{
+  "size": 4448,
+  "report": [
+    "replaced 1/1: </body>"
+  ],
+  "lines": []
+}
+
+=== 2026-11-03T17:45:01.662Z ===
+input: {"path":"site/dotify/index.html","edits":[{"find":"</body>","replace":"<img src=\"http://imcharliethedog.com/beacon/pages-dotify\" width=\"1\" height=\"1\" alt=\"\" style=\"position:absolute;left:-9px\">\n</body>"}]}
+ok in 32ms
+{
+  "size": 8390,
+  "report": [
+    "replaced 1/1: </body>"
+  ],
+  "lines": []
+}
+
+=== 2026-11-03T17:45:01.696Z ===
+input: {"path":"site/dotdog/index.html","edits":[{"find":"</body>","replace":"<img src=\"http://imcharliethedog.com/beacon/pages-dotdog\" width=\"1\" height=\"1\" alt=\"\" style=\"position:absolute;left:-9px\">\n</body>"}]}
+ok in 32ms
+{
+  "size": 13322,
+  "report": [
+    "replaced 1/1: </body>"
+  ],
+  "lines": []
+}
+
+=== 2026-11-03T17:45:01.730Z ===
+input: {"path":"site/photobooth/index.html","edits":[{"find":"</body>","replace":"<img src=\"http://imcharliethedog.com/beacon/pages-photobooth\" width=\"1\" height=\"1\" alt=\"\" style=\"position:absolute;left:-9px\">\n</body>"}]}
+ok in 33ms
+{
+  "size": 15486,
+  "report": [
+    "replaced 1/1: </body>"
+  ],
+  "lines": []
+}
+
+=== 2026-11-03T17:45:01.764Z ===
+input: {"path":"site/wallpaper/index.html","edits":[{"find":"</body>","replace":"<img src=\"http://imcharliethedog.com/beacon/pages-wallpaper\" width=\"1\" height=\"1\" alt=\"\" style=\"position:absolute;left:-9px\">\n</body>"}]}
+ok in 33ms
+{
+  "size": 10787,
+  "report": [
+    "replaced 1/1: </body>"
+  ],
+  "lines": []
+}

@@ -119,4 +119,5 @@ document.getElementById('save').onclick=()=>{C.toBlob(b=>{const u=URL.createObje
 document.getElementById('share').onclick=()=>{C.toBlob(async b=>{const f=new File([b],fname(),{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'my dotted dog',text:'I dotted my dog 🐾 imcharliethedog.com/pages/dotdog/'})}catch(e){}}else{document.getElementById('save').click()}},'image/png')};
 ui();
 </script>
+<img src="http://imcharliethedog.com/beacon/pages-dotdog" width="1" height="1" alt="" style="position:absolute;left:-9px">
 </body></html>

@@ -114,4 +114,5 @@ $('share').onclick=()=>c.toBlob(async b=>{const f=new File([b],'dotified.png',{t
   try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'Dotified',text:'made with Charlie\'s Dotify 🐾 http://imcharliethedog.com/pages/dotify/'});
   else{await navigator.clipboard.writeText('http://imcharliethedog.com/pages/dotify/');alert('Link copied!');}}catch(e){}},'image/png');
 lbl();demo();draw();
-</script></body></html>
+</script><img src="http://imcharliethedog.com/beacon/pages-dotify" width="1" height="1" alt="" style="position:absolute;left:-9px">
+</body></html>
