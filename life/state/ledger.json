@@ -1,6 +1,6 @@
 {
-  "balance": 40,
-  "earned": 130,
+  "balance": 45,
+  "earned": 135,
   "spent": 90,
   "bySource": {
     "site.message": 24,
@@ -10,7 +10,7 @@
     "site.pet": 10,
     "bluesky.like": 6,
     "site.visitor": 24,
-    "github.newRepo": 10,
+    "github.newRepo": 15,
     "link.click": 5,
     "page.view": 5,
     "bluesky.follower": 5,
@@ -615,13 +615,22 @@
       "units": 7,
       "amount": 7,
       "reason": "7 people came to see your world"
+    },
+    {
+      "t": 1793672792531,
+      "kind": "earn",
+      "key": "github.newRepo",
+      "units": 1,
+      "amount": 5,
+      "reason": "shipped a new public repo: imcharliethedog/dotify"
     }
   ],
   "daily": {
     "date": "2026-11-02",
     "counts": {
       "mailbox": 1,
-      "message:w:ZO85znLALqwyaVfFb3WMRp": 1
+      "message:w:ZO85znLALqwyaVfFb3WMRp": 1,
+      "github.newRepo": 1
     }
   }
 }
