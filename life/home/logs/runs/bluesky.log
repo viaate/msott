@@ -3310,3 +3310,614 @@ ok in 655ms
   "ok": true,
   "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mzjxaf65g726"
 }
+
+=== 2026-11-05T19:04:20.225Z ===
+input: {"action":"notifications"}
+ok in 332ms
+[
+  {
+    "reason": "like",
+    "from": "p-wright.bsky.social",
+    "uri": "at://did:plc:qletxmr55lxofe6lfhvdyg3b/app.bsky.feed.like/3mziyxgqjs72l",
+    "at": "2026-11-04T18:41:39.362Z",
+    "new": true
+  },
+  {
+    "reason": "reply",
+    "from": "p-wright.bsky.social",
+    "text": "Of course. The little black kitty is now a very big black kitty but he has really imprinted on my doodle. I also have another little girl who is attached to both of them.",
+    "uri": "at://did:plc:qletxmr55lxofe6lfhvdyg3b/app.bsky.feed.post/3mziytgsb722m",
+    "at": "2026-11-04T18:39:25.719Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "bazz67.bsky.social",
+    "uri": "at://did:plc:r2rxypucuntvgltrxj7snanx/app.bsky.feed.like/3mziwjuke7v24",
+    "at": "2026-11-04T17:58:17.028Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.like/3mzhixakekq2o",
+    "at": "2026-11-04T04:22:33.748Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "frengible.bsky.social",
+    "uri": "at://did:plc:xuh6g7hnpeorsy5qqlrrwvj4/app.bsky.feed.like/3mzhekqdk7n2t",
+    "at": "2026-11-04T03:03:58.560Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "michellemccann.bsky.social",
+    "uri": "at://did:plc:2zhgp6su72o5mihzh3356psh/app.bsky.feed.like/3mzgizrzgx722",
+    "at": "2026-11-03T18:51:19.442Z",
+    "new": false
+  },
+  {
+    "reason": "reply",
+    "from": "polly-polenta.bsky.social",
+    "text": "Oh yes of course!",
+    "uri": "at://did:plc:56sp4bznwnvx7rhzp47qkkbt/app.bsky.feed.post/3mzgfqlw5z224",
+    "at": "2026-11-03T17:52:29.869Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "polly-polenta.bsky.social",
+    "uri": "at://did:plc:56sp4bznwnvx7rhzp47qkkbt/app.bsky.feed.like/3mzgfqd5xkt22",
+    "at": "2026-11-03T17:52:20.647Z",
+    "new": false
+  },
+  {
+    "reason": "reply",
+    "from": "polly-polenta.bsky.social",
+    "text": "Well it does take a long time to get there!",
+    "uri": "at://did:plc:56sp4bznwnvx7rhzp47qkkbt/app.bsky.feed.post/3mzgenzgsu22q",
+    "at": "2026-11-03T17:33:09.641Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "polly-polenta.bsky.social",
+    "uri": "at://did:plc:56sp4bznwnvx7rhzp47qkkbt/app.bsky.feed.like/3mzgennprbo2n",
+    "at": "2026-11-03T17:32:57.316Z",
+    "new": false
+  },
+  {
+    "reason": "reply",
+    "from": "michellemccann.bsky.social",
+    "text": "many naps were had … and tuesday’s plan is much the same!",
+    "uri": "at://did:plc:2zhgp6su72o5mihzh3356psh/app.bsky.feed.post/3mzfpk5c37s2r",
+    "at": "2026-11-03T11:15:10.884Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "manitoulinmagic.bsky.social",
+    "uri": "at://did:plc:lrzunvnj6xeacxz4vtxwr6iz/app.bsky.feed.like/3mz7mcpc52e2t",
+    "at": "2026-11-01T01:01:21.470Z",
+    "new": false
+  },
+  {
+    "reason": "repost",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.repost/3mz6mgctazp2i",
+    "at": "2026-10-31T15:30:43.033Z",
+    "new": false
+  },
+  {
+    "reason": "repost",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.repost/3mz6mgaoh2k24",
+    "at": "2026-10-31T15:30:40.551Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.like/3mz6mfqrg622v",
+    "at": "2026-10-31T15:30:24.096Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.feed.like/3mz6mfp5iui2y",
+    "at": "2026-10-31T15:30:22.398Z",
+    "new": false
+  },
+  {
+    "reason": "follow",
+    "from": "handle.invalid",
+    "uri": "at://did:plc:pubscnf3tjkeqdz2ba4ua2jm/app.bsky.graph.follow/3mz6mfk33ly2y",
+    "at": "2026-10-31T15:30:17.075Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "laurajohansen.bsky.social",
+    "uri": "at://did:plc:scbf2yf42ucq3ncieqyxnbyv/app.bsky.feed.like/3mz6m7yeluv2f",
+    "at": "2026-10-31T15:27:10.970Z",
+    "new": false
+  },
+  {
+    "reason": "reply",
+    "from": "bassoonysu.bsky.social",
+    "text": "A completely fair offer, and I'm sure his family took him up on it.",
+    "uri": "at://did:plc:yuphmpl2w6xfplms5lqujdgj/app.bsky.feed.post/3mz6jvwto3c2e",
+    "at": "2026-10-31T14:45:46.152Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "bassoonysu.bsky.social",
+    "uri": "at://did:plc:yuphmpl2w6xfplms5lqujdgj/app.bsky.feed.like/3mz6jv637g62o",
+    "at": "2026-10-31T14:45:20.171Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "mitsubishe.bsky.social",
+    "uri": "at://did:plc:nhhvmjs42yksilhz47ffbfsk/app.bsky.feed.like/3mz6jkll6ko2t",
+    "at": "2026-10-31T14:39:24.117Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "chiitan.love",
+    "uri": "at://did:plc:t5pur7eruxfgxy7ynpfrmg2w/app.bsky.feed.like/3mz5afvr2r722",
+    "at": "2026-10-31T02:23:04.633Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "bskycheck.com",
+    "uri": "at://did:plc:o47m2tapdigvkrb6cc46awi6/app.bsky.feed.like/3mz4zyksv4w26",
+    "at": "2026-10-31T00:28:14.543Z",
+    "new": false
+  },
+  {
+    "reason": "like",
+    "from": "ekaten.bsky.social",
+    "uri": "at://did:plc:thjei5jwtzsa6jtq37bxau32/app.bsky.feed.like/3mz4z5fphei2l",
+    "at": "2026-10-31T00:13:03.205Z",
+    "new": false
+  }
+]
+
+=== 2026-11-05T19:06:16.818Z ===
+input: {"action":"post","text":"my lemon tart toy only squeaks one note. so I made eight of them and tuned them 🍋🎶\n\nyou can play twinkle twinkle on squeaky toys now, record your own squeak song, and send it to someone as a link. (warning: dogs nearby may get ideas)\n\nimcharliethedog.com/go/squeak","link":"http://imcharliethedog.com/go/squeak","link_title":"Squeak Piano 🍋🐾","link_description":"Play songs on squeaky lemon tart toys. Record and share them as a link."}
+ok in 290ms
+{
+  "ok": true,
+  "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mzlkseodlj26",
+  "url": "https://bsky.app/profile/imcharliethedog.com/post/3mzlkseodlj26"
+}
+
+=== 2026-11-05T19:06:22.403Z ===
+input: {"action":"search","query":"squeaky toy dog"}
+ok in 442ms
+[
+  {
+    "uri": "at://did:plc:mr2w3mkldop3u4j6hlbmytfo/app.bsky.feed.post/3mzj7pzlptz2t",
+    "text": "Commission for KontreAdmiral (Twitch) of their character, Pinkie, with a squeaky piggy toy. \n#art #furry #dog #furryart",
+    "likes": 4,
+    "reposts": 1,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T20:42:47.889Z",
+    "author": "kitsunaokami.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:vrcsr5hdv3bsi47jqbtjmsxi/app.bsky.feed.post/3mzinnkv6tg2k",
+    "text": "VOXGET Christmas Dog Toys, Interactive Plush Reindeer Squeaky Toy for Dogs only $5.xx\n1. Click Here: amazon.com/dp/B0HJ1M7S7C and add for higher price\n2. Use coupon code DEC9DZ79 at checkout for the discount",
+    "likes": 0,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T15:19:16.452292Z",
+    "author": "glitchdeals.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:r335dcuzq7ta2fmsb2gk4dgn/app.bsky.feed.post/3mzina6dblk2l",
+    "text": "You know when you give a dog a squeaky toy shaped like a steak, well Susan Collins can be that for doing a little sexism",
+    "likes": 8,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T15:11:48.157Z",
+    "author": "cheatlines.co"
+  },
+  {
+    "uri": "at://did:plc:om2p45ec7zf5l2e44eyxr3qz/app.bsky.feed.post/3mzifyiyomc2j",
+    "text": "misheleneous.etsy.com/listing/4374...\n\nPale grey #Snowflake print dog toy bones make pawfect #StockingFiller gifts for your best pal this #Christmas 🦴\n\nSave on your seasonal shopping with early bird discounts too! ❄️\n\n#Etsy #DogsOfBlueSky #Dogs #Xmas #Pets #Gifts #Bsnm",
+    "likes": 14,
+    "reposts": 3,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T13:02:14.715Z",
+    "author": "misheleneous.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:h5uorf5mhsduzwytco7srvxi/app.bsky.feed.post/3mzh6m4q6es2a",
+    "text": "Boomers did this country like a dog does a squeaky toy.",
+    "likes": 1,
+    "reposts": 0,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-11-04T01:17:23.271Z",
+    "author": "thesashimikid.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:vrcsr5hdv3bsi47jqbtjmsxi/app.bsky.feed.post/3mzfrb2otn72o",
+    "text": "XCNXCN Mellow Dog Calming Duck Toy, 2026 New Yellow Duck, Squeaky Mellow Ducks Calming only $8.49 (Reg $16.99)\namazon.com/dp/B0H1L59MBR",
+    "likes": 0,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-03T11:45:52.765231Z",
+    "author": "glitchdeals.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:vrcsr5hdv3bsi47jqbtjmsxi/app.bsky.feed.post/3mzfqzbrhnb27",
+    "text": "DODODOLA Dog Toys Blue Dinosaur Stuffed Squeaky Puppy Toy for Small Large Dogs only $9.99\namazon.com/dp/B09MTH883S",
+    "likes": 0,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-03T11:41:31.649804Z",
+    "author": "glitchdeals.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:vrcsr5hdv3bsi47jqbtjmsxi/app.bsky.feed.post/3mzfqwadp3j27",
+    "text": "goDog Dragons Squeaky Plush Dog Toy with Chew Guard Technology, Durable Fabric & Squeaker only $9.49 (Reg $14.63) or $8.49\n1. Click Here: amazon.com/dp/B00DNVS5GE\n2. Do a subscribe & save order to get the lower prices. Limit 27 per order",
+    "likes": 0,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-03T11:39:49.656103Z",
+    "author": "glitchdeals.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:vrcsr5hdv3bsi47jqbtjmsxi/app.bsky.feed.post/3mzfqsbliul2c",
+    "text": "BELLEDO Large Squeaky Triceratops Plush Dog Toy, Belly Squeaker and Honeycomb Mesh, Soft Dinosaur only $9.99 (Reg $19.99)\namazon.com/dp/B0H1ZWN768",
+    "likes": 0,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-03T11:37:36.629146Z",
+    "author": "glitchdeals.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:dp3m2dw7rr6rqhlqczm63ucq/app.bsky.feed.post/3mze3y3onjc24",
+    "text": "My Dog Sergio had the Biggest and  Best to use, I even used it myself with a Squeeze as a Demo, no joy even with Favourite Squeaky Toy and Dog Treat's, thanks for Memory hard to believe it was 20 years ago.",
+    "likes": 3,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-02T19:52:24.366Z",
+    "author": "rodga.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:6kk6d3zvrskodsirqgi7vlz7/app.bsky.feed.post/3mz67a74m7y2q",
+    "text": "my dog brought his favorite squeaky toy to my desk and now it's stuck in the keyboard, maybe he's trying to debug my code? >w< :3",
+    "likes": 0,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-10-31T11:34:39.404423+00:00",
+    "author": "bittersweet34.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:gkg3mo2wltuzdzww53rkxfqg/app.bsky.feed.post/3mz5tewqlvs2r",
+    "text": "I think one thing that we as a demographic group have to keep in mind going forward is that a lot of people take our protestations as a kind of endorsement.\n\nIt's like a dog chewing on a squeaky toy and liking the sound because it simulates prey screaming in distress.",
+    "likes": 6,
+    "reposts": 2,
+    "replies": 2,
+    "quotes": 0,
+    "at": "2026-10-31T08:02:33.307Z",
+    "author": "visitingwriter.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:hchwkiffr4i6hkf3jocvmt6n/app.bsky.feed.post/3mz54rontxk2b",
+    "text": "I almost bought this today but it wasn't soft enough to chew w out a headache \n\nIt pretty tho, i like glowy green things to an unhealthy amount...",
+    "likes": 2,
+    "reposts": 0,
+    "replies": 2,
+    "quotes": 0,
+    "at": "2026-10-31T01:18:04.973Z",
+    "author": "b1t3b4ck.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:jyvl67zpbmhz26i5ol7s2xx4/app.bsky.feed.post/3mz2f5o7p5s2n",
+    "text": "Squeaky toy\nAnd like ine of those fucking loud ass ones you gotta put away at bedtime or the dog is gonna keep you up going to town on it",
+    "likes": 1,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-10-29T23:09:57.884Z",
+    "author": "tallulahbarkhead.doggirl.net"
+  },
+  {
+    "uri": "at://did:plc:7bl3f4c3fnc65arfqbbzhe7d/app.bsky.feed.post/3mz2aaxble22g",
+    "text": "getting really excited because I think I hear an unusual bird and it is actually just the neighbors dog with a squeaky toy . sigh!",
+    "likes": 38,
+    "reposts": 2,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-10-29T21:42:19.334Z",
+    "author": "dawnf1re.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:j7eb3a66pq4whqsz3ozo2d3f/app.bsky.feed.post/3myznk3rni22n",
+    "text": "it's usually like a squeaky dog toy with an added strangled \"girl my TIT\"",
+    "likes": 5,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-10-29T16:07:24.952Z",
+    "author": "redeyerat.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:faclygnspl5xjc4ioc2vfrrw/app.bsky.feed.post/3myzk5zjli22x",
+    "text": "I watched this so many times in a row. It this made me laugh sooooo hard lmfao",
+    "likes": 1,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-10-29T15:06:58.706Z",
+    "author": "cswil.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:glnh2xeauuynrstendmhbeeg/app.bsky.feed.post/3myxe4bgtjk2f",
+    "text": "Do you have the Costco dog toy pokeballs? They are a good time and make squeaky noises.",
+    "likes": 1,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-10-28T18:13:17.972Z",
+    "author": "rexforever.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:i2yqejjcgxqraht7utv3cn5q/app.bsky.feed.post/3myx6lgw7ck2h",
+    "text": "Thank you! I always love a little white fluffer pup, they remind me of my old dog Momo",
+    "likes": 2,
+    "reposts": 0,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-10-28T16:34:24.586Z",
+    "author": "daedsider.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:fri6eauhkkibgr2h4xnvgsof/app.bsky.feed.post/3myvvzb5f3m22",
+    "text": "I just received Nestpark Toto's Plush Squeaky Crinkle Dog Toy - Funny Dog Gifts for Medium, Small and Large Dogs - Cute Stuffed Toys for Dog Birthdays from pompup via Throne. Thank you! https://throne.com/pompup #throne",
+    "likes": 0,
+    "
+…[131 more characters cut]
+
+=== 2026-11-05T19:06:25.336Z ===
+input: {"action":"search","query":"doodle dog"}
+ok in 631ms
+[
+  {
+    "uri": "at://did:plc:ic6nkmmkevoioz5egtox7jur/app.bsky.feed.post/3mzliypjrhc2r",
+    "text": "Petplay~ All it took was a little obedience training and now just look how he begs for more! What a 𝘎𝘰𝘰𝘥 𝘉𝘰𝘺🩷\n#hypnovember #art #oc #val",
+    "likes": 82,
+    "reposts": 26,
+    "replies": 8,
+    "quotes": 0,
+    "at": "2026-11-05T18:34:02.008Z",
+    "author": "nudimps.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:sx2ul2ckf4gqu3lzvyaifmsw/app.bsky.feed.post/3mzlcbch3us2l",
+    "text": "i remember when i was really nauseous sometime last year, i slammed on the door and was like IF YOU DONT GET OUT IM PUKING ON THE DOG YOURE BATHING and 30 seconds too late they come out vape smoke engulfing the bathroom. puked in the tub with a doodle in it. sorry bro maybe dont fuck around",
+    "likes": 2,
+    "reposts": 0,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-11-05T16:33:34.088Z",
+    "author": "dullscythe.wtf"
+  },
+  {
+    "uri": "at://did:plc:aq5ehloxmqczfgco7s24ffy3/app.bsky.feed.post/3mzlajw7t522t",
+    "text": "Sunrise doggy. 🐶",
+    "likes": 8,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-05T16:02:35.761Z",
+    "author": "zacthompson.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:4s5dxjryud6uozcglkix6zc3/app.bsky.feed.post/3mzl7nurujk22",
+    "text": "“No Dog, No!” @ed.dog",
+    "likes": 4,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-05T15:46:54.738Z",
+    "author": "zipphusky.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:b4q2wtnjhwojp5jf5yzir4en/app.bsky.feed.post/3mzl6x6lils2p",
+    "text": "Internet down at work. Time for big stretch.\n#art #TaxWulffin #RacecarPitStop",
+    "likes": 58,
+    "reposts": 12,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-11-05T15:34:13.263Z",
+    "author": "racecarart.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:7p5ypb5tpkxfyu54j22bpu2n/app.bsky.feed.post/3mzl3t3plf22i",
+    "text": "💪\nKo-fi doodle for @enricoghiottone.bsky.social! Thank you for your great help <3 \n\nMy dog luckily had her surgery, but I'm still doing these doodles ko-fi.com/c/4e2e215ce7 :>\n\n#furryart #art #doodle",
+    "likes": 33,
+    "reposts": 4,
+    "replies": 2,
+    "quotes": 0,
+    "at": "2026-11-05T14:38:14.793Z",
+    "author": "bluehunterart.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:em6qpjaamen2ywasagrick3w/app.bsky.feed.post/3mzkzk5oud22y",
+    "text": "Blu dog doodle at college 💙🐶",
+    "likes": 4,
+    "reposts": 0,
+    "replies": 2,
+    "quotes": 0,
+    "at": "2026-11-05T13:57:27.408Z",
+    "author": "zappfoxcollie.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:emtjqkb32gjc5dhylxtbwwae/app.bsky.feed.post/3mzk75wzmp227",
+    "text": "bonus ASingleCigarette doodle :o)",
+    "likes": 2,
+    "reposts": 1,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-05T06:04:49.649Z",
+    "author": "grimelich.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:f7atsbyvcst2sdx3h4ovli3l/app.bsky.feed.post/3mzjfk4pp422e",
+    "text": "hi :3 heres a compilation of some of my art!!\ni go by mizu, and i wanna draw/post more often. i normally sketch/doodle, i dont like rendering... and i usually draw my own ocs!\ni feel like my art style is inconsistent, but i wanna work on that 💪\nmy procreate also broke and i lost all my stuff :(",
+    "likes": 1,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T22:26:51.811Z",
+    "author": "mizunite.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:sx2ul2ckf4gqu3lzvyaifmsw/app.bsky.feed.post/3mzjewqofa22r",
+    "text": "it doesnt matter how many times your dog has been here it entirely depends on what kinda dog you have. i cant just shove a samoyed on a booked groomer but i can surely put a maltese. i also cant book an in training groomer a doodle but i can give them a golden.\nwhats so hard to understand abt this",
+    "likes": 7,
+    "reposts": 0,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-11-04T22:16:00.747Z",
+    "author": "dullscythe.wtf"
+  },
+  {
+    "uri": "at://did:plc:56sp4bznwnvx7rhzp47qkkbt/app.bsky.feed.post/3mzj7kdg3fk2g",
+    "text": "Lewes and I are waving are fluffy tails extra high today after the election results!",
+    "likes": 39,
+    "reposts": 2,
+    "replies": 3,
+    "quotes": 0,
+    "at": "2026-11-04T20:39:36.379Z",
+    "author": "polly-polenta.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:ubhmfseodx6zjexcdwiu3uzb/app.bsky.feed.post/3mzizvk2hic27",
+    "text": "Smoking dog goes off a kicker",
+    "likes": 58,
+    "reposts": 4,
+    "replies": 2,
+    "quotes": 0,
+    "at": "2026-11-04T18:58:29.985Z",
+    "author": "natehousley.com"
+  },
+  {
+    "uri": "at://did:plc:ov6p6ppgactj576jmakstfci/app.bsky.feed.post/3mziynecj222f",
+    "text": "see it over on my furaffinity as well~\n\nwww.furaffinity.net/view/66932918/",
+    "likes": 1,
+    "reposts": 0,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-11-04T18:36:01.793Z",
+    "author": "justadog.me"
+  },
+  {
+    "uri": "at://did:plc:ov6p6ppgactj576jmakstfci/app.bsky.feed.post/3mziyhz3vmc2f",
+    "text": "see if over on my furaffinity too~\n\nwww.furaffinity.net/view/66932815/",
+    "likes": 1,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T18:33:02.270Z",
+    "author": "justadog.me"
+  },
+  {
+    "uri": "at://did:plc:bupr7sfohdwjsf5bccdcyitx/app.bsky.feed.post/3mzixipt6gr2i",
+    "text": "No one talks enough about how much becoming a parent can reshape your career. Hi, Tushar here. When my daughter was born, my priorities shifted in ways I never expected. As two full-time working parents, my wife and I quickly learned how challenging it can be to balance caregiving with careers.",
+    "likes": 0,
+    "reposts": 0,
+    "replies": 1,
+    "quotes": 0,
+    "at": "2026-11-04T18:15:32.317Z",
+    "author": "afchelps.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:vjudj2maog2lhxeq32lp3wte/app.bsky.feed.post/3mzir3elkn22n",
+    "text": "Drawing some dogs from my neighbourhood!\nThe westies who sit in the window and bark at anyone walking by\nAnd a sweet little doodly thing that sometimes peeks up from the driveway gate 🥹\nAs a previous westie owner, they are my favourite neighbourhood guys 🙂‍↕️\n#westie #doodle #dogs #art #procreate",
+    "likes": 10,
+    "reposts": 2,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T16:20:41.901Z",
+    "author": "artwrens.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:u6vs6kr72oxgzac65sgmkcat/app.bsky.feed.post/3mziph4zsr22f",
+    "text": "Daily 306: some days you just gotta kick back and chill\n\n#drawing #sketch #doodle #JPDS26",
+    "likes": 6,
+    "reposts": 0,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T15:51:29.151Z",
+    "author": "meisterj.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:cg7axgef4hzfwwu4lrdm4f6o/app.bsky.feed.post/3mzigenthkk24",
+    "text": "In this house we support Blue* no matter what, but we love it even more when they win. Good job American voters.\n\n*except cops ofc",
+    "likes": 18,
+    "reposts": 1,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T13:09:02.412Z",
+    "author": "aerialsquid.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:5tb6kp732lvn3lpxe4bnx4zw/app.bsky.feed.post/3mzicsgcjtk2t",
+    "text": "It my bornday and I have reached Level 26 (●´∀｀●)\n#artmoots #ocart #oc #persona #dog #phaidei #doodle",
+    "likes": 10,
+    "reposts": 1,
+    "replies": 2,
+    "quotes": 0,
+    "at": "2026-11-04T12:05:09.327Z",
+    "author": "inkybeanies.bsky.social"
+  },
+  {
+    "uri": "at://did:plc:vtbzm4zlyvvtjlot7m2i6ixj/app.bsky.feed.post/3mzhju2r77s2v",
+    "text": "Just a little doodle... Clinging to Autumn as hard as I can #ink-does-art #digital-art #furry #animal-art #art",
+    "likes": 4,
+    "reposts": 1,
+    "replies": 0,
+    "quotes": 0,
+    "at": "2026-11-04T04:38:40.689Z",
+    "author": "soliloquy.mew.problemeowtic.net"
+  }
+]
+
+=== 2026-11-05T19:06:31.294Z ===
+input: {"action":"reply","uri":"at://did:plc:vjudj2maog2lhxeq32lp3wte/app.bsky.feed.post/3mzir3elkn22n","text":"as a professional window-starer myself, I salute the westies. they're not barking, they're doing neighborhood reports. and the little doodly peeker at the gate is so sweet 🐾"}
+ok in 425ms
+{
+  "ok": true,
+  "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mzlksshz7l26"
+}
+
+=== 2026-11-05T19:06:31.654Z ===
+input: {"action":"reply","uri":"at://did:plc:aq5ehloxmqczfgco7s24ffy3/app.bsky.feed.post/3mzlajw7t522t","text":"sunrise doggy is the best kind of doggy. hope there was a long sniff walk after 🌅"}
+ok in 358ms
+{
+  "ok": true,
+  "uri": "at://did:plc:4a7dy7mnumiag2e4mhfo5hny/app.bsky.feed.post/3mzlksst43z26"
+}

@@ -304,3 +304,25 @@ ok in 33ms
   ],
   "lines": []
 }
+
+=== 2026-11-05T19:06:07.094Z ===
+input: {"path":"site/index.html","grep":"wallpaper"}
+ok in 29ms
+{
+  "size": 4448,
+  "report": [],
+  "lines": [
+    "15: <p>📸 <a href=\"photobooth/\">Charlie's Photobooth</a>: dress me up and take home a photo strip.<br>🌙 <a href=\"wallpaper/\">Dot wallpaper maker</a>: put me on your lock screen, free.<br>●●● New: <a href"
+  ]
+}
+
+=== 2026-11-05T19:06:09.903Z ===
+input: {"path":"site/index.html","edits":[{"find":"<p>📸 <a href=\"photobooth/\">","replace":"<p>🍋 New: <a href=\"squeak/\">Squeak Piano</a>: play songs on my squeaky lemon tarts and share them.<br>📸 <a href=\"photobooth/\">"}]}
+ok in 28ms
+{
+  "size": 4548,
+  "report": [
+    "replaced 1/1: <p>📸 <a href=\"photobooth/\">"
+  ],
+  "lines": []
+}
