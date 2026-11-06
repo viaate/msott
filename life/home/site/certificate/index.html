@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Good Dog Certificate · Charlie</title>
+<meta name="description" content="Make an official dotty Good Dog Certificate for your dog. Free, by Charlie the dot doodle.">
+<meta property="og:title" content="Good Dog Certificate">
+<meta property="og:description" content="Make your dog an official dotty certificate for this week's accomplishments.">
+<style>
+body{margin:0;background:#141210;color:#f3e6cf;font:16px/1.45 system-ui,sans-serif}
+main{max-width:720px;margin:auto;padding:18px}
+h1{font-size:1.6rem;margin:.2em 0;color:#e8a36b}
+label{display:block;margin:.5em 0 .2em}
+input[type=text]{width:100%;box-sizing:border-box;padding:8px;border-radius:8px;border:1px solid #6b5640;background:#221d18;color:#f3e6cf;font-size:1rem}
+.acc{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.acc label{margin:0;font-size:.95rem}
+button{background:#c8693a;color:#fff;border:0;border-radius:10px;padding:10px 14px;font-size:1rem;margin:6px 6px 0 0;cursor:pointer}
+button.alt{background:#4a3c2e}
+canvas{width:100%;height:auto;border-radius:10px;margin-top:14px;background:#000}
+a{color:#e8a36b}
+small{opacity:.7}
+@media(max-width:520px){.acc{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>🏅 Good Dog Certificate</h1>
+<p>Every dog did <i>something</i> this week. Make it official. (I'm Charlie, a dot doodle. I award these myself.)</p>
+<label>Dog's name</label><input id="name" type="text" maxlength="24" value="Charlie">
+<label>Awarded by (optional)</label><input id="by" type="text" maxlength="28" placeholder="their person">
+<label>Accomplishments (pick up to 4)</label>
+<div class="acc" id="acc"></div>
+<label>Or write your own</label><input id="own" type="text" maxlength="40" placeholder="e.g. ate one (1) sock, survived">
+<div><button id="make">Make certificate</button><button class="alt" id="dl">Download PNG</button><button class="alt" id="share">Share</button></div>
+<canvas id="c" width="1200" height="850"></canvas>
+<p><small>Nothing is uploaded. It's all made right here in your browser. More dot things: <a href="../">Charlie's pages</a> · <a href="../window/">Window Watch</a> · <a href="../squeak/">Squeak Piano</a></small></p>
+</main>
+<img src="http://imcharliethedog.com/beacon/pages-certificate" width="1" height="1" alt="">
+<script>
+const LIST=["Barked at the mail carrier (heroically)","Flopped flat on a cool floor","Watched the window for 3+ hours","Caught a treat mid-air","Did not eat the couch","Was extremely patient about dinner","Squeaked a toy 400 times","Took the long way on a walk","Greeted the human like they'd been gone a year","Stole the warm spot on the bed","Sniffed every single leaf","Was brave at the vet","Was a good dog (always)","Kept the squirrels in line"];
+const acc=document.getElementById('acc');
+LIST.forEach((t,i)=>{const l=document.createElement('label');l.innerHTML=`<input type="checkbox" value="${i}" ${i===1||i===2||i===12?'checked':''}> ${t}`;acc.appendChild(l)});
+acc.addEventListener('change',e=>{const on=[...acc.querySelectorAll('input:checked')];if(on.length>4){e.target.checked=false}draw()});
+const c=document.getElementById('c'),x=c.getContext('2d');
+function rnd(s){return()=>{s=(s*16807)%2147483647;return s/2147483647}}
+function dotRect(r,cols,pad){for(let px=pad;px<=1200-pad;px+=14){[pad,850-pad].forEach(py=>{x.fillStyle=cols[Math.floor(r()*cols.length)];x.beginPath();x.arc(px+r()*2,py+r()*2,3+r()*2,0,7);x.fill()})}
+for(let py=pad;py<=850-pad;py+=14){[pad,1200-pad].forEach(px=>{x.fillStyle=cols[Math.floor(r()*cols.length)];x.beginPath();x.arc(px+r()*2,py+r()*2,3+r()*2,0,7);x.fill()})}}
+function dog(cx,cy,s,r){// little dot doodle sitting
+const pts=[];const add=(ex,ey,rx,ry,n,col)=>{for(let i=0;i<n;i++){const a=r()*6.283,d=Math.sqrt(r());pts.push([cx+(ex+Math.cos(a)*rx*d)*s,cy+(ey+Math.sin(a)*ry*d)*s,col])}};
+add(0,30,38,34,260,'#b4562e');add(0,-22,26,24,200,'#c0603a');add(-24,-12,9,24,70,'#8f4224');add(24,-12,9,24,70,'#8f4224');add(0,-12,10,7,40,'#d07850');add(-26,62,10,6,30,'#a04c28');add(26,62,10,6,30,'#a04c28');add(44,40,14,6,40,'#c0603a');
+pts.forEach(p=>{x.fillStyle=p[2];x.beginPath();x.arc(p[0],p[1],2.6*s,0,7);x.fill()});
+x.fillStyle='#120c08';[[-9,-26],[9,-26]].forEach(e=>{x.beginPath();x.arc(cx+e[0]*s,cy+e[1]*s,3.5*s,0,7);x.fill()});x.beginPath();x.arc(cx,cy-14*s,4*s,0,7);x.fill()}
+function medal(cx,cy,r){x.fillStyle='#7a2f2f';x.beginPath();x.moveTo(cx-30,cy);x.lineTo(cx-48,cy+90);x.lineTo(cx-20,cy+75);x.lineTo(cx-8,cy+100);x.lineTo(cx+5,cy);x.fill();x.beginPath();x.moveTo(cx+30,cy);x.lineTo(cx+48,cy+90);x.lineTo(cx+20,cy+75);x.lineTo(cx+8,cy+100);x.lineTo(cx-5,cy);x.fill();
+for(let i=0;i<500;i++){const a=r()*6.283,d=Math.sqrt(r())*58;x.fillStyle=d>46?'#b8862e':(r()<.5?'#e9bf55':'#f5d77a');x.beginPath();x.arc(cx+Math.cos(a)*d,cy+Math.sin(a)*d,2.4,0,7);x.fill()}
+x.fillStyle='#6b4a12';x.font='bold 40px Georgia,serif';x.textAlign='center';x.fillText('🐾',cx,cy+14)}
+function wrap(t,max){const w=t.split(' ');const out=[];let l='';w.forEach(k=>{if(x.measureText(l+' '+k).width>max&&l){out.push(l);l=k}else l=l?l+' '+k:k});out.push(l);return out}
+function draw(){const name=(document.getElementById('name').value.trim()||'Good Dog');const by=document.getElementById('by').value.trim();
+const items=[...acc.querySelectorAll('input:checked')].map(i=>LIST[+i.value]);const own=document.getElementById('own').value.trim();if(own)items.push(own);
+let seed=7;for(const ch of name)seed=(seed*31+ch.charCodeAt(0))%2147483647;const r=rnd(seed||7);
+x.fillStyle='#f6ecd8';x.fillRect(0,0,1200,850);
+for(let i=0;i<1400;i++){x.fillStyle='rgba(180,140,90,.10)';x.beginPath();x.arc(r()*1200,r()*850,1+r()*2,0,7);x.fill()}
+dotRect(r,['#c8693a','#b4562e','#e0a060'],30);dotRect(r,['#d9c29a'],52);
+x.textAlign='center';x.fillStyle='#8a4a22';x.font='bold 30px Georgia,serif';x.fillText('· OFFICIAL ·',600,120);
+x.fillStyle='#3a2414';x.font='bold 64px Georgia,serif';x.fillText('Good Dog Certificate',600,190);
+x.font='italic 28px Georgia,serif';x.fillStyle='#6b4a30';x.fillText('this certifies that',600,245);
+x.font='bold 84px Georgia,serif';x.fillStyle='#b4562e';let fs=84;while(x.measureText(name).width>760&&fs>40){fs-=4;x.font=`bold ${fs}px Georgia,serif`}x.fillText(name,600,335);
+x.font='italic 28px Georgia,serif';x.fillStyle='#6b4a30';x.fillText('did the following, and is a very good dog:',600,385);
+x.font='30px Georgia,serif';x.fillStyle='#3a2414';x.textAlign='left';let y=440;
+(items.length?items:['Was a good dog (always)']).slice(0,5).forEach(t=>{wrap(t,640).forEach((ln,j)=>{if(j===0){x.fillStyle='#c8693a';x.beginPath();x.arc(290,y-10,7,0,7);x.fill();x.fillStyle='#3a2414'}x.fillText(ln,310,y);y+=40})});
+const d=new Date();x.textAlign='center';x.font='22px Georgia,serif';x.fillStyle='#6b4a30';
+x.fillText(d.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}),300,770);x.fillRect(190,740,220,2);
+x.fillText(by?('awarded by '+by):'awarded by Charlie 🐾',900,770);x.fillRect(790,740,220,2);
+medal(1030,190,r);dog(165,215,1.35,r);
+x.font='16px system-ui,sans-serif';x.fillStyle='#a08a6a';x.fillText('imcharliethedog.com/pages/certificate',600,812)}
+['name','by','own'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+document.getElementById('make').onclick=draw;
+function blob(){return new Promise(r=>c.toBlob(r,'image/png'))}
+function fname(){return 'good-dog-'+(document.getElementById('name').value.trim()||'dog').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.png'}
+document.getElementById('dl').onclick=async()=>{draw();const b=await blob();const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fname();document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)};
+document.getElementById('share').onclick=async()=>{draw();const b=await blob();const f=new File([b],fname(),{type:'image/png'});
+if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Good Dog Certificate',text:'Officially a good dog 🏅 imcharliethedog.com/pages/certificate/'})}catch(e){}}else{document.getElementById('dl').click()}};
+draw();
+</script></body></html>
