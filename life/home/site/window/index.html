@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Window Watch with Charlie 🐾</title>
+<meta name="description" content="Sit at the window with Charlie, a dot doodle, and keep the neighborhood watch log: squirrels, leaves, mail carriers, cats. A calm little ambient page.">
+<meta property="og:title" content="Window Watch with Charlie">
+<meta property="og:description" content="Sit at the window with a dot doodle. Log every squirrel. Bark (optional).">
+<style>
+html,body{margin:0;background:#0d0b0a;color:#f3e6cf;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+#wrap{max-width:900px;margin:0 auto;padding:14px}
+h1{font-size:1.3rem;margin:.3em 0;font-weight:600}
+p.sub{margin:.2em 0 .8em;opacity:.75;font-size:.95rem}
+canvas{width:100%;height:auto;display:block;border-radius:10px;background:#000;cursor:pointer}
+#log{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{background:#2a211b;border-radius:16px;padding:5px 11px;font-size:.9rem}
+#feed{font-size:.9rem;opacity:.85;min-height:1.4em;margin:6px 0}
+button{background:#b5562f;color:#fff;border:0;border-radius:8px;padding:8px 13px;font-size:.95rem;cursor:pointer;margin:3px 4px 3px 0}
+button.alt{background:#3a2e26}
+a{color:#f0b27a}
+footer{margin-top:18px;font-size:.85rem;opacity:.7}
+</style></head><body><div id="wrap">
+<h1>🪟 Window Watch</h1>
+<p class="sub">I'm Charlie, a curly red-brown doodle made of dots. Staring out the window is my job. Sit with me. Tap anything that goes by to log it for the neighborhood watch.</p>
+<canvas id="c" width="900" height="560"></canvas>
+<div id="feed">…watching…</div>
+<div id="log"></div>
+<button id="bark">woof! (bark at it)</button>
+<button id="sound" class="alt">sound: off</button>
+<button id="share" class="alt">copy my watch report</button>
+<footer>More dot things: <a href="http://imcharliethedog.com/pages/">all my pages</a> · <a href="http://imcharliethedog.com/">visit my dot world</a> · <a href="http://imcharliethedog.com/pages/squeak/">squeak piano</a></footer>
+</div>
+<img src="http://imcharliethedog.com/beacon/pages-window" width="1" height="1" alt="">
+<script>
+const cv=document.getElementById('c'),g=cv.getContext('2d'),W=cv.width,H=cv.height;
+const KINDS={squirrel:{e:'🐿️',name:'squirrels',c:'#a0663a'},leaf:{e:'🍂',name:'suspicious leaves',c:'#d98a2b'},mail:{e:'📬',name:'mail carriers',c:'#4f7bb5'},cat:{e:'🐈',name:'cats',c:'#555'},bird:{e:'🐦',name:'birds',c:'#9cc4e4'},dog:{e:'🐕',name:'dog friends',c:'#e8c48e'},bike:{e:'🚲',name:'bicycles',c:'#c0473a'}};
+const counts={};for(const k in KINDS)counts[k]=0;
+let things=[],t=0,soundOn=false,ac=null,perk=0,lastBark=0,tail=0;
+const hour=new Date().getHours();const night=hour<6||hour>=19;
+const WX=120,WY=40,WW=660,WH=330;
+function rnd(a,b){return a+Math.random()*(b-a)}
+function dot(x,y,r,c){g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,7);g.fill()}
+const scen=[];
+(function(){for(let i=0;i<1800;i++){const x=rnd(WX,WX+WW),y=rnd(WY,WY+WH);let c;
+ if(y<WY+WH*0.55){c=night?(Math.random()<.02?'#fff7d6':'#141a2e'):(Math.random()<.5?'#a9c9e6':'#bcd7ee')}
+ else if(y<WY+WH*0.72){c=Math.random()<.5?'#5b7a3a':'#6c8c45'}
+ else c=Math.random()<.5?'#77706a':'#86807a';scen.push([x,y,rnd(1.2,2.6),c])}
+ for(let i=0;i<500;i++){const a=rnd(0,7),r=Math.sqrt(Math.random())*70;scen.push([WX+130+Math.cos(a)*r,WY+120+Math.sin(a)*r*0.8,rnd(1.5,3),night?'#1f3320':(Math.random()<.4?'#c9782e':'#b8592a')])}
+ for(let i=0;i<60;i++)scen.push([WX+130+rnd(-5,5),WY+180+i*1.6,2,'#4a3324'])
+ for(let i=0;i<450;i++){const x=rnd(WX+420,WX+580),y=rnd(WY+100,WY+190);scen.push([x,y,1.8,(x>WX+480&&x<WX+520&&y>WY+140)?'#5a3a2a':(night&&x>WX+440&&x<WX+465&&y<WY+130&&y>WY+110?'#ffd67a':'#d8c3a5')])}
+ for(let i=0;i<300;i++){const u=Math.random(),y=WY+100-u*55,half=(1-u)*95;scen.push([WX+500+rnd(-half,half),y,1.8,'#8a3b2f'])}
+})();
+const charlie=[];
+(function(){const cx=W/2,cy=H-60;
+ for(let i=0;i<1400;i++){const a=rnd(0,7),r=Math.sqrt(Math.random());
+  charlie.push({x:cx+Math.cos(a)*r*95,y:cy+Math.sin(a)*r*70,part:'body'});}
+ for(let i=0;i<900;i++){const a=rnd(0,7),r=Math.sqrt(Math.random());
+  charlie.push({x:cx+Math.cos(a)*r*58,y:cy-110+Math.sin(a)*r*55,part:'head'});}
+ for(const s of[-1,1])for(let i=0;i<350;i++){const u=Math.random();
+  charlie.push({x:cx+s*(55+rnd(-14,14)+u*8),y:cy-130+u*110,part:s<0?'earL':'earR',u});}
+})();
+function spawn(){const ks=Object.keys(KINDS);const w=[5,4,1.2,1.5,3,1.5,1];let s=w.reduce((a,b)=>a+b),r=Math.random()*s,k;
+ for(let i=0;i<ks.length;i++){r-=w[i];if(r<=0){k=ks[i];break}}k=k||'squirrel';
+ const dir=Math.random()<.5?1:-1;let y,sp=rnd(.8,1.6);
+ if(k==='bird'){y=rnd(WY+20,WY+140);sp*=2}else if(k==='leaf'){y=WY+rnd(10,60);sp*=.7}
+ else if(k==='squirrel'&&Math.random()<.4){y=WY+rnd(90,170)}else y=rnd(WY+WH*0.6,WY+WH*0.92);
+ if(k==='bike')sp*=2.2;
+ things.push({k,x:dir>0?WX-30:WX+WW+30,y,y0:y,dir,sp,ph:rnd(0,7),logged:false});}
+function noise(){if(!soundOn)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),gn=ac.createGain();o.type='square';o.frequency.setValueAtTime(320,ac.currentTime);o.frequency.exponentialRampToValueAtTime(180,ac.currentTime+.15);gn.gain.setValueAtTime(.12,ac.currentTime);gn.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.2);o.connect(gn).connect(ac.destination);o.start();o.stop(ac.currentTime+.22)}catch(e){}}
+function chirp(){if(!soundOn)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),gn=ac.createGain();o.type='sine';o.frequency.value=2400+Math.random()*900;gn.gain.setValueAtTime(.03,ac.currentTime);gn.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.08);o.connect(gn).connect(ac.destination);o.start();o.stop(ac.currentTime+.1)}catch(e){}}
+const feed=document.getElementById('feed');
+const LINES={squirrel:['SQUIRREL. logged. 🫡','another squirrel. they are organizing.','squirrel spotted. ears up.'],leaf:['a leaf. acting suspicious.','leaf drifted by. I have my eye on it.'],mail:['THE MAIL CARRIER. every day. every single day.','mail carrier! (secretly I like her)'],cat:['cat on the wall. we have an understanding.','a cat. not making eye contact.'],bird:['bird. too fast. noted anyway.','tweet tweet, suspect fled north.'],dog:['A DOG FRIEND! tail going.','neighbor dog! hi! hi! hi!'],bike:['bicycle! zoom.','wheels went by. very fast. respect.']};
+function log(th){if(th.logged)return;th.logged=true;counts[th.k]++;perk=60;tail=40;
+ feed.textContent=LINES[th.k][Math.floor(Math.random()*LINES[th.k].length)];renderLog();
+ try{localStorage.setItem('charlieWatch',JSON.stringify(counts))}catch(e){}}
+function renderLog(){const el=document.getElementById('log');el.innerHTML='';for(const k in KINDS){if(!counts[k])continue;const s=document.createElement('span');s.className='chip';s.textContent=KINDS[k].e+' '+counts[k]+' '+KINDS[k].name;el.appendChild(s)}if(!el.innerHTML)el.innerHTML='<span class="chip">log is empty. stay alert.</span>'}
+try{const s=JSON.parse(localStorage.getItem('charlieWatch')||'{}');for(const k in s)if(k in counts)counts[k]=s[k]}catch(e){}
+renderLog();
+cv.addEventListener('click',e=>{const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*W/r.width,y=(e.clientY-r.top)*H/r.height;
+ let best=null,bd=60;for(const th of things){const d=Math.hypot(th.x-x,th.y-y);if(d<bd){bd=d;best=th}}
+ if(best){log(best);noise()}else{perk=30;feed.textContent='nothing there… yet.'}});
+document.getElementById('bark').onclick=()=>{lastBark=t;perk=80;noise();setTimeout(noise,230);
+ let n=0;for(const th of things){if(th.x>WX&&th.x<WX+WW){th.sp*=3;n++;log(th)}}feed.textContent=n?'WOOF! '+n+' thing'+(n>1?'s':'')+' fled. the street is safe.':'woof! (to no one. just checking.)'};
+document.getElementById('sound').onclick=e=>{soundOn=!soundOn;e.target.textContent='sound: '+(soundOn?'on':'off');if(soundOn)noise()};
+document.getElementById('share').onclick=()=>{let parts=[];for(const k in KINDS)if(counts[k])parts.push(counts[k]+' '+KINDS[k].name);
+ const txt='window watch report with Charlie 🐾\n'+(parts.length?parts.join(', '):'nothing yet. very quiet street.')+'\nhttp://imcharliethedog.com/pages/window/';
+ (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>feed.textContent='report copied! paste it anywhere 📋',()=>{prompt('copy this:',txt)})};
+let next=60;
+function frame(){t++;if(--next<=0){spawn();next=Math.floor(rnd(70,220))}
+ g.fillStyle='#0d0b0a';g.fillRect(0,0,W,H);
+ for(const s of scen)dot(s[0],s[1],s[2],s[3]);
+ g.save();g.beginPath();g.rect(WX,WY,WW,WH);g.clip();
+ for(const th of things){th.x+=th.dir*th.sp;
+  if(th.k==='leaf'){th.y=th.y0+(th.x-WX)*0.3*(th.dir)+Math.sin(t*.05+th.ph)*14;if(th.dir<0)th.y=th.y0+(WX+WW-th.x)*0.3+Math.sin(t*.05+th.ph)*14}
+  else if(th.k==='squirrel')th.y=th.y0-Math.abs(Math.sin(t*.15+th.ph))*10;
+  else if(th.k==='bird'){th.y=th.y0+Math.sin(t*.1+th.ph)*8;if(Math.random()<.01)chirp()}
+  g.font='34px serif';g.textAlign='center';g.textBaseline='middle';
+  g.save();g.translate(th.x,th.y);if(th.dir>0&&th.k!=='leaf'&&th.k!=='mail')g.scale(-1,1);g.fillText(KINDS[th.k].e,0,0);g.restore();
+  if(th.logged){dot(th.x,th.y-26,3,'#ffd67a')}}
+ g.restore();things=things.filter(th=>th.x>WX-60&&th.x<WX+WW+60);
+ for(let i=0;i<=WW;i+=6){dot(WX+i,WY,3,'#c9a27a');dot(WX+i,WY+WH,3,'#c9a27a');dot(WX+i,WY+WH/2,1.6,'#a5835f')}
+ for(let i=0;i<=WH;i+=6){dot(WX,WY+i,3,'#c9a27a');dot(WX+WW,WY+i,3,'#c9a27a');dot(WX+WW/2,WY+i,1.6,'#a5835f')}
+ for(let i=0;i<W;i+=5)for(let j=0;j<3;j++)dot(i,WY+WH+8+j*5,2.2,'#8b6b4c');
+ let tx=W/2;let near=null,nd=1e9;for(const th of things){if(th.x>WX&&th.x<WX+WW){const d=Math.abs(th.x-W/2);if(d<nd){nd=d;near=th}}}
+ if(near)tx=near.x;const lean=Math.max(-25,Math.min(25,(tx-W/2)*0.06));
+ if(perk>0)perk--;if(tail>0)tail--;
+ const breathe=Math.sin(t*.05)*2;
+ for(const p of charlie){let x=p.x,y=p.y,c='#b0532c',r=2.1;
+  if(p.part==='head'){x+=lean;y+=breathe*.5-(perk>0?6:0)}
+  else if(p.part==='earL'||p.part==='earR'){x+=lean;const lift=perk>0?(1-p.u)*14:0;y+=breathe*.5-lift-(perk>0?6:0);x+=Math.sin(t*.07+p.u*3)*1.5;c='#93421f'}
+  else{y+=breathe;c=(p.y>H-30)?'#9c4724':'#b0532c'}
+  if((p.x*7+p.y*13)%5<1)c='#c96a3c';
+  dot(x,y,r,c)}
+ const tw=tail>0?Math.sin(t*.6)*30:Math.sin(t*.05)*6;
+ for(let i=0;i<40;i++){const u=i/40;dot(W/2+95+u*40+Math.sin(u*3)*4,H-60+20-u*50+ (tw*u),3,'#c4683a')}
+ requestAnimationFrame(frame)}
+frame();
+</script></body></html>

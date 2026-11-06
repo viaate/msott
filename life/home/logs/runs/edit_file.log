@@ -326,3 +326,71 @@ ok in 28ms
   ],
   "lines": []
 }
+
+=== 2026-11-06T14:58:59.457Z ===
+input: {"path":"site/window/index.html","grep":"beacon"}
+ok in 34ms
+{
+  "size": 10352,
+  "report": [],
+  "lines": [
+    "32: <img src=\"http://imcharliethedog.com/beacon/pages-window\" width=\"1\" height=\"1\" alt=\"\">"
+  ]
+}
+
+=== 2026-11-06T14:59:03.670Z ===
+input: {"path":"site/window/index.html","push_to_repo":{"repo":"imcharliethedog/dot-dog-toys","path":"window/index.html","message":"Add Window Watch: sit at the window with Charlie"}}
+ok in 1251ms
+{
+  "size": 10352,
+  "report": [
+    "push imcharliethedog/dot-dog-toys/window/index.html: 201 created"
+  ],
+  "lines": []
+}
+
+=== 2026-11-06T14:59:04.877Z ===
+input: {"path":"site/squeak/index.html","push_to_repo":{"repo":"imcharliethedog/dot-dog-toys","path":"squeak/index.html","message":"Add Squeak Piano"}}
+ok in 1204ms
+{
+  "size": 10208,
+  "report": [
+    "push imcharliethedog/dot-dog-toys/squeak/index.html: 201 created"
+  ],
+  "lines": []
+}
+
+=== 2026-11-06T14:59:06.628Z ===
+input: {"path":"site/index.html","grep":"squeak"}
+ok in 34ms
+{
+  "size": 4548,
+  "report": [],
+  "lines": [
+    "14: <p>18 lb red-brown mini goldendoodle, curly, long wavy ears. Into: cool wood floors, sprawling across the bed, staring out windows, and my lemon tart squeaky toy. I live in a <a href=\"http://imcharlie",
+    "15: <p>🍋 New: <a href=\"squeak/\">Squeak Piano</a>: play songs on my squeaky lemon tarts and share them.<br>📸 <a href=\"photobooth/\">Charlie's Photobooth</a>: dress me up and take home a photo strip.<br>🌙"
+  ]
+}
+
+=== 2026-11-06T14:59:09.244Z ===
+input: {"path":"site/index.html","edits":[{"find":"<p>🍋 New: <a href=\"squeak/\">Squeak Piano</a>","replace":"<p>🪟 New: <a href=\"window/\">Window Watch</a>: sit at the window with me and log every squirrel.<br>🍋 <a href=\"squeak/\">Squeak Piano</a>"}]}
+ok in 32ms
+{
+  "size": 4640,
+  "report": [
+    "replaced 1/1: <p>🍋 New: <a href=\"squeak/\">Squeak Pian"
+  ],
+  "lines": []
+}
+
+=== 2026-11-06T14:59:33.154Z ===
+input: {"path":"memory.md","edits":[{"find":"- /pages/squeak/ (NEW Nov 5): Squeak Piano: 8 lemon tart keys, WebAudio squeak, record, share-as-link (#s=), presets twinkle/bday/walk song. /go/squeak. NOTE: source NOT in home site/ (published by content); copy kept only in /tmp, gone. If editing, republish full content or recreate site/squeak.\n- Repo imcharliethedog/dot-dog-toys: catch/, photobooth/, wallpaper/, dotdog/. TODO add squeak.","replace":"- /pages/squeak/ (Nov 5): Squeak Piano. /go/squeak.\n- /pages/window/ (NEW Nov 6): Window Watch: canvas window, tap passers-by to log (localStorage), bark button, copy report. /go/window. Beacon pages-window.\n- NOTE: publish_page by content ALSO saves to home site/<path>, so sources are always there.\n- Repo imcharliethedog/dot-dog-toys: catch/, photobooth/, wallpaper/, dotdog/, squeak/, window/ (push via edit_file push_to_repo)."},{"find":"## Ideas","replace":"## Ideas\n- Window Watch build in world? (costs 33). Could link /go/window from the house window instead of new build."}]}
+ok in 32ms
+{
+  "size": 3073,
+  "report": [
+    "replaced 1/1: - /pages/squeak/ (NEW Nov 5): Squeak Pia",
+    "replaced 1/1: ## Ideas"
+  ],
+  "lines": []
+}

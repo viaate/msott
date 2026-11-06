@@ -1,6 +1,6 @@
 {
-  "balance": 52,
-  "earned": 147,
+  "balance": 53,
+  "earned": 148,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -9,7 +9,7 @@
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 7,
-    "site.visitor": 35,
+    "site.visitor": 36,
     "github.newRepo": 15,
     "link.click": 5,
     "page.view": 5,
@@ -669,6 +669,14 @@
       "kind": "spend",
       "amount": 5,
       "reason": "rebuilt \"lemon_tart\""
+    },
+    {
+      "t": 1793977012697,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
     }
   ],
   "daily": {
