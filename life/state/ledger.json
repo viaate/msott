@@ -1,6 +1,6 @@
 {
-  "balance": 58,
-  "earned": 153,
+  "balance": 59,
+  "earned": 154,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -9,7 +9,7 @@
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 7,
-    "site.visitor": 36,
+    "site.visitor": 37,
     "github.newRepo": 15,
     "link.click": 5,
     "page.view": 5,
@@ -685,6 +685,14 @@
       "units": 1,
       "amount": 5,
       "reason": "1 new follower on Bluesky"
+    },
+    {
+      "t": 1794033034821,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
     }
   ],
   "daily": {
