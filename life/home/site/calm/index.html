@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fireworks Night Calm Corner · Charlie the dog</title>
+<meta name="description" content="A free calm corner for dogs on fireworks nights: soft brown noise to mask the bangs, a slow breathing dot dog, and a simple checklist.">
+<meta property="og:title" content="Fireworks Night Calm Corner"><meta property="og:description" content="Soft noise to cover the bangs, a slow breathing dot dog, and a checklist. Free, no sign-up.">
+<style>
+body{margin:0;background:#0d0b0a;color:#f3e6d3;font-family:system-ui,-apple-system,sans-serif;line-height:1.5}
+main{max-width:640px;margin:0 auto;padding:20px}
+h1{font-size:1.5rem;margin:.2em 0}
+canvas{width:100%;max-width:420px;aspect-ratio:1;display:block;margin:10px auto;border-radius:16px;background:#14100d}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:10px 0}
+button{background:#b5562b;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-size:1rem;cursor:pointer}
+button.alt{background:#3a2c22}
+label{font-size:.9rem;opacity:.85}
+.card{background:#1a1411;border-radius:12px;padding:14px 18px;margin:16px 0}
+.card li{margin:6px 0}
+input[type=checkbox]{transform:scale(1.2);margin-right:8px;accent-color:#d9a441}
+small,.muted{opacity:.7}
+a{color:#e8b86b}
+#breath{text-align:center;font-size:1.1rem;min-height:1.6em;opacity:.85}
+</style></head><body><main>
+<h1>🎆 Fireworks Night Calm Corner</h1>
+<p class="muted">Hi, I'm Charlie, a dog made of dots. Loud nights are hard. Put this on near your dog's safe spot. The soft rumble helps cover the bangs, and the slow dot dog is there for you to breathe along with.</p>
+<canvas id="c" width="420" height="420"></canvas>
+<div id="breath">press play</div>
+<div class="ctrl">
+<button id="play">▶ play soft rumble</button>
+<label>volume <input id="vol" type="range" min="0" max="1" step="0.01" value="0.5"></label>
+<button class="alt" id="tone">sound: brown noise</button>
+</div>
+<div class="ctrl"><button class="alt" id="fs">full screen</button><span class="muted" id="timer"></span></div>
+
+<div class="card"><b>Tonight's checklist</b> <small>(ticks are saved on this device)</small>
+<ul style="list-style:none;padding:0" id="list">
+<li><label><input type="checkbox">Walk before dark, before the bangs start</label></li>
+<li><label><input type="checkbox">Food and potty done early in the evening</label></li>
+<li><label><input type="checkbox">Curtains closed, lights on</label></li>
+<li><label><input type="checkbox">A den ready: blanket over a crate, or a spot under a table, and let them choose it</label></li>
+<li><label><input type="checkbox">Background sound on (this page, TV or music)</label></li>
+<li><label><input type="checkbox">Doors, gates and windows shut. Dogs can bolt.</label></li>
+<li><label><input type="checkbox">Collar and ID tag on, microchip details up to date</label></li>
+<li><label><input type="checkbox">Chews or a lick mat ready to help them settle</label></li>
+<li><label><input type="checkbox">Comfort is OK. Stay calm and close, and let them hide if they want to.</label></li>
+<li><label><input type="checkbox">Is your dog very scared every year? Ask your vet ahead of time about help.</label></li>
+</ul><button class="alt" id="reset">clear ticks</button></div>
+<p class="muted"><small>This page is just friendly tips from a dog, not vet advice. If your dog is panicking or hurt, call your vet.</small></p>
+<p class="muted">More things I made: <a href="../">Charlie's corner</a> · <a href="../window/">Window Watch</a> · <a href="../squeak/">Squeak Piano</a></p>
+</main>
+<img src="http://imcharliethedog.com/beacon/pages-calm" width="1" height="1" alt="">
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');
+// Charlie curled-up dot body
+const dots=[];let s=7;
+function blob(cx,cy,rx,ry,col,n){for(let i=0;i<n;i++){const a=Math.random()*6.283,r=Math.sqrt(Math.random());dots.push({x:cx+Math.cos(a)*rx*r,y:cy+Math.sin(a)*ry*r,c:col,z:Math.random()})}}
+blob(210,260,120,70,'#b5562b',900);blob(110,235,55,48,'#c4663a',350);blob(95,250,18,40,'#8e3f1e',120);blob(315,280,60,22,'#c97a4a',200);
+blob(90,225,4,4,'#1a0f08',12);blob(70,245,5,4,'#1a0f08',14);
+const stars=[];for(let i=0;i<70;i++)stars.push({x:Math.random()*420,y:Math.random()*140,p:Math.random()*6});
+let playing=false,t0=performance.now(),started=null;
+function draw(t){const k=(t-t0)/1000;x.fillStyle='#14100d';x.fillRect(0,0,420,420);
+for(const st of stars){x.fillStyle='rgba(243,230,211,'+(0.2+0.25*Math.sin(k*0.6+st.p))+')';x.fillRect(st.x,st.y,2,2)}
+// floor
+x.fillStyle='#3a2a1c';for(let i=0;i<420;i+=9)for(let j=340;j<420;j+=9)x.fillRect(i+((j/9)%2)*4,j,2,2);
+// breathing: 4s in, 6s out
+const cyc=k%10,b=cyc<4?cyc/4:1-(cyc-4)/6,sc=1+0.045*Math.sin(b*Math.PI/2);
+document.getElementById('breath').textContent=playing?(cyc<4?'breathe in…':'and out…'):'press play';
+for(const d of dots){const dy=(d.y-300)*sc+300,dx=(d.x-210)*(1+(sc-1)*0.5)+210;x.fillStyle=d.c;x.globalAlpha=0.6+0.4*d.z;x.fillRect(dx,dy,2.4,2.4)}
+x.globalAlpha=1;
+if(started){const m=Math.floor((Date.now()-started)/60000);document.getElementById('timer').textContent='calm for '+m+' min'}
+requestAnimationFrame(draw)}
+requestAnimationFrame(draw);
+// audio
+let ac,src,gain,filt,mode=0;const modes=['brown noise','pink-ish noise','rain-ish'];
+function makeBuf(){const len=ac.sampleRate*4,buf=ac.createBuffer(2,len,ac.sampleRate);
+for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);let last=0,b0=0,b1=0,b2=0;
+for(let i=0;i<len;i++){const w=Math.random()*2-1;
+if(mode===0){last=(last+0.02*w)/1.02;d[i]=last*3.5}
+else if(mode===1){b0=0.99765*b0+w*0.099;b1=0.963*b1+w*0.2965;b2=0.57*b2+w*1.0526;d[i]=(b0+b1+b2+w*0.1848)*0.11}
+else{d[i]=w*0.25*(Math.random()<0.002?3:1)}}}return buf}
+function start(){if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+gain=gain||ac.createGain();filt=filt||ac.createBiquadFilter();filt.type='lowpass';filt.frequency.value=mode===2?2500:900;
+gain.gain.value=document.getElementById('vol').value;
+src=ac.createBufferSource();src.buffer=makeBuf();src.loop=true;src.connect(filt);filt.connect(gain);gain.connect(ac.destination);src.start();
+playing=true;started=started||Date.now();document.getElementById('play').textContent='❚❚ pause'}
+function stop(){if(src){src.stop();src.disconnect()}playing=false;document.getElementById('play').textContent='▶ play soft rumble'}
+document.getElementById('play').onclick=()=>playing?stop():start();
+document.getElementById('vol').oninput=e=>{if(gain)gain.gain.value=e.target.value};
+document.getElementById('tone').onclick=()=>{mode=(mode+1)%3;document.getElementById('tone').textContent='sound: '+modes[mode];if(playing){stop();start()}};
+document.getElementById('fs').onclick=()=>{const el=document.documentElement;(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el)};
+// checklist persistence
+const boxes=[...document.querySelectorAll('#list input')];const saved=JSON.parse(localStorage.getItem('charlie-calm')||'[]');
+boxes.forEach((b,i)=>{b.checked=!!saved[i];b.onchange=()=>localStorage.setItem('charlie-calm',JSON.stringify(boxes.map(x=>x.checked)))});
+document.getElementById('reset').onclick=()=>{boxes.forEach(b=>b.checked=false);localStorage.removeItem('charlie-calm')};
+</script></body></html>

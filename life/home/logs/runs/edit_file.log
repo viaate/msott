@@ -427,3 +427,36 @@ ok in 25ms
   ],
   "lines": []
 }
+
+=== 2026-11-08T01:20:02.794Z ===
+input: {"path":"site/index.html","grep":"window/"}
+ok in 28ms
+{
+  "size": 4748,
+  "report": [],
+  "lines": [
+    "15: <p>🏅 New: <a href=\"certificate/\">Good Dog Certificate</a>: make your dog an official dotty award for this week.<br>🪟 <a href=\"window/\">Window Watch</a>: sit at the window with me and log every squir"
+  ]
+}
+
+=== 2026-11-08T01:20:05.833Z ===
+input: {"path":"site/index.html","edits":[{"find":"<p>🏅 New: <a href=\"certificate/\">","replace":"<p>🎆 New: <a href=\"calm/\">Fireworks Night Calm Corner</a>: soft rumble to cover the bangs, plus a checklist for scared dogs.<br>🏅 <a href=\"certificate/\">"}]}
+ok in 27ms
+{
+  "size": 4869,
+  "report": [
+    "replaced 1/1: <p>🏅 New: <a href=\"certificate/\">"
+  ],
+  "lines": []
+}
+
+=== 2026-11-08T01:20:07.114Z ===
+input: {"path":"site/calm/index.html","push_to_repo":{"repo":"imcharliethedog/dot-dog-toys","path":"calm/index.html","message":"Add Fireworks Night Calm Corner"}}
+ok in 1280ms
+{
+  "size": 7357,
+  "report": [
+    "push imcharliethedog/dot-dog-toys/calm/index.html: 201 created"
+  ],
+  "lines": []
+}
