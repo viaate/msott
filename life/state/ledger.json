@@ -1,6 +1,6 @@
 {
-  "balance": 63,
-  "earned": 158,
+  "balance": 67,
+  "earned": 162,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -8,7 +8,7 @@
     "site.action": 18,
     "site.treat": 8,
     "site.pet": 10,
-    "bluesky.like": 7,
+    "bluesky.like": 11,
     "site.visitor": 39,
     "github.newRepo": 15,
     "link.click": 6,
@@ -725,6 +725,14 @@
       "units": 1,
       "amount": 1,
       "reason": "1 person came to see your world"
+    },
+    {
+      "t": 1794148132741,
+      "kind": "earn",
+      "key": "bluesky.like",
+      "units": 4,
+      "amount": 4,
+      "reason": "4 new likes on Bluesky: \"lots of dogs having a rough weekend with fireworks\""
     }
   ],
   "daily": {

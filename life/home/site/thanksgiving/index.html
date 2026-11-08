@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Can I Have Some? A Thanksgiving plate checker for dogs</title>
+<meta name="description" content="Tap a Thanksgiving food to see if it's okay for your dog, then build them their own safe little plate. Made by Charlie, a dotty mini goldendoodle.">
+<meta property="og:title" content="Can I Have Some? Thanksgiving plate checker for dogs">
+<meta property="og:description" content="Tap a food: safe, careful, or no. Then build your dog a safe little plate.">
+<style>
+body{margin:0;background:#15110e;color:#f3e6cf;font-family:system-ui,-apple-system,sans-serif;line-height:1.45}
+main{max-width:760px;margin:0 auto;padding:18px}
+h1{font-size:1.6em;margin:.2em 0;color:#f7c56b}
+.sub{opacity:.85;margin-top:0}
+canvas{display:block;margin:8px auto;max-width:100%}
+#say{text-align:center;min-height:3.2em;font-size:1.05em;background:#241c16;border-radius:12px;padding:10px 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:14px 0}
+.food{background:#2a211a;color:#f3e6cf;border:1px solid #4a3a2c;border-radius:10px;padding:10px 6px;font-size:.98em;cursor:pointer}
+.food:hover{border-color:#f7c56b}
+.food.ok{border-color:#5fae6a}.food.care{border-color:#e0a83a}.food.no{border-color:#d0574a;opacity:.7}
+h2{font-size:1.15em;color:#f7c56b;margin-bottom:.3em}
+#plate{min-height:2em;background:#241c16;border-radius:12px;padding:10px 14px}
+button.act{background:#c96a3b;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:1em;cursor:pointer;margin:6px 6px 0 0}
+.small{font-size:.88em;opacity:.8}
+a{color:#f7c56b}
+.legend span{margin-right:12px}
+</style>
+</head>
+<body>
+<main>
+<h1>🦃 Can I Have Some?</h1>
+<p class="sub">A Thanksgiving plate checker, by Charlie (a dotty mini goldendoodle who has asked this question at every meal of her life). Tap a food to find out. Safe ones go on your dog's plate.</p>
+<canvas id="c" width="360" height="200"></canvas>
+<div id="say">Tap a food and I'll tell you if I'm allowed. (I already know what I *want* the answer to be.)</div>
+<p class="legend small"><span>✅ okay: small, plain bits</span><span>⚠️ careful</span><span>❌ no</span></p>
+<div class="grid" id="grid"></div>
+<h2>🍽️ Your dog's plate</h2>
+<div id="plate"><span class="small">Empty so far. Very sad. Tap some ✅ foods.</span></div>
+<button class="act" id="copy">Copy my dog's plate</button>
+<button class="act" id="clear">Clear plate</button>
+<span id="msg" class="small"></span>
+
+<h2>A few house rules for the big day</h2>
+<ul>
+<li><b>Plain means plain.</b> No butter, salt, gravy, onion, garlic or spices. Little bits only: treats should be a small part of what your dog eats in a day.</li>
+<li><b>Guard the trash.</b> Turkey carcasses, strings and foil in the bin are a classic emergency.</li>
+<li><b>Tell your guests.</b> The kind uncle sneaking stuffing under the table means well.</li>
+<li><b>A quiet room</b> with water, a bed and a chew helps a lot if your dog gets overwhelmed by visitors.</li>
+</ul>
+<p class="small"><b>I'm a dog, not a vet.</b> This is general info. Every dog is different (health conditions, allergies, size), so check with your vet. If your dog ate something worrying, call your vet or an emergency line right away: ASPCA Animal Poison Control (US) <b>(888) 426-4435</b> or Pet Poison Helpline <b>(855) 764-7661</b> (fees may apply).</p>
+<p class="small">More dotty things from me: <a href="../">imcharliethedog.com/pages</a> · <a href="../calm/">calm corner for scared dogs</a> · <a href="../certificate/">good dog certificate</a></p>
+</main>
+<img src="http://imcharliethedog.com/beacon/pages-thanksgiving" width="1" height="1" alt="">
+<script>
+var F=[
+["🦃","Turkey meat (plain)","ok","Yes! Plain, cooked, boneless white meat with no skin is a great little treat. Tail is going."],
+["🎃","Plain pumpkin","ok","Yes. Plain canned or cooked pumpkin (not pie filling) is a tummy-friendly spoonful."],
+["🫛","Green beans (plain)","ok","Yes. Plain green beans are crunchy and dog-approved. Not the casserole though, it has onions."],
+["🍠","Sweet potato (plain)","ok","Yes. Plain cooked sweet potato, no marshmallows, no butter, no brown sugar."],
+["🥕","Carrots (plain)","ok","Yes! Raw or cooked plain carrots. I will crunch it loudly."],
+["🍎","Apple slices","ok","Yes, slices are fine. No core or seeds."],
+["🥔","Potato (plain)","ok","Okay: cooked plain potato. Never raw. Mashed with butter, cream or garlic is another story."],
+["🍗","Turkey skin & fat","care","Careful. Fatty skin and drippings can upset tummies and can trigger pancreatitis. Skip it."],
+["🥣","Gravy","care","Careful. Gravy is fatty and salty and often has onion or garlic in it. Better not."],
+["🧈","Mashed potatoes","care","Careful. Usually full of butter, cream, salt and sometimes garlic. A plain spoonful set aside before mixing is okay."],
+["🔴","Cranberry sauce","care","Careful. A tiny bit of plain cranberry is fine, but sauce is sugary and some mixes have grapes or raisins."],
+["🍞","Bread roll","care","A small bite of a plain baked roll is fine but pointless. Raw yeast dough is a NO: it can rise in a tummy."],
+["🧀","Cheese","care","A small cube is okay for many dogs, but it's fatty and some dogs can't handle dairy."],
+["🦴","Turkey bones","no","No! Cooked bones splinter and can hurt mouths and guts. Bin them where dogs can't reach."],
+["🥖","Stuffing","no","No. Stuffing usually has onion, garlic, herbs and sometimes raisins. Not for dogs."],
+["🧅","Onions, garlic, leeks","no","No. The whole onion family is toxic to dogs, cooked or raw, powder too."],
+["🍇","Grapes & raisins","no","No! Grapes and raisins can cause kidney failure in dogs, even a few. Watch salads and stuffing."],
+["🍫","Chocolate desserts","no","No. Chocolate is toxic to dogs, dark and baking chocolate most of all."],
+["🥧","Pumpkin pie","no","No. Sugar, spices like nutmeg, and sometimes sweeteners. Plain pumpkin yes, pie no."],
+["🌰","Pecan pie & nuts","no","No. Rich, sugary, fatty, and some nuts (macadamias!) are toxic. Keep the nut bowl up high."],
+["🍬","Sugar-free sweets","no","NO. Xylitol (birch sugar) is very dangerous for dogs, even in small amounts. Check gum, candy, some peanut butters."],
+["🌽","Corn on the cob","no","No to the cob: it can cause a blockage. A few plain kernels off the cob are fine."],
+["🍷","Alcohol","no","No. Not even a little. Same goes for raw dough, which makes alcohol as it rises."]
+];
+var plate=[],mood="wait",t=0;
+var g=document.getElementById("grid"),say=document.getElementById("say");
+F.forEach(function(f,i){var b=document.createElement("button");b.className="food";b.textContent=f[0]+" "+f[1];
+b.onclick=function(){pick(i,b)};g.appendChild(b);});
+function pick(i,b){var f=F[i];b.className="food "+f[2];mood=f[2];
+var tag=f[2]=="ok"?"✅ ":f[2]=="care"?"⚠️ ":"❌ ";say.textContent=tag+f[3];
+if(f[2]=="ok"&&plate.indexOf(f[1])<0){plate.push(f[1]);draw();}}
+function draw(){var p=document.getElementById("plate");
+if(!plate.length){p.innerHTML='<span class="small">Empty so far. Very sad. Tap some ✅ foods.</span>';return;}
+p.textContent="✅ "+plate.join(" · ");}
+function text(){return "My dog's Thanksgiving plate: "+(plate.length?plate.join(", "):"(empty, the dog objects)")+" 🦃🐾 No bones, no onions, no grapes. Check yours: imcharliethedog.com/go/thanksgiving";}
+document.getElementById("copy").onclick=function(){var s=text(),m=document.getElementById("msg");
+if(navigator.clipboard){navigator.clipboard.writeText(s).then(function(){m.textContent=" Copied!"},function(){m.textContent=" "+s});}else{m.textContent=" "+s;}};
+document.getElementById("clear").onclick=function(){plate=[];draw();document.querySelectorAll(".food").forEach(function(b){b.className="food"});mood="wait";say.textContent="Plate cleared. I'm still here. Still hopeful.";};
+var c=document.getElementById("c"),x=c.getContext("2d");
+function dot(px,py,r,col){x.fillStyle=col;x.beginPath();x.arc(px,py,r,0,7);x.fill();}
+function blob(cx,cy,rx,ry,col,step){for(var a=-rx;a<=rx;a+=step)for(var b=-ry;b<=ry;b+=step){if(a*a/(rx*rx)+b*b/(ry*ry)<=1)dot(cx+a,cy+b,step*0.38,col);}}
+function frame(){t+=1;x.clearRect(0,0,360,200);
+var red="#b8572f",dk="#8a3e22",cr="#f3e6cf";
+var bob=mood=="ok"?Math.abs(Math.sin(t/5))*-6:0;
+var tilt=mood=="care"?0.25:0;
+// plate
+blob(250,178,60,10,"#e9dcc4",5);
+// body
+blob(140,130+bob,55,30,red,6);
+// legs
+blob(105,165,8,16,dk,5);blob(170,165,8,16,dk,5);
+// tail
+var w=mood=="ok"?Math.sin(t/2)*0.9:mood=="no"?-0.3:Math.sin(t/12)*0.3;
+for(var k=0;k<7;k++){dot(88-k*6*Math.cos(w),118+bob-k*6*Math.sin(w+0.6)-k*2,4,red);}
+// head
+x.save();x.translate(200,95+bob);x.rotate(tilt);
+blob(0,0,32,28,red,6);
+blob(-26,12,9,24,dk,5);blob(24,12,9,24,dk,5);
+dot(-10,-4,3.5,"#1a1210");dot(12,-4,3.5,"#1a1210");
+dot(1,8,5,"#1a1210");
+if(mood=="ok"){dot(-4,18,3,"#e07a8a");dot(2,20,3,"#e07a8a");}
+if(mood=="no"){x.strokeStyle=cr;x.lineWidth=2;x.beginPath();x.moveTo(-8,18);x.lineTo(8,18);x.stroke();}
+x.restore();
+// food bits on plate
+for(var i=0;i<plate.length&&i<7;i++){dot(215+i*11,172,4,["#e0b07a","#e08a3a","#6aa45a","#d07a3a","#f0903a","#e04a4a","#e8d8a8"][i]);}
+requestAnimationFrame(frame);}
+frame();
+</script>
+</body>
+</html>
