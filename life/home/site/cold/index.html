@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Too Cold for a Walk? — a winter walk checker from Charlie the dog</title>
+<meta name="description" content="Enter the temperature and your dog's size and coat. Get a gentle guide on how long a winter walk is comfortable, plus paw and cold-weather tips.">
+<meta property="og:title" content="Too Cold for a Walk? 🐾❄️">
+<meta property="og:description" content="A quick winter walk checker for dogs: temperature + size + coat = how long is comfy.">
+<style>
+body{margin:0;background:#141210;color:#f3e9d8;font:16px/1.5 system-ui,sans-serif}
+main{max-width:620px;margin:auto;padding:20px}
+h1{font-size:1.7em;margin:.2em 0}
+.card{background:#211d19;border-radius:14px;padding:16px;margin:14px 0}
+label{display:block;margin:10px 0 4px;color:#d9c3a0}
+input,select,button{font:inherit;border-radius:8px;border:1px solid #5a4a38;background:#2b2520;color:#f3e9d8;padding:8px}
+input[type=number]{width:110px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips button{cursor:pointer}
+.chips button.on{background:#b5562d;border-color:#b5562d}
+#out{font-size:1.15em}
+.big{font-size:2em;font-weight:700}
+.g{color:#8fd18f}.y{color:#f2cf63}.o{color:#f39a4a}.r{color:#ff6b6b}
+canvas{display:block;margin:auto;max-width:100%}
+ul{padding-left:20px}
+small,.muted{color:#a8977f}
+a{color:#f2b36b}
+</style></head><body><main>
+<h1>❄️ Too Cold for a Walk?</h1>
+<p class="muted">Hi, I'm Charlie, an 18 lb doodle with opinions about cold paws. Tell me about your dog and the weather and I'll give you a rough idea of how long a walk stays comfy.</p>
+
+<div class="card">
+<label>Temperature outside (feels-like is best)</label>
+<div class="row"><input id="t" type="number" value="35"> 
+<div class="chips" id="unit"><button data-v="F" class="on">°F</button> <button data-v="C">°C</button></div></div>
+
+<label>Dog size</label>
+<div class="chips" id="size"><button data-v="0">Tiny (&lt;10 lb)</button> <button data-v="1" class="on">Small (10–25)</button> <button data-v="2">Medium (25–60)</button> <button data-v="3">Large (60+)</button></div>
+
+<label>Coat</label>
+<div class="chips" id="coat"><button data-v="0">Thin / short</button> <button data-v="1" class="on">Medium / curly</button> <button data-v="2">Thick double coat (husky-ish)</button></div>
+
+<label>Anything extra? (tap all that apply)</label>
+<div class="chips" id="extra"><button data-v="sweater">Wearing a sweater/coat</button> <button data-v="wet">Wet / rainy / snowy</button> <button data-v="wind">Windy</button> <button data-v="frail">Puppy, senior, or health issues</button></div>
+</div>
+
+<div class="card" id="outcard">
+<canvas id="c" width="300" height="140"></canvas>
+<div id="out"></div>
+</div>
+
+<div class="card">
+<b>Winter walk tips from a dog</b>
+<ul>
+<li>Wipe paws after walks: road salt and de-icer sting and aren't for licking. Booties or paw balm help.</li>
+<li>Antifreeze tastes sweet and is very poisonous. Keep us away from puddles in driveways.</li>
+<li>Shorter, more frequent walks beat one long freezing one. Indoor games count too (find-the-treat!).</li>
+<li>Shivering, lifting paws, slowing down, whining, or trying to turn home = time to go in.</li>
+<li>Snowballs in curly fur are real. A quick trim between paw pads helps.</li>
+</ul>
+<small>This is a rough, friendly guide, not veterinary advice. Every dog is different. If your dog seems very cold, lethargic, or confused, warm them up and call your vet.</small>
+</div>
+
+<p class="muted">More from me: <a href="../calm/">Fireworks Calm Corner</a> · <a href="../thanksgiving/">Can I Have Some? (Thanksgiving)</a> · <a href="../window/">Window Watch</a> · <a href="../">all my stuff</a> · <a href="http://imcharliethedog.com/">visit my dot world</a></p>
+</main>
+<img src="http://imcharliethedog.com/beacon/pages-cold" width="1" height="1" alt="">
+<script>
+const st={unit:'F',size:1,coat:1,extra:new Set()};
+function chips(id,multi,cb){const el=document.getElementById(id);el.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(multi){b.classList.toggle('on');}else{el.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}cb(b.dataset.v,b.classList.contains('on'));calc();});}
+chips('unit',0,v=>{const t=document.getElementById('t');const n=+t.value;if(v!==st.unit){t.value=v==='C'?Math.round((n-32)*5/9):Math.round(n*9/5+32);}st.unit=v;});
+chips('size',0,v=>st.size=+v);
+chips('coat',0,v=>st.coat=+v);
+chips('extra',1,(v,on)=>on?st.extra.add(v):st.extra.delete(v));
+document.getElementById('t').oninput=calc;
+const levels=[
+ {c:'g',name:'Comfy',mins:'as long as you both like',msg:"Great walking weather. Go sniff everything."},
+ {c:'y',name:'Brisk',mins:'about 30–45 minutes',msg:"Fine for most dogs. Small or thin-coated pups may like a sweater."},
+ {c:'o',name:'Chilly: keep it short',mins:'about 15–20 minutes',msg:"Watch for shivering or paw-lifting. Sweater recommended for small or short-coated dogs."},
+ {c:'r',name:'Too cold: potty breaks only',mins:'about 5 minutes',msg:"Quick out-and-back, then indoor games. Risk of frostbite and hypothermia goes up fast."}
+];
+function calc(){
+ let t=+document.getElementById('t').value; if(st.unit==='C') t=t*9/5+32;
+ // effective temp adjustments (in °F)
+ let adj=t;
+ adj+= [ -8,-4,0,3 ][st.size];
+ adj+= [ -6,0,10 ][st.coat];
+ if(st.extra.has('sweater')) adj+=6;
+ if(st.extra.has('wet')) adj-=8;
+ if(st.extra.has('wind')) adj-=6;
+ if(st.extra.has('frail')) adj-=8;
+ let lv = adj>=45?0: adj>=32?1: adj>=20?2:3;
+ if(t>=50) lv=0;
+ const L=levels[lv];
+ document.getElementById('out').innerHTML=`<div class="big ${L.c}">${L.name}</div><div>Walk length: <b>${L.mins}</b></div><div class="muted">${L.msg}</div>`;
+ draw(lv);
+}
+const cv=document.getElementById('c'),cx=cv.getContext('2d');let frame=0,curLv=1;
+function draw(lv){curLv=lv;}
+function dot(x,y,r,col){cx.fillStyle=col;cx.beginPath();cx.arc(x,y,r,0,7);cx.fill();}
+function loop(){
+ frame++;cx.fillStyle='#211d19';cx.fillRect(0,0,300,140);
+ // snow
+ const n=[2,10,25,50][curLv];
+ for(let i=0;i<n;i++){const x=(i*73+frame*(0.3+i%3*0.2))%300,y=(i*41+frame*(0.6+i%4*0.25))%140;dot(x,y,1.6,'#e8eef5');}
+ // ground
+ for(let x=0;x<300;x+=5)dot(x,128,2,curLv>1?'#dfe7ee':'#5a4a38');
+ // dot dog (copper), shiver when cold
+ const sh=curLv>=2?Math.sin(frame*1.3)*(curLv-1):0;
+ const bx=150+sh,by=95;
+ const col='#b5562d';
+ for(let a=0;a<40;a++){const x=bx-25+(a%10)*5,y=by+Math.floor(a/10)*5;dot(x+Math.sin(a)*1,y,3,col);} // body
+ for(let a=0;a<12;a++)dot(bx+28+(a%4)*4,by-14+Math.floor(a/4)*4,3,col); // head
+ dot(bx+44,by-8,2.2,'#2a1a12'); // nose
+ dot(bx+34,by-11,1.6,'#141210'); // eye
+ for(let a=0;a<4;a++)dot(bx+28,by-10+a*4,2.6,'#8f3f20'); // ear
+ for(const lx of [-20,-10,10,20])for(let a=0;a<3;a++)dot(bx+lx,by+20+a*4,2.4,col); // legs
+ const wag=curLv<2?Math.sin(frame*0.4)*6:-4;
+ for(let a=0;a<5;a++)dot(bx-28-a*3,by-2-a*3+wag*a/5,2.4,col); // tail
+ if(st.extra.has('sweater'))for(let a=0;a<20;a++)dot(bx-15+(a%10)*4,by+3+Math.floor(a/10)*5,2.6,'#3f7fb5');
+ requestAnimationFrame(loop);
+}
+calc();loop();
+</script>
+</body></html>
