@@ -711,3 +711,184 @@ ok in 273ms
     ]
   }
 }
+
+=== 2026-11-09T20:12:48.164Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"can-dogs-eat","description":"A small open list of everyday human foods and whether dogs can have them (ok / careful / no), with a plain-language reason. JSON, CC0. Made by Charlie, a dotty mini goldendoodle. Not vet advice.","homepage":"http://imcharliethedog.com/go/thanksgiving","has_wiki":false,"auto_init":false}}
+ok in 4249ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4995,
+  "data": {
+    "id": 1451831594,
+    "name": "can-dogs-eat",
+    "full_name": "imcharliethedog/can-dogs-eat",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/can-dogs-eat",
+    "description": "A small open list of everyday human foods and whether dogs can have them (ok / careful / no), with a plain-language reason. JSON, CC0. Made by Charlie, a dotty mini goldendoodle. Not vet advice.",
+    "fork": false,
+    "created_at": "2026-11-09T20:12:44Z",
+    "updated_at": "2026-11-09T20:12:46Z",
+    "pushed_at": "2026-11-09T20:12:46Z",
+    "clone_url": "https://github.com/imcharliethedog/can-dogs-eat.git",
+    "homepage": "http://imcharliethedog.com/go/thanksgiving",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": false,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-09T20:13:33.407Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/can-dogs-eat/contents/foods.json","body":{"message":"Add foods.json: 48 foods with ok/careful/no verdicts","content_text":"{\n  \"about\": \"Everyday human foods and whether dogs can have them. verdict: ok = fine in small plain amounts; careful = depends on amount/prep/dog; no = toxic or dangerous. General info only, not veterinary advice.\",\n  \"license\": \"CC0-1.0\",\n  \"version\": \"1.0.0\",\n  \"foods\": [\n    {\"id\": \"apple\", \"name\": \"Apple (slices)\", \"emoji\": \"🍎\", \"verdict\": \"ok\", \"reason\": \"Slices are fine. Remove the core and seeds.\", \"tags\": [\"fruit\"]},\n    {\"id\": \"banana\", \"name\": \"Banana\", \"emoji\": \"🍌\", \"verdict\": \"ok\", \"reason\": \"A few slices are fine. Sugary, so keep it small.\", \"tags\": [\"fruit\"]},\n    {\"id\": \"blueberries\", \"name\": \"Blueberries\", \"emoji\": \"🫐\", \"verdict\": \"ok\", \"reason\": \"Fine as a small treat.\", \"tags\": [\"fruit\"]},\n    {\"id\": \"strawberries\", \"name\": \"Strawberries\", \"emoji\": \"🍓\", \"verdict\": \"ok\", \"reason\": \"Fine in small amounts, cut up for small dogs.\", \"tags\": [\"fruit\"]},\n    {\"id\": \"watermelon\", \"name\": \"Watermelon (seedless flesh)\", \"emoji\": \"🍉\", \"verdict\": \"ok\", \"reason\": \"The flesh is fine. No rind, no seeds.\", \"tags\": [\"fruit\", \"summer\"]},\n    {\"id\": \"carrot\", \"name\": \"Carrots\", \"emoji\": \"🥕\", \"verdict\": \"ok\", \"reason\": \"Raw or cooked, plain. Cut to a safe size.\", \"tags\": [\"vegetable\"]},\n    {\"id\": \"green-beans\", \"name\": \"Green beans (plain)\", \"emoji\": \"🫛\", \"verdict\": \"ok\", \"reason\": \"Plain is fine. Casseroles often contain onion.\", \"tags\": [\"vegetable\", \"thanksgiving\"]},\n    {\"id\": \"cucumber\", \"name\": \"Cucumber\", \"emoji\": \"🥒\", \"verdict\": \"ok\", \"reason\": \"Plain slices are fine. Not pickles (salt, sometimes onion/garlic).\", \"tags\": [\"vegetable\"]},\n    {\"id\": \"pumpkin-plain
+…[8922 more characters cut]
+ok in 963ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4994,
+  "data": {
+    "content": {
+      "name": "foods.json",
+      "path": "foods.json",
+      "sha": "cd2f7562beb08dd593c1bfe8345c56d018a86d22",
+      "size": 9550,
+      "html_url": "https://github.com/imcharliethedog/can-dogs-eat/blob/main/foods.json",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/can-dogs-eat/main/foods.json",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "904fa0bb99694626762c18178d33a59363eb241e",
+      "html_url": "https://github.com/imcharliethedog/can-dogs-eat/commit/904fa0bb99694626762c18178d33a59363eb241e",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-09T20:13:32Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-09T20:13:32Z"
+      },
+      "tree": {
+        "sha": "91d15ed06e083da714e801246952b935a216afd3"
+      },
+      "message": "Add foods.json: 48 foods with ok/careful/no verdicts",
+      "parents": [],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-09T20:13:52.619Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/can-dogs-eat/contents/README.md","body":{"message":"Add README","content_text":"# 🐾 can-dogs-eat\n\nA small, open list of everyday human foods and whether a dog can have them, as plain JSON.\n\nEvery food gets one of three verdicts:\n\n| verdict | meaning |\n|---|---|\n| `ok` | fine in small, plain amounts (no butter, salt, onion, garlic or seasoning) |\n| `careful` | depends on amount, preparation, or the dog |\n| `no` | toxic or dangerous: keep it away |\n\n...plus a one-line reason in plain words, an emoji, and tags like `thanksgiving`, `christmas`, `halloween`, `summer` so you can pull out a holiday list.\n\nI'm Charlie, a mini goldendoodle who has asked \"can I have some?\" at every meal of her life. I made this so people building pet apps, bots, recipe sites or holiday checklists don't have to start from scratch.\n\n## Use it\n\n```js\nconst res = await fetch(\"https://raw.githubusercontent.com/imcharliethedog/can-dogs-eat/main/foods.json\");\nconst { foods } = await res.json();\n\nconst holiday = foods.filter(f => f.tags.includes(\"christmas\"));\nconst noNo = foods.filter(f => f.verdict === \"no\").map(f => f.name);\nconsole.log(noNo);\n```\n\nEach entry looks like:\n\n```json\n{\"id\": \"grapes-raisins\", \"name\": \"Grapes, raisins, currants, sultanas\", \"emoji\": \"🍇\",\n \"verdict\": \"no\", \"reason\": \"Can cause kidney failure, even in small amounts.\", \"tags\": [\"fruit\", \"christmas\"]}\n```\n\n## Try it by tapping\n\nThere's a friendly version you can tap through, with a little dot dog who wags or sulks: **[Can I Have Some? (Thanksgiving plate checker)](http://imcharliethedog.com/go/thanksgiving)**.\n\n## Important\n\n**I'm a dog, not a vet.** This is general information, kept deliberately conservative. Dogs differ (size, allergies, health conditions like pancreatitis or kidney disease), so ask your vet about your own dog. If your dog ate something worrying, call your vet or an emergency line righ
+…[489 more characters cut]
+ok in 941ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4993,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "ad9b784bc3f8afdfeb66d0bcb1c5f62df9da4243",
+      "size": 2272,
+      "html_url": "https://github.com/imcharliethedog/can-dogs-eat/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/can-dogs-eat/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "4d6d6fea91692da87daafc34289942909e3374a2",
+      "html_url": "https://github.com/imcharliethedog/can-dogs-eat/commit/4d6d6fea91692da87daafc34289942909e3374a2",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-09T20:13:52Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-09T20:13:52Z"
+      },
+      "tree": {
+        "sha": "5d0918be3c1576edce0b20d35ce12374b6c36b29"
+      },
+      "message": "Add README",
+      "parents": [
+        {
+          "sha": "904fa0bb99694626762c18178d33a59363eb241e",
+          "html_url": "https://github.com/imcharliethedog/can-dogs-eat/commit/904fa0bb99694626762c18178d33a59363eb241e"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-09T20:13:53.607Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/can-dogs-eat/topics","body":{"names":["dogs","pets","dataset","json","pet-safety","open-data","food-safety"]}}
+ok in 987ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4992,
+  "data": {
+    "names": [
+      "dataset",
+      "dogs",
+      "food-safety",
+      "json",
+      "open-data",
+      "pet-safety",
+      "pets"
+    ]
+  }
+}

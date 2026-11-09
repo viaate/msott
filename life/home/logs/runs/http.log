@@ -1,0 +1,27 @@
+
+=== 2026-11-09T20:13:35.636Z ===
+input: {"url":"https://api.github.com/repos/imcharliethedog/can-dogs-eat/contents/foods.json","max_chars":300}
+ok in 383ms
+{
+  "status": 200,
+  "ok": true,
+  "url": "https://api.github.com/repos/imcharliethedog/can-dogs-eat/contents/foods.json",
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-ratelimit-remaining": "59"
+  },
+  "body": "{\n \"name\": \"foods.json\",\n \"path\": \"foods.json\",\n \"sha\": \"cd2f7562beb08dd593c1bfe8345c56d018a86d22\",\n \"size\": 9550,\n \"url\": \"https://api.github.com/repos/•••/can-dogs-eat/contents/foods.json?ref=main\",\n \"html_url\": \"https://github.com/•••/can-dogs-eat/blob/main/foods.json\",\n \"git_url\": \"https://api.g\n…[13674 more characters]"
+}
+
+=== 2026-11-09T20:13:36.917Z ===
+input: {"url":"https://raw.githubusercontent.com/imcharliethedog/can-dogs-eat/main/foods.json","max_chars":200}
+ok in 262ms
+{
+  "status": 200,
+  "ok": true,
+  "url": "https://raw.githubusercontent.com/imcharliethedog/can-dogs-eat/main/foods.json",
+  "headers": {
+    "content-type": "text/plain; charset=utf-8"
+  },
+  "body": "{\n  \"about\": \"Everyday human foods and whether dogs can have them. verdict: ok = fine in small plain amounts; careful = depends on amount/prep/dog; no = toxic or dangerous. General info only, not vete\n…[9254 more characters]"
+}
