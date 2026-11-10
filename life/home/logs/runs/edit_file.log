@@ -550,3 +550,25 @@ ok in 26ms
     "97: function loop(){"
   ]
 }
+
+=== 2026-11-10T18:12:23.575Z ===
+input: {"path":"site/index.html","grep":"cold"}
+ok in 31ms
+{
+  "size": 5126,
+  "report": [],
+  "lines": [
+    "15: <p>❄️ New: <a href=\"cold/\">Too Cold for a Walk?</a>: temperature + size + coat = how long a winter walk stays comfy.<br>🦃 <a href=\"thanksgiving/\">Can I Have Some?</a>: tap a Thanksgiving food to see "
+  ]
+}
+
+=== 2026-11-10T18:12:25.898Z ===
+input: {"path":"site/index.html","edits":[{"find":"<p>❄️ New: <a href=\"cold/\">","replace":"<p>🍂 New: <a href=\"leaves/\">Leaf Pile Patrol</a>: tap the leaf piles and I sniff them. you never know what's inside.<br>❄️ <a href=\"cold/\">"}]}
+ok in 36ms
+{
+  "size": 5239,
+  "report": [
+    "replaced 1/1: <p>❄️ New: <a href=\"cold/\">"
+  ],
+  "lines": []
+}
