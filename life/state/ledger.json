@@ -1,6 +1,6 @@
 {
-  "balance": 76,
-  "earned": 171,
+  "balance": 82,
+  "earned": 177,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -9,8 +9,8 @@
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 11,
-    "site.visitor": 43,
-    "github.newRepo": 20,
+    "site.visitor": 44,
+    "github.newRepo": 25,
     "link.click": 6,
     "page.view": 6,
     "bluesky.follower": 10,
@@ -757,10 +757,26 @@
       "units": 3,
       "amount": 3,
       "reason": "3 people came to see your world"
+    },
+    {
+      "t": 1794306610910,
+      "kind": "earn",
+      "key": "github.newRepo",
+      "units": 1,
+      "amount": 5,
+      "reason": "shipped a new public repo: imcharliethedog/dog-walk-weather"
+    },
+    {
+      "t": 1794306618191,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
     }
   ],
   "daily": {
-    "date": "2026-11-09",
+    "date": "2026-11-10",
     "counts": {
       "github.newRepo": 1
     }
