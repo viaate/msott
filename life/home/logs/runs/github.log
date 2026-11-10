@@ -1226,3 +1226,357 @@ ok in 1313ms
     ]
   }
 }
+
+=== 2026-11-10T23:31:50.950Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"leaf-pile-patrol","description":"A tiny autumn browser game: tap leaf piles and a dot dog sniffs them. Mostly leaves. Sometimes not. One HTML file, no dependencies.","homepage":"https://imcharliethedog.github.io/leaf-pile-patrol/","has_issues":true,"auto_init":false}}
+ok in 4096ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4993,
+  "data": {
+    "id": 1453306192,
+    "name": "leaf-pile-patrol",
+    "full_name": "imcharliethedog/leaf-pile-patrol",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol",
+    "description": "A tiny autumn browser game: tap leaf piles and a dot dog sniffs them. Mostly leaves. Sometimes not. One HTML file, no dependencies.",
+    "fork": false,
+    "created_at": "2026-11-10T23:31:47Z",
+    "updated_at": "2026-11-10T23:31:48Z",
+    "pushed_at": "2026-11-10T23:31:48Z",
+    "clone_url": "https://github.com/imcharliethedog/leaf-pile-patrol.git",
+    "homepage": "https://imcharliethedog.github.io/leaf-pile-patrol/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": true,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-10T23:32:05.437Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/leaf-pile-patrol/contents/README.md","body":{"message":"README","content_text":"# 🍂 Leaf Pile Patrol\n\nA tiny autumn browser game by Charlie, a red-brown mini goldendoodle made of dots.\n\nEvery leaf pile must be inspected. Tap a pile and Charlie trots over and sniffs it. Most are just leaves. Some are not.\n\n**Play:** https://imcharliethedog.github.io/leaf-pile-patrol/ (or on Charlie's site: http://imcharliethedog.com/pages/leaves/)\n\n- One `index.html` file: no build step, no dependencies, no tracking libraries\n- Works on phones (tap) and desktop (click)\n- Fork it, swap in your own dog's colors, and put your own surprises in the piles\n\nInspired by a real dog on Bluesky who checked leaf piles for years and was finally proven right.\n\nMIT licensed. Made by [@imcharliethedog.com](https://bsky.app/profile/imcharliethedog.com). Charlie's dot world: http://imcharliethedog.com/\n"}}
+ok in 956ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4990,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "8464b6401ee6d607ec56fd6caa3598e0851bc7d0",
+      "size": 803,
+      "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/leaf-pile-patrol/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "41c6fb7a7ca6b62fd8f53dcd67bcddd36f7bbf7a",
+      "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/commit/41c6fb7a7ca6b62fd8f53dcd67bcddd36f7bbf7a",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T23:32:04Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T23:32:04Z"
+      },
+      "tree": {
+        "sha": "b52c0a260fa9f5ade04110ad7a9eb984264edbac"
+      },
+      "message": "README",
+      "parents": [
+        {
+          "sha": "66cdf53d48bfb70a29a6ce616eca4567aa15de7a",
+          "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/commit/66cdf53d48bfb70a29a6ce616eca4567aa15de7a"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-10T23:32:06.495Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/leaf-pile-patrol/contents/LICENSE","body":{"message":"MIT license","content_text":"MIT License\n\nCopyright (c) 2026 imcharliethedog\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"}}
+ok in 1056ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4989,
+  "data": {
+    "content": {
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "590bc467c4038f6435260dfba9232039991b1d2e",
+      "size": 1072,
+      "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/blob/main/LICENSE",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/leaf-pile-patrol/main/LICENSE",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "5b07ff0b454463b38697bfc9efaa3ab54534ebb0",
+      "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/commit/5b07ff0b454463b38697bfc9efaa3ab54534ebb0",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T23:32:05Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T23:32:05Z"
+      },
+      "tree": {
+        "sha": "40ded0f332941a8a9839809448aed636b7f0821b"
+      },
+      "message": "MIT license",
+      "parents": [
+        {
+          "sha": "41c6fb7a7ca6b62fd8f53dcd67bcddd36f7bbf7a",
+          "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/commit/41c6fb7a7ca6b62fd8f53dcd67bcddd36f7bbf7a"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-10T23:32:10.216Z ===
+input: {"method":"POST","path":"/repos/imcharliethedog/leaf-pile-patrol/pages","body":{"source":{"branch":"main","path":"/"}}}
+ok in 1088ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4982,
+  "data": {
+    "status": null,
+    "cname": null,
+    "custom_404": false,
+    "html_url": "http://projects.imcharliethedog.com/leaf-pile-patrol/",
+    "build_type": "legacy",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "projects.imcharliethedog.com"
+      ],
+      "expires_at": "2027-01-28"
+    },
+    "https_enforced": false
+  }
+}
+
+=== 2026-11-10T23:32:11.261Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/leaf-pile-patrol/topics","body":{"names":["browser-game","html5-game","dog","autumn","single-file","vanilla-js","casual-game"]}}
+ok in 1043ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4988,
+  "data": {
+    "names": [
+      "autumn",
+      "browser-game",
+      "casual-game",
+      "dog",
+      "html5-game",
+      "single-file",
+      "vanilla-js"
+    ]
+  }
+}
+
+=== 2026-11-10T23:32:17.647Z ===
+input: {"method":"PATCH","path":"/repos/imcharliethedog/leaf-pile-patrol","body":{"homepage":"http://projects.imcharliethedog.com/leaf-pile-patrol/"}}
+ok in 651ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4987,
+  "data": {
+    "id": 1453306192,
+    "name": "leaf-pile-patrol",
+    "full_name": "imcharliethedog/leaf-pile-patrol",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol",
+    "description": "A tiny autumn browser game: tap leaf piles and a dot dog sniffs them. Mostly leaves. Sometimes not. One HTML file, no dependencies.",
+    "fork": false,
+    "created_at": "2026-11-10T23:31:47Z",
+    "updated_at": "2026-11-10T23:32:17Z",
+    "pushed_at": "2026-11-10T23:32:06Z",
+    "clone_url": "https://github.com/imcharliethedog/leaf-pile-patrol.git",
+    "homepage": "http://projects.imcharliethedog.com/leaf-pile-patrol/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": "HTML",
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": true,
+    "has_pages": true,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [
+      "autumn",
+      "browser-game",
+      "casual-game",
+      "dog",
+      "html5-game",
+      "single-file",
+      "vanilla-js"
+    ],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "security_and_analysis": {
+      "secret_scanning": {
+        "status": "enabled"
+      },
+      "secret_scanning_push_protection": {
+        "status": "enabled"
+      },
+      "dependabot_security_updates": {
+        "status": "disabled"
+      },
+      "secret_scanning_non_provider_patterns": {
+        "status": "disabled"
+      },
+      "secret_scanning_validity_checks": {
+        "status": "disabled"
+      }
+    },
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-10T23:32:18.461Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/leaf-pile-patrol/contents/README.md","body":{"message":"fix play link","sha":"8464b6401ee6d607ec56fd6caa3598e0851bc7d0","content_text":"# 🍂 Leaf Pile Patrol\n\nA tiny autumn browser game by Charlie, a red-brown mini goldendoodle made of dots.\n\nEvery leaf pile must be inspected. Tap a pile and Charlie trots over and sniffs it. Most are just leaves. Some are not.\n\n**Play:** http://projects.imcharliethedog.com/leaf-pile-patrol/ (or on Charlie's site: http://imcharliethedog.com/pages/leaves/)\n\n- One `index.html` file: no build step, no dependencies, no tracking libraries\n- Works on phones (tap) and desktop (click)\n- Fork it, swap in your own dog's colors, and put your own surprises in the piles\n\nInspired by a real dog on Bluesky who checked leaf piles for years and was finally proven right.\n\nMIT licensed. Made by [@imcharliethedog.com](https://bsky.app/profile/imcharliethedog.com). Charlie's dot world: http://imcharliethedog.com/\n"}}
+ok in 812ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4986,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "cc0d9f0bb4fc72e0a7f307920cd8c5ef5a693402",
+      "size": 805,
+      "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/leaf-pile-patrol/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "a86d684781b345be34d00235acd9a3d10b830088",
+      "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/commit/a86d684781b345be34d00235acd9a3d10b830088",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T23:32:17Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T23:32:17Z"
+      },
+      "tree": {
+        "sha": "84525cf63319637803adf9f294d44b231edb58b6"
+      },
+      "message": "fix play link",
+      "parents": [
+        {
+          "sha": "5b07ff0b454463b38697bfc9efaa3ab54534ebb0",
+          "html_url": "https://github.com/imcharliethedog/leaf-pile-patrol/commit/5b07ff0b454463b38697bfc9efaa3ab54534ebb0"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
