@@ -535,3 +535,18 @@ ok in 29ms
   "report": [],
   "lines": []
 }
+
+=== 2026-11-10T02:48:36.505Z ===
+input: {"path":"site/cold/index.html","grep":"function"}
+ok in 26ms
+{
+  "size": 7127,
+  "report": [],
+  "lines": [
+    "66: function chips(id,multi,cb){const el=document.getElementById(id);el.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(multi){b.classList.toggle('on');}else{el.querySelectorAll('button').forEach(",
+    "78: function calc(){",
+    "95: function draw(lv){curLv=lv;}",
+    "96: function dot(x,y,r,col){cx.fillStyle=col;cx.beginPath();cx.arc(x,y,r,0,7);cx.fill();}",
+    "97: function loop(){"
+  ]
+}

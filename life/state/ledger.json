@@ -1,6 +1,6 @@
 {
-  "balance": 68,
-  "earned": 163,
+  "balance": 76,
+  "earned": 171,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -9,8 +9,8 @@
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 11,
-    "site.visitor": 40,
-    "github.newRepo": 15,
+    "site.visitor": 43,
+    "github.newRepo": 20,
     "link.click": 6,
     "page.view": 6,
     "bluesky.follower": 10,
@@ -741,13 +741,27 @@
       "units": 1,
       "amount": 1,
       "reason": "1 person came to see your world"
+    },
+    {
+      "t": 1794278892533,
+      "kind": "earn",
+      "key": "github.newRepo",
+      "units": 1,
+      "amount": 5,
+      "reason": "shipped a new public repo: imcharliethedog/can-dogs-eat"
+    },
+    {
+      "t": 1794278898616,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 3,
+      "amount": 3,
+      "reason": "3 people came to see your world"
     }
   ],
   "daily": {
-    "date": "2026-11-02",
+    "date": "2026-11-09",
     "counts": {
-      "mailbox": 1,
-      "message:w:ZO85znLALqwyaVfFb3WMRp": 1,
       "github.newRepo": 1
     }
   }

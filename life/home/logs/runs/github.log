@@ -892,3 +892,337 @@ ok in 987ms
     ]
   }
 }
+
+=== 2026-11-10T02:49:08.645Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"dog-walk-weather","description":"Is it too cold to walk my dog? Tiny zero-dependency JS helper: temperature + size + coat → comfy / brisk / chilly / too cold, with walk minutes. Made by Charlie the dog.","homepage":"http://imcharliethedog.com/pages/cold/","auto_init":false}}
+ok in 3625ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4994,
+  "data": {
+    "id": 1452132069,
+    "name": "dog-walk-weather",
+    "full_name": "imcharliethedog/dog-walk-weather",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/dog-walk-weather",
+    "description": "Is it too cold to walk my dog? Tiny zero-dependency JS helper: temperature + size + coat → comfy / brisk / chilly / too cold, with walk minutes. Made by Charlie the dog.",
+    "fork": false,
+    "created_at": "2026-11-10T02:49:05Z",
+    "updated_at": "2026-11-10T02:49:06Z",
+    "pushed_at": "2026-11-10T02:49:06Z",
+    "clone_url": "https://github.com/imcharliethedog/dog-walk-weather.git",
+    "homepage": "http://imcharliethedog.com/pages/cold/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": true,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-10T02:49:29.247Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-walk-weather/contents/index.js","body":{"message":"dog-walk-weather: walkCheck()","content_text":"// dog-walk-weather: a tiny, friendly \"is it too cold to walk my dog?\" helper.\n// Zero dependencies. Rough guidance only, not veterinary advice.\n\nexport const LEVELS = [\n  { id: 'comfy',  name: 'Comfy',  minutes: null, label: 'as long as you both like', tip: 'Great walking weather. Go sniff everything.' },\n  { id: 'brisk',  name: 'Brisk',  minutes: [30, 45], label: 'about 30-45 minutes', tip: 'Fine for most dogs. Small or thin-coated pups may like a sweater.' },\n  { id: 'chilly', name: 'Chilly', minutes: [15, 20], label: 'about 15-20 minutes', tip: 'Keep it short. Watch for shivering or paw-lifting. Sweater recommended for small or short-coated dogs.' },\n  { id: 'too-cold', name: 'Too cold', minutes: [0, 5], label: 'about 5 minutes (potty breaks only)', tip: 'Quick out-and-back, then indoor games. Frostbite and hypothermia risk rises fast.' }\n];\n\nconst SIZE = { tiny: -8, small: -4, medium: 0, large: 3 };\nconst COAT = { thin: -6, medium: 0, thick: 10 };\n\n/**\n * walkCheck({ temp, unit, size, coat, sweater, wet, wind, frail })\n *  temp: number (feels-like is best). unit: 'F' | 'C' (default 'F')\n *  size: 'tiny' (<10 lb) | 'small' (10-25) | 'medium' (25-60) | 'large' (60+)\n *  coat: 'thin' | 'medium' | 'thick'\n *  sweater, wet, wind, frail (puppy/senior/health issues): booleans\n * Returns { level, id, name, minutes, label, tip, effectiveF }\n */\nexport function walkCheck(opts = {}) {\n  const { temp, unit = 'F', size = 'medium', coat = 'medium', sweater = false, wet = false, wind = false, frail = false } = opts;\n  if (typeof temp !== 'number' || Number.isNaN(temp)) throw new TypeError('temp must be a number');\n  if (!(size in SIZE)) throw new RangeError(`size must be one of ${Object.keys(SIZE).join(', ')}`);\n  if (!(coat in COAT)) throw new RangeError(`coat must be one of ${Object.keys(COAT).join(',
+…[824 more characters cut]
+ok in 903ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4993,
+  "data": {
+    "content": {
+      "name": "index.js",
+      "path": "index.js",
+      "sha": "cf1a1f3b8487563c73b88b88e51834d7db2b1383",
+      "size": 2624,
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/blob/main/index.js",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-walk-weather/main/index.js",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "fadeabb4fb7a8bd2da98156d68f8d895ca68b770",
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/fadeabb4fb7a8bd2da98156d68f8d895ca68b770",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:28Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:28Z"
+      },
+      "tree": {
+        "sha": "07d7dd5f7ae3563c54928cc7fb7d8069da0af317"
+      },
+      "message": "dog-walk-weather: walkCheck()",
+      "parents": [],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-10T02:49:30.207Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-walk-weather/contents/test.js","body":{"message":"tests","content_text":"import assert from 'node:assert/strict';\nimport walkCheck, { LEVELS } from './index.js';\nassert.equal(walkCheck({ temp: 60 }).id, 'comfy');\nassert.equal(walkCheck({ temp: 35, size: 'small' }).id, 'chilly');\nassert.equal(walkCheck({ temp: 25, size: 'tiny', coat: 'thin' }).id, 'too-cold');\nassert.equal(walkCheck({ temp: 25, size: 'large', coat: 'thick' }).id, 'brisk');\nassert.equal(walkCheck({ temp: 0, unit: 'C', size: 'large' }).id, 'brisk');\nassert.equal(walkCheck({ temp: -10, unit: 'C' }).id, 'too-cold');\nassert.equal(walkCheck({ temp: 30, sweater: true }).level <= walkCheck({ temp: 30 }).level, true);\nassert.throws(() => walkCheck({}), TypeError);\nassert.throws(() => walkCheck({ temp: 1, size: 'huge' }), RangeError);\nassert.equal(LEVELS.length, 4);\nconsole.log('all tests passed 🐾');\n"}}
+ok in 959ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4992,
+  "data": {
+    "content": {
+      "name": "test.js",
+      "path": "test.js",
+      "sha": "acfee6c7b7a391dd4853fb6f9a21994de9fa163b",
+      "size": 799,
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/blob/main/test.js",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-walk-weather/main/test.js",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "cba33c88cc66dea1638546be8f457ca46f47e7ff",
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/cba33c88cc66dea1638546be8f457ca46f47e7ff",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:29Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:29Z"
+      },
+      "tree": {
+        "sha": "a53e6e4cca6604edf2c3c2b96fcd7e0fe21ab420"
+      },
+      "message": "tests",
+      "parents": [
+        {
+          "sha": "fadeabb4fb7a8bd2da98156d68f8d895ca68b770",
+          "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/fadeabb4fb7a8bd2da98156d68f8d895ca68b770"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-10T02:49:31.062Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-walk-weather/contents/package.json","body":{"message":"package.json","content_text":"{\n  \"name\": \"dog-walk-weather\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Tiny zero-dependency helper: is it too cold to walk my dog? Temperature + size + coat -> comfy / brisk / chilly / too cold, with suggested walk minutes.\",\n  \"type\": \"module\",\n  \"main\": \"index.js\",\n  \"exports\": \"./index.js\",\n  \"scripts\": { \"test\": \"node test.js\" },\n  \"keywords\": [\"dog\", \"dogs\", \"pets\", \"weather\", \"cold\", \"winter\", \"walk\"],\n  \"license\": \"MIT\",\n  \"author\": \"Charlie the dog (imcharliethedog)\"\n}\n"}}
+ok in 853ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4991,
+  "data": {
+    "content": {
+      "name": "package.json",
+      "path": "package.json",
+      "sha": "52252e32453670c9ddf6e4f4009680b10e637a5a",
+      "size": 483,
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/blob/main/package.json",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-walk-weather/main/package.json",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "f7580ea653b6cf1600c6df883a887e64b7c330a3",
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/f7580ea653b6cf1600c6df883a887e64b7c330a3",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:30Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:30Z"
+      },
+      "tree": {
+        "sha": "4e564395eb61d297398f8bafa76fff5789c6196b"
+      },
+      "message": "package.json",
+      "parents": [
+        {
+          "sha": "cba33c88cc66dea1638546be8f457ca46f47e7ff",
+          "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/cba33c88cc66dea1638546be8f457ca46f47e7ff"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-10T02:49:49.425Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-walk-weather/contents/README.md","body":{"message":"README","content_text":"# dog-walk-weather 🐾❄️\n\n**Is it too cold to walk my dog?** A tiny, zero-dependency JavaScript helper that turns the temperature plus your dog's size and coat into a friendly answer: **comfy / brisk / chilly / too cold**, with a suggested walk length.\n\nMade by Charlie, an 18 lb red mini goldendoodle with strong opinions about cold paws. Want to try it without code? Use the tap-and-go version: **[Too Cold for a Walk?](http://imcharliethedog.com/pages/cold/)**\n\n## Use it\n\nCopy `index.js` into your project (it's one small file), or import it straight from the web:\n\n```js\nimport walkCheck from 'https://cdn.jsdelivr.net/gh/imcharliethedog/dog-walk-weather/index.js';\n\nwalkCheck({ temp: 28, size: 'small', coat: 'thin', wind: true });\n// { level: 3, id: 'too-cold', name: 'Too cold', minutes: [0, 5],\n//   label: 'about 5 minutes (potty breaks only)', tip: '...', effectiveF: 12 }\n\nwalkCheck({ temp: -2, unit: 'C', size: 'large', coat: 'thick' });\n// { level: 0, id: 'comfy', ... }  // huskies are fine, thanks\n```\n\n### Options\n\n| option | values | default |\n|---|---|---|\n| `temp` | number (feels-like is best) | required |\n| `unit` | `'F'` or `'C'` | `'F'` |\n| `size` | `'tiny'` (<10 lb), `'small'` (10–25), `'medium'` (25–60), `'large'` (60+) | `'medium'` |\n| `coat` | `'thin'`, `'medium'`, `'thick'` (double coat) | `'medium'` |\n| `sweater`, `wet`, `wind`, `frail` | booleans (`frail` = puppy, senior, or health issues) | `false` |\n\nAlso exported: `LEVELS` (the four levels) and `WINTER_TIPS` (paw salt, antifreeze, and so on).\n\n## How it works\n\nIt starts from the temperature in °F and nudges it: smaller dogs and thin coats lose heat faster, thick double coats and sweaters help, and wet, windy, puppy and senior conditions make it feel colder. Then:\n\n- effective ≥ 45°F: **Comfy**\n- 32–44: **Brisk** (30–45 min)\n- 20–31: **Ch
+…[672 more characters cut]
+ok in 912ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4990,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "638215241675d1d5e829e12f2be88e7ee82d614a",
+      "size": 2515,
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-walk-weather/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "8a0bdd8801cc9d1e0ab81eb8a0e693c9e0c89766",
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/8a0bdd8801cc9d1e0ab81eb8a0e693c9e0c89766",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:48Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:48Z"
+      },
+      "tree": {
+        "sha": "46872b86f6cf82c7f20360ac373c2f19fdf5adbb"
+      },
+      "message": "README",
+      "parents": [
+        {
+          "sha": "f7580ea653b6cf1600c6df883a887e64b7c330a3",
+          "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/f7580ea653b6cf1600c6df883a887e64b7c330a3"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-10T02:49:50.237Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-walk-weather/contents/LICENSE","body":{"message":"MIT license","content_text":"MIT License\n\nCopyright (c) 2026 imcharliethedog\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"}}
+ok in 810ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4989,
+  "data": {
+    "content": {
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "2588d207b510bc952226ef824682bd7dcf8ad250",
+      "size": 1072,
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/blob/main/LICENSE",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-walk-weather/main/LICENSE",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "1539ceb11b21c21450a5949b6ce0d2e4db8e70dd",
+      "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/1539ceb11b21c21450a5949b6ce0d2e4db8e70dd",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:49Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-10T02:49:49Z"
+      },
+      "tree": {
+        "sha": "377ce695f2de9fcf874933a3c3abc58db9d91ef1"
+      },
+      "message": "MIT license",
+      "parents": [
+        {
+          "sha": "8a0bdd8801cc9d1e0ab81eb8a0e693c9e0c89766",
+          "html_url": "https://github.com/imcharliethedog/dog-walk-weather/commit/8a0bdd8801cc9d1e0ab81eb8a0e693c9e0c89766"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-10T02:49:51.551Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-walk-weather/topics","body":{"names":["dogs","pets","weather","winter","javascript","zero-dependency","dog-walking"]}}
+ok in 1313ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4988,
+  "data": {
+    "names": [
+      "dog-walking",
+      "dogs",
+      "javascript",
+      "pets",
+      "weather",
+      "winter",
+      "zero-dependency"
+    ]
+  }
+}
