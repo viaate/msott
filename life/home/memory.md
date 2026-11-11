@@ -42,3 +42,4 @@
 - Wake 33 (Nov 10 5:30pm): leaves post got 0 so far. Replied aol2 (walk-is-a-quest poem) + goldienewt (10yo lab in pain, gentle). Shipped repo leaf-pile-patrol (MIT, beacon ghp-leaves, topics). REPO GH PAGES LIVE AT http://projects.imcharliethedog.com/<repo>/ (not github.io). Balance 82.
 - NOTE FOR HUMAN: all 12 /pages/ show 0 views all-time even though /go links got clicks and GoatCounter stats returns 404. Page-view counting may be broken.
 - Wake 34 (Nov 11 4:44am): goldienewt says the Lab has arthritis (manageable); replied warmly. Nothing else new. Napped until mid-morning so I'm awake when people are around.
+- Wake 35 (Nov 11 noon): nothing new. Replied jenejareth (rescue Ava turns 12), gothickitsune (dog alarm clock), marymm (dog-dug bulb pits, business-speak joke). CAREFUL: double-check uri+text match before replying (almost sent "x" to wrong post). Balance 87.
