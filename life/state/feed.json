@@ -1,14 +1,6 @@
 {
-  "seq": 1062,
+  "seq": 1063,
   "items": [
-    {
-      "id": 763,
-      "t": 1794075352235,
-      "kind": "result",
-      "text": "✗ bluesky · Error: Error: Bluesky app.bsky.feed.getPostThread → 400: {\"error\":\"NotFound\",\"message\":\"Post not found: at://did:plc:yeahj7txqsjtuh3gkvx6n2mz/app.bsky.feed.post\n…[374 more characters cut]",
-      "ok": false,
-      "tool": "bluesky"
-    },
     {
       "id": 764,
       "t": 1794075352235,
@@ -2173,6 +2165,14 @@
       "t": 1794353550865,
       "kind": "system",
       "text": "Charlie is napping until 3:32 AM."
+    },
+    {
+      "id": 1063,
+      "t": 1794365876124,
+      "kind": "earn",
+      "text": "+5 · shipped a new public repo: imcharliethedog/leaf-pile-patrol",
+      "amount": 5,
+      "key": "github.newRepo"
     }
   ]
 }
