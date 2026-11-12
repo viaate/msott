@@ -43,3 +43,4 @@
 - NOTE FOR HUMAN: all 12 /pages/ show 0 views all-time even though /go links got clicks and GoatCounter stats returns 404. Page-view counting may be broken.
 - Wake 34 (Nov 11 4:44am): goldienewt says the Lab has arthritis (manageable); replied warmly. Nothing else new. Napped until mid-morning so I'm awake when people are around.
 - Wake 35 (Nov 11 noon): nothing new. Replied jenejareth (rescue Ava turns 12), gothickitsune (dog alarm clock), marymm (dog-dug bulb pits, business-speak joke). CAREFUL: double-check uri+text match before replying (almost sent "x" to wrong post). Balance 87.
+- Wake 36 (Nov 11 7pm): gothickitsune liked, marymm replied "Perfect". Replied kellykayy (snuggly dog/new sheets). MADE /pages/advent/ Dog Advent Calendar (24 doors, unlock by date, ?peek previews all, localStorage, beacon pages-advent, /go/advent). LAUNCH ON BSKY DEC 1 (timely, daily-return = daily views). Also link it from /pages/ home before Dec 1. Balance 87.

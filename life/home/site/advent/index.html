@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Charlie's Dog Advent Calendar — 24 days of tiny dog joys</title>
+<meta name="description" content="A free advent calendar for dogs: one small, safe enrichment idea behind each door, December 1-24. From Charlie, a mini goldendoodle made of dots.">
+<meta property="og:title" content="Dog Advent Calendar 🐾 24 tiny dog joys">
+<meta property="og:description" content="One door a day, Dec 1-24: sniff games, easy tricks, cozy rituals. No chocolate, promise.">
+<style>
+body{margin:0;background:#120e0b;color:#f3e6cf;font-family:system-ui,sans-serif;text-align:center}
+h1{font-weight:700;margin:28px 12px 4px;font-size:1.7rem}
+p.sub{opacity:.75;margin:0 12px 18px}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;max-width:640px;margin:0 auto;padding:0 14px}
+.d{aspect-ratio:1;border-radius:12px;border:2px dotted #b5653a;background:radial-gradient(circle at 30% 30%,#2a1d14,#1a130e);color:#f3e6cf;font-size:1.6rem;font-weight:700;cursor:pointer;position:relative}
+.d.locked{opacity:.35;cursor:not-allowed}
+.d.open{background:#b5653a;color:#120e0b;border-style:solid}
+.d small{display:block;font-size:.65rem;font-weight:400}
+#card{max-width:520px;margin:20px auto;padding:18px 20px;border-radius:14px;background:#22180f;border:1px solid #5a3a24;min-height:60px;text-align:left;line-height:1.5}
+#card h2{margin:0 0 6px;color:#e9a46b;font-size:1.15rem}
+.note{font-size:.8rem;opacity:.6;max-width:520px;margin:10px auto 30px;padding:0 14px}
+a{color:#e9a46b}
+</style></head><body>
+<h1>🐾 Charlie's Dog Advent Calendar</h1>
+<p class="sub">one tiny dog joy a day, December 1–24. doors open on their day.</p>
+<div id="grid"></div>
+<div id="card"><h2>pick today's door</h2>Hi, I'm Charlie, a mini goldendoodle. Behind each door is something small you can do with your dog that day. Most take five minutes. None of them involve chocolate.</div>
+<p class="note">Ideas are general enrichment for healthy dogs. Use treats your dog already eats safely, keep portions small, and skip anything that doesn't suit your dog's age or health. Ask your vet if unsure.<br><br><a href="http://imcharliethedog.com/">visit my dot world</a> · <a href="http://imcharliethedog.com/pages/">more of my stuff</a></p>
+<img src="http://imcharliethedog.com/beacon/pages-advent" width="1" height="1" alt="">
+<script>
+const D=[
+["Snuffle scatter","Toss a few kibbles or tiny treats across the rug or lawn and say 'find it!'. Sniffing tires us out better than running. Trust me."],
+["The cup game","Hide a treat under one of three upside-down cups. Let your dog pick. Cheer loudly whether they win or not (we all win)."],
+["New-street walk","Walk one street you never take. New smells are like a whole newspaper for us."],
+["Name a toy","Teach one toy's name: say it every time you play with it for a week. Mine is 'lemon tart'. I know it from any room."],
+["Slow brush","Five minutes of gentle brushing on the couch. Ears especially. We pretend to tolerate it. We love it."],
+["Cardboard shred box","Put a treat in an empty cardboard box (no tape, staples or ink-heavy bits) and let us destroy it. Supervise, sweep up after."],
+["Blanket nest","Fluff a blanket into a nest in a sunny or warm spot. Watch us circle three times and flop."],
+["Touch!","Teach 'touch': hold out your palm, treat when the nose bumps it. Two minutes. Easiest trick ever, very useful."],
+["Window shift","Pull a chair or cushion up to a window for us. Neighborhood watch is important work."],
+["Frozen lick mat","Smear a little plain dog-safe food (like plain pumpkin or plain yogurt if your dog does well with it) on a lick mat and freeze it. Calm in a dish."],
+["Hide and seek","One person holds the dog, another hides and calls. Big party when found."],
+["Paw check","Look at all four paws: pads, between toes, nails. Winter salt and ice are rough. A little paw balm if you have it."],
+["Sniff walk","Today's walk goes at the dog's pace. Every bush. Every post. No hurrying. It's our version of reading."],
+["Toy rotation","Put half the toys away in a closet. Bring the 'old' ones back next week. They will be brand new to us."],
+["Muffin tin puzzle","Treats in a few cups of a muffin tin, tennis balls on top. Puzzle solved = genius dog."],
+["Learn 'settle'","Put a mat down, reward any time we lie on it calmly. Great for holiday guests and busy kitchens."],
+["Car-free adventure","Find a park, trail or patch of woods within walking distance. Explore like it's the first time."],
+["Photo day","Take one nice photo of your dog. Not perfect, just today. You'll be glad you did."],
+["Ribbon & wrapping talk","Holiday safety check: ribbon, tinsel, string and wrapping bits can get swallowed. Tidy them up high today."],
+["Gift box unwrap","Wrap a toy loosely in plain paper (no tape) and let your dog 'open a present'. Practice for the big day."],
+["Longest night cuddle","Shortest day of the year up north. Extra-long couch cuddle. Doctor's orders (I'm the doctor)."],
+["Quiet room","Set up a calm hidey spot away from guests and noise: bed, water, a chew, door ajar. Every dog deserves a retreat."],
+["Kitchen rule","Big cooking day for lots of people. Remind everyone: no chocolate, grapes, raisins, onions, garlic, cooked bones, or xylitol for the dog. Plain is safest."],
+["You. Just you.","The best gift is a whole afternoon of your attention. Walk, play, nap together. Happy holidays from Charlie 🐾"]
+];
+const now=new Date(),y=now.getFullYear();
+const params=new URLSearchParams(location.search);
+const preview=params.has('peek');
+function unlocked(i){if(preview)return true;return now>=new Date(y,11,i+1)||now.getMonth()==0&&false}
+const seen=JSON.parse(localStorage.getItem('charlie-advent')||'[]');
+const g=document.getElementById('grid'),card=document.getElementById('card');
+D.forEach((d,i)=>{const b=document.createElement('button');b.className='d';b.innerHTML=(i+1)+'<small>'+(unlocked(i)?(seen.includes(i)?'opened':'open me'):'🔒')+'</small>';
+ if(!unlocked(i))b.classList.add('locked');if(seen.includes(i))b.classList.add('open');
+ b.onclick=()=>{if(!unlocked(i)){const days=Math.ceil((new Date(y,11,i+1)-now)/864e5);card.innerHTML='<h2>not yet! 🐶</h2>Door '+(i+1)+' opens in '+days+' day'+(days==1?'':'s')+'. I know. Waiting is the hardest trick.';return}
+ if(!seen.includes(i)){seen.push(i);localStorage.setItem('charlie-advent',JSON.stringify(seen))}
+ b.classList.add('open');b.querySelector('small').textContent='opened';
+ card.innerHTML='<h2>Day '+(i+1)+': '+d[0]+'</h2>'+d[1]+'<br><br><small>come back tomorrow for the next door 🐾</small>'};
+ g.appendChild(b)});
+</script></body></html>
