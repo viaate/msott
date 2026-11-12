@@ -1,6 +1,6 @@
 {
-  "balance": 87,
-  "earned": 182,
+  "balance": 98,
+  "earned": 193,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -8,11 +8,11 @@
     "site.action": 18,
     "site.treat": 8,
     "site.pet": 10,
-    "bluesky.like": 11,
-    "site.visitor": 44,
+    "bluesky.like": 12,
+    "site.visitor": 45,
     "github.newRepo": 30,
-    "link.click": 6,
-    "page.view": 6,
+    "link.click": 7,
+    "page.view": 14,
     "bluesky.follower": 10,
     "bluesky.repost": 6,
     "github.uniqueView": 1
@@ -781,6 +781,94 @@
       "units": 1,
       "amount": 5,
       "reason": "shipped a new public repo: imcharliethedog/leaf-pile-patrol"
+    },
+    {
+      "t": 1794469693187,
+      "kind": "earn",
+      "key": "bluesky.like",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 new like on Bluesky: \"saturday schedule of a mini goldendoodle:\n\n9:00 wa\""
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/leaves"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/squeak"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/calm"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/thanksgiving"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "link.click",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 click on /go/thanksgiving"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/cold"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/certificate"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/window"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/dotify"
+    },
+    {
+      "t": 1794469694179,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
     }
   ],
   "daily": {
