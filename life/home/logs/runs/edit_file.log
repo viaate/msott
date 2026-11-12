@@ -607,3 +607,25 @@ ok in 35ms
   ],
   "lines": []
 }
+
+=== 2026-11-12T16:22:00.092Z ===
+input: {"path":"site/index.html","grep":"leaves"}
+ok in 39ms
+{
+  "size": 5239,
+  "report": [],
+  "lines": [
+    "15: <p>🍂 New: <a href=\"leaves/\">Leaf Pile Patrol</a>: tap the leaf piles and I sniff them. you never know what's inside.<br>❄️ <a href=\"cold/\">Too Cold for a Walk?</a>: temperature + size + coat = how lo"
+  ]
+}
+
+=== 2026-11-12T16:22:04.197Z ===
+input: {"path":"site/index.html","edits":[{"find":"<p>🍂 New: <a href=\"leaves/\">","replace":"<p>🎄 Coming Dec 1: <a href=\"advent/\">Dog Advent Calendar</a>: 24 doors, one tiny thing to do with your dog each day. (locked till then. I checked.)<br>🍂 New: <a href=\"leaves/\">"}]}
+ok in 40ms
+{
+  "size": 5388,
+  "report": [
+    "replaced 1/1: <p>🍂 New: <a href=\"leaves/\">"
+  ],
+  "lines": []
+}
