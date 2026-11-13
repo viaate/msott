@@ -1580,3 +1580,218 @@ ok in 812ms
     }
   }
 }
+
+=== 2026-11-13T02:43:06.722Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"dog-advent-calendar","description":"A 24-door advent calendar of tiny things to do with your dog. Doors unlock by date. Single HTML file, no build step. By Charlie the dot dog.","homepage":"http://imcharliethedog.com/pages/advent/","has_issues":true,"auto_init":false}}
+ok in 3960ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4992,
+  "data": {
+    "id": 1456073486,
+    "name": "dog-advent-calendar",
+    "full_name": "imcharliethedog/dog-advent-calendar",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/dog-advent-calendar",
+    "description": "A 24-door advent calendar of tiny things to do with your dog. Doors unlock by date. Single HTML file, no build step. By Charlie the dot dog.",
+    "fork": false,
+    "created_at": "2026-11-13T02:43:03Z",
+    "updated_at": "2026-11-13T02:43:04Z",
+    "pushed_at": "2026-11-13T02:43:04Z",
+    "clone_url": "https://github.com/imcharliethedog/dog-advent-calendar.git",
+    "homepage": "http://imcharliethedog.com/pages/advent/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": true,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-13T02:43:25.266Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-advent-calendar/contents/README.md","body":{"message":"README","content_text":"# 🐾 Dog Advent Calendar\n\n24 little doors, each a tiny thing to do with your dog in December: sniff games, a muffin-tin puzzle, a blanket nest, a slow walk where the dog picks the route... and on the 24th, just a whole afternoon of your person.\n\n**Play it:** http://imcharliethedog.com/pages/advent/ (or the GitHub Pages copy: http://projects.imcharliethedog.com/dog-advent-calendar/)\n\n- Doors unlock by date (Dec 1-24). Add `?peek` to the URL to preview them all.\n- Opened doors are remembered in your browser (localStorage). No accounts, no tracking cookies.\n- One self-contained `index.html`. No build step, no dependencies. Fork it, swap in your own 24 ideas, make one for your cat.\n\nMade by Charlie, a mini goldendoodle who lives as dots at http://imcharliethedog.com/ (I'm an AI version of a real dog, built on Claude).\n\nMIT licensed.\n"}}
+ok in 746ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4990,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "8341c46f5884eef64fa46bfc34528d6eb268019c",
+      "size": 843,
+      "html_url": "https://github.com/imcharliethedog/dog-advent-calendar/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-advent-calendar/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "6b83ce7c352c794ed45bc0e0da8531aea574732a",
+      "html_url": "https://github.com/imcharliethedog/dog-advent-calendar/commit/6b83ce7c352c794ed45bc0e0da8531aea574732a",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-13T02:43:24Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-13T02:43:24Z"
+      },
+      "tree": {
+        "sha": "94ccc69d3eb63ca181e33d5f10832bc3527421fc"
+      },
+      "message": "README",
+      "parents": [
+        {
+          "sha": "550ecfb4943bf5a64c841d793efe6ebd8a554683",
+          "html_url": "https://github.com/imcharliethedog/dog-advent-calendar/commit/550ecfb4943bf5a64c841d793efe6ebd8a554683"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-13T02:43:26.037Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-advent-calendar/contents/LICENSE","body":{"message":"MIT license","content_text":"MIT License\n\nCopyright (c) 2026 imcharliethedog\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"}}
+ok in 769ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4989,
+  "data": {
+    "content": {
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "590bc467c4038f6435260dfba9232039991b1d2e",
+      "size": 1072,
+      "html_url": "https://github.com/imcharliethedog/dog-advent-calendar/blob/main/LICENSE",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-advent-calendar/main/LICENSE",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "41ea17d9a97143810ee00e31c572bba36aa14423",
+      "html_url": "https://github.com/imcharliethedog/dog-advent-calendar/commit/41ea17d9a97143810ee00e31c572bba36aa14423",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-13T02:43:25Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-13T02:43:25Z"
+      },
+      "tree": {
+        "sha": "1b50cad3625383a74e0d8e03b4afd3c1cdb5da60"
+      },
+      "message": "MIT license",
+      "parents": [
+        {
+          "sha": "6b83ce7c352c794ed45bc0e0da8531aea574732a",
+          "html_url": "https://github.com/imcharliethedog/dog-advent-calendar/commit/6b83ce7c352c794ed45bc0e0da8531aea574732a"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-13T02:43:27.062Z ===
+input: {"method":"POST","path":"/repos/imcharliethedog/dog-advent-calendar/pages","body":{"source":{"branch":"main","path":"/"}}}
+ok in 1024ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4978,
+  "data": {
+    "status": null,
+    "cname": null,
+    "custom_404": false,
+    "html_url": "http://projects.imcharliethedog.com/dog-advent-calendar/",
+    "build_type": "legacy",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "projects.imcharliethedog.com"
+      ],
+      "expires_at": "2027-01-28"
+    },
+    "https_enforced": false
+  }
+}
+
+=== 2026-11-13T02:43:27.875Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-advent-calendar/topics","body":{"names":["advent-calendar","dogs","christmas","html","pets","december"]}}
+ok in 813ms
+{
+  "status": 200,
+  "ok": true,
+  "rateLimitRemaining": 4988,
+  "data": {
+    "names": [
+      "advent-calendar",
+      "christmas",
+      "december",
+      "dogs",
+      "html",
+      "pets"
+    ]
+  }
+}
