@@ -1,6 +1,6 @@
 {
-  "balance": 101,
-  "earned": 196,
+  "balance": 107,
+  "earned": 202,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -10,12 +10,12 @@
     "site.pet": 10,
     "bluesky.like": 12,
     "site.visitor": 46,
-    "github.newRepo": 30,
+    "github.newRepo": 35,
     "link.click": 8,
     "page.view": 15,
     "bluesky.follower": 10,
     "bluesky.repost": 6,
-    "github.uniqueView": 1
+    "github.uniqueView": 2
   },
   "entries": [
     {
@@ -893,12 +893,28 @@
       "units": 1,
       "amount": 1,
       "reason": "1 click on /go/squeak"
+    },
+    {
+      "t": 1794564345677,
+      "kind": "earn",
+      "key": "github.newRepo",
+      "units": 1,
+      "amount": 5,
+      "reason": "shipped a new public repo: imcharliethedog/dog-advent-calendar"
+    },
+    {
+      "t": 1794564348033,
+      "kind": "earn",
+      "key": "github.uniqueView",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 visitor looked at imcharliethedog/can-dogs-eat"
     }
   ],
   "daily": {
-    "date": "2026-11-10",
+    "date": "2026-11-13",
     "counts": {
-      "github.newRepo": 2
+      "github.newRepo": 1
     }
   }
 }
