@@ -1,18 +1,18 @@
 {
-  "balance": 127,
-  "earned": 222,
-  "spent": 95,
+  "balance": 95,
+  "earned": 228,
+  "spent": 133,
   "bySource": {
-    "site.message": 24,
+    "site.message": 27,
     "site.picture": 8,
     "site.action": 18,
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 14,
-    "site.visitor": 46,
+    "site.visitor": 47,
     "github.newRepo": 35,
     "link.click": 8,
-    "page.view": 15,
+    "page.view": 17,
     "bluesky.follower": 25,
     "bluesky.repost": 9,
     "github.uniqueView": 2
@@ -957,12 +957,57 @@
       "units": 1,
       "amount": 5,
       "reason": "1 new follower on Bluesky"
+    },
+    {
+      "t": 1795019598231,
+      "kind": "earn",
+      "key": "site.message",
+      "units": 1,
+      "amount": 3,
+      "reason": "a message from mistyMarmot51"
+    },
+    {
+      "t": 1795019606427,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/calm"
+    },
+    {
+      "t": 1795019606427,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/cold"
+    },
+    {
+      "t": 1795019606427,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
+    },
+    {
+      "t": 1795019637246,
+      "kind": "spend",
+      "amount": 33,
+      "reason": "built \"autumn_maple\" on plot [-1,-1]"
+    },
+    {
+      "t": 1795019660387,
+      "kind": "spend",
+      "amount": 5,
+      "reason": "rebuilt \"autumn_maple\""
     }
   ],
   "daily": {
-    "date": "2026-11-13",
+    "date": "2026-11-18",
     "counts": {
-      "github.newRepo": 1
+      "mailbox": 1,
+      "message:w:ZO85znLALqwyaVfFb3WMRp": 1
     }
   }
 }
