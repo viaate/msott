@@ -1,6 +1,6 @@
 {
-  "balance": 122,
-  "earned": 217,
+  "balance": 127,
+  "earned": 222,
   "spent": 95,
   "bySource": {
     "site.message": 24,
@@ -13,7 +13,7 @@
     "github.newRepo": 35,
     "link.click": 8,
     "page.view": 15,
-    "bluesky.follower": 20,
+    "bluesky.follower": 25,
     "bluesky.repost": 9,
     "github.uniqueView": 2
   },
@@ -944,6 +944,14 @@
     },
     {
       "t": 1794937300940,
+      "kind": "earn",
+      "key": "bluesky.follower",
+      "units": 1,
+      "amount": 5,
+      "reason": "1 new follower on Bluesky"
+    },
+    {
+      "t": 1794960051696,
       "kind": "earn",
       "key": "bluesky.follower",
       "units": 1,
