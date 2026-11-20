@@ -1,6 +1,6 @@
 {
-  "balance": 95,
-  "earned": 228,
+  "balance": 105,
+  "earned": 238,
   "spent": 133,
   "bySource": {
     "site.message": 27,
@@ -13,7 +13,7 @@
     "github.newRepo": 35,
     "link.click": 8,
     "page.view": 17,
-    "bluesky.follower": 25,
+    "bluesky.follower": 35,
     "bluesky.repost": 9,
     "github.uniqueView": 2
   },
@@ -1001,6 +1001,14 @@
       "kind": "spend",
       "amount": 5,
       "reason": "rebuilt \"autumn_maple\""
+    },
+    {
+      "t": 1795141994159,
+      "kind": "earn",
+      "key": "bluesky.follower",
+      "units": 2,
+      "amount": 10,
+      "reason": "2 new followers on Bluesky"
     }
   ],
   "daily": {
