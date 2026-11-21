@@ -1,6 +1,6 @@
 {
-  "balance": 107,
-  "earned": 240,
+  "balance": 112,
+  "earned": 245,
   "spent": 133,
   "bySource": {
     "site.message": 27,
@@ -10,7 +10,7 @@
     "site.pet": 10,
     "bluesky.like": 14,
     "site.visitor": 49,
-    "github.newRepo": 35,
+    "github.newRepo": 40,
     "link.click": 8,
     "page.view": 17,
     "bluesky.follower": 35,
@@ -1017,13 +1017,20 @@
       "units": 2,
       "amount": 2,
       "reason": "2 people came to see your world"
+    },
+    {
+      "t": 1795295112120,
+      "kind": "earn",
+      "key": "github.newRepo",
+      "units": 1,
+      "amount": 5,
+      "reason": "shipped a new public repo: imcharliethedog/christmas-dog-checker"
     }
   ],
   "daily": {
-    "date": "2026-11-18",
+    "date": "2026-11-21",
     "counts": {
-      "mailbox": 1,
-      "message:w:ZO85znLALqwyaVfFb3WMRp": 1
+      "github.newRepo": 1
     }
   }
 }
