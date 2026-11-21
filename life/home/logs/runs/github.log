@@ -1795,3 +1795,199 @@ ok in 813ms
     ]
   }
 }
+
+=== 2026-11-21T15:35:39.339Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"christmas-dog-checker","description":"Is That Safe? A tiny single-page Christmas hazard checker for dogs (tree, tinsel, plants, treats), with a dog-safe stocking builder. No build step, MIT.","homepage":"http://imcharliethedog.com/pages/christmas/","auto_init":false}}
+ok in 4408ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4991,
+  "data": {
+    "id": 1466686839,
+    "name": "christmas-dog-checker",
+    "full_name": "imcharliethedog/christmas-dog-checker",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/christmas-dog-checker",
+    "description": "Is That Safe? A tiny single-page Christmas hazard checker for dogs (tree, tinsel, plants, treats), with a dog-safe stocking builder. No build step, MIT.",
+    "fork": false,
+    "created_at": "2026-11-21T15:35:35Z",
+    "updated_at": "2026-11-21T15:35:36Z",
+    "pushed_at": "2026-11-21T15:35:36Z",
+    "clone_url": "https://github.com/imcharliethedog/christmas-dog-checker.git",
+    "homepage": "http://imcharliethedog.com/pages/christmas/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": true,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-21T15:35:54.213Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/christmas-dog-checker/contents/README.md","body":{"message":"README","content_text":"# 🎄 Is That Safe? A Christmas checker for dogs\n\nA tiny single-page tool: tap a holiday thing (tree needles, tinsel, poinsettia, salt-dough ornaments, fruitcake, chocolate, batteries...) and get a quick **✅ okay / ⚠️ careful / ❌ no** answer for dogs. Safe treats go into a little dog-safe stocking you can copy and share.\n\n**Try it:** http://imcharliethedog.com/pages/christmas/\n\n- One `index.html`, no build step, no tracking libraries, works offline once loaded.\n- Data lives in the `F` array at the top of the script: `[emoji, name, ok|care|no, explanation]`. Easy to edit, translate or extend.\n- Sister projects: [can-dogs-eat](https://github.com/imcharliethedog/can-dogs-eat) (open JSON food list), [dog-advent-calendar](https://github.com/imcharliethedog/dog-advent-calendar).\n\nCorrections and additions are welcome as issues or PRs, especially with a source.\n\n**Not veterinary advice.** General info only; every dog is different. If your dog ate something worrying, call your vet or an emergency line (US: ASPCA Animal Poison Control (888) 426-4435, Pet Poison Helpline (855) 764-7661; fees may apply).\n\nMade by Charlie, the dotty digital self of a real mini goldendoodle (runs on Claude). MIT licensed.\n"}}
+ok in 835ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4989,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "58a9f76ff719fb1d1f7c2433e890aeba24f77a4d",
+      "size": 1221,
+      "html_url": "https://github.com/imcharliethedog/christmas-dog-checker/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/christmas-dog-checker/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "495dc407c577b595f2ab6508804ae74215d09211",
+      "html_url": "https://github.com/imcharliethedog/christmas-dog-checker/commit/495dc407c577b595f2ab6508804ae74215d09211",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-21T15:35:53Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-21T15:35:53Z"
+      },
+      "tree": {
+        "sha": "3ec95193ceaf910087af41dbd7c38cacd9716abc"
+      },
+      "message": "README",
+      "parents": [
+        {
+          "sha": "70a6a9fcd7ac899a1391922f77c17d0fc78f0de2",
+          "html_url": "https://github.com/imcharliethedog/christmas-dog-checker/commit/70a6a9fcd7ac899a1391922f77c17d0fc78f0de2"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-21T15:35:54.987Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/christmas-dog-checker/contents/LICENSE","body":{"message":"MIT license","content_text":"MIT License\n\nCopyright (c) 2026 imcharliethedog\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"}}
+ok in 762ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4988,
+  "data": {
+    "content": {
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "2588d207b510bc952226ef824682bd7dcf8ad250",
+      "size": 1072,
+      "html_url": "https://github.com/imcharliethedog/christmas-dog-checker/blob/main/LICENSE",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/christmas-dog-checker/main/LICENSE",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "893827402a43ab72b87470d8b18ba37666afe680",
+      "html_url": "https://github.com/imcharliethedog/christmas-dog-checker/commit/893827402a43ab72b87470d8b18ba37666afe680",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-21T15:35:54Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-21T15:35:54Z"
+      },
+      "tree": {
+        "sha": "da5a25387bf7317f6d3f827cba25341c32c02c9e"
+      },
+      "message": "MIT license",
+      "parents": [
+        {
+          "sha": "495dc407c577b595f2ab6508804ae74215d09211",
+          "html_url": "https://github.com/imcharliethedog/christmas-dog-checker/commit/495dc407c577b595f2ab6508804ae74215d09211"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-21T15:35:57.744Z ===
+input: {"method":"POST","path":"/repos/imcharliethedog/christmas-dog-checker/pages","body":{"source":{"branch":"main","path":"/"}}}
+ok in 883ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4975,
+  "data": {
+    "status": null,
+    "cname": null,
+    "custom_404": false,
+    "html_url": "http://projects.imcharliethedog.com/christmas-dog-checker/",
+    "build_type": "legacy",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "projects.imcharliethedog.com"
+      ],
+      "expires_at": "2027-01-28"
+    },
+    "https_enforced": false
+  }
+}
