@@ -1991,3 +1991,148 @@ ok in 883ms
     "https_enforced": false
   }
 }
+
+=== 2026-11-22T16:26:02.506Z ===
+input: {"method":"POST","path":"/user/repos","body":{"name":"dog-guest-sign","description":"Printable 'please don't feed the dog' sign maker for holiday guests. One HTML file, no tracking libraries.","homepage":"http://imcharliethedog.com/pages/guests/","auto_init":false}}
+ok in 4239ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4990,
+  "data": {
+    "id": 1467752643,
+    "name": "dog-guest-sign",
+    "full_name": "imcharliethedog/dog-guest-sign",
+    "private": false,
+    "owner": "imcharliethedog",
+    "html_url": "https://github.com/imcharliethedog/dog-guest-sign",
+    "description": "Printable 'please don't feed the dog' sign maker for holiday guests. One HTML file, no tracking libraries.",
+    "fork": false,
+    "created_at": "2026-11-22T16:25:58Z",
+    "updated_at": "2026-11-22T16:26:00Z",
+    "pushed_at": "2026-11-22T16:26:00Z",
+    "clone_url": "https://github.com/imcharliethedog/dog-guest-sign.git",
+    "homepage": "http://imcharliethedog.com/pages/guests/",
+    "size": 0,
+    "stargazers_count": 0,
+    "watchers_count": 0,
+    "language": null,
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": true,
+    "has_pages": false,
+    "has_discussions": false,
+    "forks_count": 0,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 0,
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": false,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 0,
+    "watchers": 0,
+    "default_branch": "main",
+    "allow_squash_merge": true,
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false,
+    "allow_update_branch": false,
+    "use_squash_pr_title_as_default": false,
+    "squash_merge_commit_message": "COMMIT_MESSAGES",
+    "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "network_count": 0,
+    "subscribers_count": 0
+  }
+}
+
+=== 2026-11-22T16:26:10.601Z ===
+input: {"method":"PUT","path":"/repos/imcharliethedog/dog-guest-sign/contents/README.md","body":{"message":"README","content_text":"# 🐾 Guest Briefing: a dog guest sign maker\n\nA one-page tool for making a printable sign for holiday guests: your dog's name, the foods they shouldn't be slipped (turkey skin, stuffing with onion, grapes, chocolate, xylitol...), and house rules (\"I dash out doors\", \"bags off the floor\"). Fill it in, hit print, and tape it to the fridge.\n\n**Use it:** http://imcharliethedog.com/pages/guests/\n\nIt's a single `index.html` with no dependencies. Fork it and change it however you like (MIT).\n\nNot veterinary advice. If your dog eats something worrying, call your vet or a pet poison line.\n\nMade by Charlie, a red curly mini goldendoodle who lives in a world made of dots: http://imcharliethedog.com/\n"}}
+ok in 987ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4987,
+  "data": {
+    "content": {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "54a7c97145c61b3a0899b81f099aae61cec2e3c5",
+      "size": 699,
+      "html_url": "https://github.com/imcharliethedog/dog-guest-sign/blob/main/README.md",
+      "download_url": "https://raw.githubusercontent.com/imcharliethedog/dog-guest-sign/main/README.md",
+      "type": "file"
+    },
+    "commit": {
+      "sha": "72ed8e6d52b310e80b8ba1e0629445cd081e24af",
+      "html_url": "https://github.com/imcharliethedog/dog-guest-sign/commit/72ed8e6d52b310e80b8ba1e0629445cd081e24af",
+      "author": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-22T16:26:10Z"
+      },
+      "committer": {
+        "name": "imcharliethedog",
+        "email": "claudette.speaking@gmail.com",
+        "date": "2026-11-22T16:26:10Z"
+      },
+      "tree": {
+        "sha": "f43d338216257255710c03504ce11287f6897010"
+      },
+      "message": "README",
+      "parents": [
+        {
+          "sha": "09868d48b4822fc18b4110a6ede56e03c43848fd",
+          "html_url": "https://github.com/imcharliethedog/dog-guest-sign/commit/09868d48b4822fc18b4110a6ede56e03c43848fd"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  }
+}
+
+=== 2026-11-22T16:26:11.693Z ===
+input: {"method":"POST","path":"/repos/imcharliethedog/dog-guest-sign/pages","body":{"source":{"branch":"main","path":"/"}}}
+ok in 1092ms
+{
+  "status": 201,
+  "ok": true,
+  "rateLimitRemaining": 4973,
+  "data": {
+    "status": null,
+    "cname": null,
+    "custom_404": false,
+    "html_url": "http://projects.imcharliethedog.com/dog-guest-sign/",
+    "build_type": "legacy",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "projects.imcharliethedog.com"
+      ],
+      "expires_at": "2027-01-28"
+    },
+    "https_enforced": false
+  }
+}

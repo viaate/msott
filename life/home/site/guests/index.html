@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guest Briefing: a printable "please don't feed the dog" sign for holiday guests</title>
+<meta name="description" content="Make a free printable sign for holiday guests: your dog's name, what not to feed them, door rules. By Charlie the dog.">
+<style>
+body{margin:0;background:#151210;color:#f3e9d8;font-family:Georgia,serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+h1{color:#e8a36a;font-size:1.8em;margin:.2em 0}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#221c17;padding:14px;border-radius:10px}
+label{font-size:.9em;color:#d9c7ad}input,select,textarea{width:100%;box-sizing:border-box;padding:7px;border-radius:6px;border:1px solid #5a4a3a;background:#2c241d;color:#f3e9d8;font:inherit}
+.full{grid-column:1/-1}.checks label{display:inline-block;margin:3px 10px 3px 0}.checks input{width:auto}
+button{background:#c4662f;color:#fff;border:0;padding:10px 18px;border-radius:8px;font-size:1em;cursor:pointer;margin:12px 6px 12px 0}
+#sign{background:#fffaf0;color:#2b1d12;margin:16px auto;padding:34px 40px;max-width:640px;border:6px double #b5602b;border-radius:6px;box-shadow:0 4px 24px #0008}
+#sign h2{font-size:2.2em;margin:0;text-align:center;color:#a04a1c}
+#sign .sub{text-align:center;font-style:italic;margin:.3em 0 1em}
+#sign ul{font-size:1.15em;line-height:1.6}
+#sign .yes{background:#eef6e6;padding:10px 14px;border-radius:6px;margin-top:10px}
+#sign .sig{text-align:right;margin-top:18px;font-style:italic}
+.paw{font-size:1.6em;text-align:center;letter-spacing:.4em;color:#c4662f}
+.foot{font-size:.85em;color:#a9977f;margin-top:20px}.foot a{color:#e8a36a}
+@media print{body{background:#fff}.wrap>*:not(#sign){display:none!important}#sign{box-shadow:none;margin:0 auto;max-width:none}}
+@media(max-width:600px){.form{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<h1>🐾 Guest Briefing</h1>
+<p>Holiday guests mean well. They also sneak the dog turkey skin under the table. Make a sign, print it, and tape it to the fridge or the front door. From me, Charlie, a dog who has personally been slipped a dinner roll.</p>
+<div class="form">
+<div><label>Dog's name<input id="name" value="Charlie"></label></div>
+<div><label>Occasion<select id="occ"><option>Thanksgiving</option><option>the holidays</option><option>Christmas</option><option>this party</option><option>your stay</option></select></label></div>
+<div class="full checks"><label style="display:block">Please don't feed me:</label>
+<label><input type="checkbox" value="turkey skin, bones or gravy" checked> turkey skin/bones/gravy</label>
+<label><input type="checkbox" value="anything with onion or garlic (stuffing!)" checked> onion/garlic/stuffing</label>
+<label><input type="checkbox" value="grapes or raisins" checked> grapes/raisins</label>
+<label><input type="checkbox" value="chocolate or anything sweet" checked> chocolate/sweets</label>
+<label><input type="checkbox" value="anything sugar-free (xylitol)" checked> sugar-free (xylitol)</label>
+<label><input type="checkbox" value="alcohol, even a lick"> alcohol</label>
+<label><input type="checkbox" value="ham or fatty scraps"> ham/fatty scraps</label>
+<label><input type="checkbox" value="corn on the cob"> corn cobs</label>
+<label><input type="checkbox" value="ANYTHING from the table, no matter how I look at you"> anything at all</label></div>
+<div class="full checks"><label style="display:block">House rules:</label>
+<label><input type="checkbox" value="Please close the door behind you. I am a door-dasher." checked> I dash out doors</label>
+<label><input type="checkbox" value="Keep your bag zipped and off the floor (medicine, gum, snacks)." checked> bags off the floor</label>
+<label><input type="checkbox" value="Please don't let me jump up, even if you don't mind."> no jumping</label>
+<label><input type="checkbox" value="If I go to my crate or bed, I'm taking a break. Let me be."> leave me be in my bed</label>
+<label><input type="checkbox" value="Trash goes in the closed bin. I will find it otherwise."> trash in closed bin</label></div>
+<div class="full"><label>What IS okay (optional)<input id="ok" value="Ear scratches, belly rubs, and the treats in the jar by the door (ask a human first)."></label></div>
+<div class="full"><label>Signed by<input id="sig" value="the management"></label></div>
+</div>
+<button onclick="make()">Update sign</button><button onclick="make();window.print()">🖨 Print</button>
+<div id="sign"></div>
+<p class="foot">Not vet advice. If your dog eats something worrying, call your vet or the ASPCA Animal Poison Control line (888-426-4435, US; a fee may apply). Wondering whether a food is okay? Try my <a href="/pages/thanksgiving/">Can I Have Some?</a> checker. Made by <a href="/pages/">Charlie</a>, a red curly dog who lives in a world made of dots.</p>
+</div>
+<img src="http://imcharliethedog.com/beacon/pages-guests" width="1" height="1" alt="">
+<script>
+const $=id=>document.getElementById(id);const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function make(){const n=esc($('name').value||'the dog');const boxes=[...document.querySelectorAll('.checks')];
+const food=[...boxes[0].querySelectorAll('input:checked')].map(i=>i.value);const rules=[...boxes[1].querySelectorAll('input:checked')].map(i=>i.value);
+let h=`<div class="paw">🐾🐾🐾</div><h2>Hello! I'm ${n}.</h2><p class="sub">A few notes for ${esc($('occ').value)}:</p>`;
+if(food.length)h+=`<b>Please don't feed me:</b><ul>${food.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`;
+if(food.length)h+=`<p>I will look at you like I've never been fed. That is an act. I've been fed.</p>`;
+if(rules.length)h+=`<b>House rules:</b><ul>${rules.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`;
+if($('ok').value.trim())h+=`<div class="yes"><b>What I would love:</b> ${esc($('ok').value)}</div>`;
+h+=`<p class="sig">Thank you! ♥<br>${n} &amp; ${esc($('sig').value)}</p>`;$('sign').innerHTML=h;}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',make));make();
+</script></body></html>
