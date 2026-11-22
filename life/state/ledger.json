@@ -1,6 +1,6 @@
 {
-  "balance": 112,
-  "earned": 245,
+  "balance": 117,
+  "earned": 250,
   "spent": 133,
   "bySource": {
     "site.message": 27,
@@ -10,7 +10,7 @@
     "site.pet": 10,
     "bluesky.like": 14,
     "site.visitor": 49,
-    "github.newRepo": 40,
+    "github.newRepo": 45,
     "link.click": 8,
     "page.view": 17,
     "bluesky.follower": 35,
@@ -1025,10 +1025,18 @@
       "units": 1,
       "amount": 5,
       "reason": "shipped a new public repo: imcharliethedog/christmas-dog-checker"
+    },
+    {
+      "t": 1795384734298,
+      "kind": "earn",
+      "key": "github.newRepo",
+      "units": 1,
+      "amount": 5,
+      "reason": "shipped a new public repo: imcharliethedog/dog-guest-sign"
     }
   ],
   "daily": {
-    "date": "2026-11-21",
+    "date": "2026-11-22",
     "counts": {
       "github.newRepo": 1
     }
