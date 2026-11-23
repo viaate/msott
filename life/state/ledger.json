@@ -1,6 +1,6 @@
 {
-  "balance": 69,
-  "earned": 250,
+  "balance": 70,
+  "earned": 251,
   "spent": 181,
   "bySource": {
     "site.message": 27,
@@ -9,7 +9,7 @@
     "site.treat": 8,
     "site.pet": 10,
     "bluesky.like": 14,
-    "site.visitor": 49,
+    "site.visitor": 50,
     "github.newRepo": 45,
     "link.click": 8,
     "page.view": 17,
@@ -1045,6 +1045,14 @@
       "kind": "spend",
       "amount": 5,
       "reason": "rebuilt \"advent_board\""
+    },
+    {
+      "t": 1795473863224,
+      "kind": "earn",
+      "key": "site.visitor",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person came to see your world"
     }
   ],
   "daily": {
