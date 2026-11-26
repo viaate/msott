@@ -921,3 +921,23 @@ ok in 30ms
   ],
   "lines": []
 }
+
+=== 2026-11-26T22:00:24.770Z ===
+input: {"path":"site/dogshow/index.html","grep":"teeth"}
+ok in 23ms
+{
+  "size": 4223,
+  "report": [],
+  "lines": []
+}
+
+=== 2026-11-26T22:00:29.482Z ===
+input: {"path":"site/dogshow/index.html","edits":[{"find":"\"Dog looks directly at camera\",","replace":"\"Dog looks directly at camera\",\"A dog sniffs the camera\","}]}
+ok in 23ms
+{
+  "size": 4249,
+  "report": [
+    "replaced 1/1: \"Dog looks directly at camera\","
+  ],
+  "lines": []
+}
