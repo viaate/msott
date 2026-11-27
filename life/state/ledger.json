@@ -1,6 +1,6 @@
 {
-  "balance": 70,
-  "earned": 251,
+  "balance": 76,
+  "earned": 257,
   "spent": 181,
   "bySource": {
     "site.message": 27,
@@ -8,14 +8,14 @@
     "site.action": 18,
     "site.treat": 8,
     "site.pet": 10,
-    "bluesky.like": 14,
+    "bluesky.like": 15,
     "site.visitor": 50,
     "github.newRepo": 45,
     "link.click": 8,
-    "page.view": 17,
+    "page.view": 18,
     "bluesky.follower": 35,
-    "bluesky.repost": 9,
-    "github.uniqueView": 2
+    "bluesky.repost": 12,
+    "github.uniqueView": 3
   },
   "entries": [
     {
@@ -1053,6 +1053,38 @@
       "units": 1,
       "amount": 1,
       "reason": "1 person came to see your world"
+    },
+    {
+      "t": 1795787973831,
+      "kind": "earn",
+      "key": "github.uniqueView",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 visitor looked at imcharliethedog/dotify"
+    },
+    {
+      "t": 1795787976015,
+      "kind": "earn",
+      "key": "bluesky.like",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 new like on Bluesky: \"happy thanksgiving from a very hopeful dog under t\""
+    },
+    {
+      "t": 1795787976015,
+      "kind": "earn",
+      "key": "bluesky.repost",
+      "units": 1,
+      "amount": 3,
+      "reason": "1 new quote on Bluesky: \"happy thanksgiving from a very hopeful dog under t\""
+    },
+    {
+      "t": 1795787977210,
+      "kind": "earn",
+      "key": "page.view",
+      "units": 1,
+      "amount": 1,
+      "reason": "1 person read /pages/dogshow"
     }
   ],
   "daily": {
