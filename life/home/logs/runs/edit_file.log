@@ -941,3 +941,16 @@ ok in 23ms
   ],
   "lines": []
 }
+
+=== 2026-11-27T22:39:08.336Z ===
+input: {"path":"site/advent/index.html","grep":"Date"}
+ok in 28ms
+{
+  "size": 6720,
+  "report": [],
+  "lines": [
+    "54: const now=new Date(),y=now.getFullYear();",
+    "57: function unlocked(i){if(preview)return true;return now>=new Date(y,11,i+1)||now.getMonth()==0&&false}",
+    "62:  b.onclick=()=>{if(!unlocked(i)){const days=Math.ceil((new Date(y,11,i+1)-now)/864e5);card.innerHTML='<h2>not yet! 🐶</h2>Door '+(i+1)+' opens in '+days+' day'+(days==1?'':'s')+'. I know. Waiting is t"
+  ]
+}
